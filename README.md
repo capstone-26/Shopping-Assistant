@@ -40,10 +40,6 @@ Currently this is a Django web application that runs inside a Docker container. 
 ## Authors
 
 - Shey Laplanche
-- 
--
--
--
 
 ## License
 
