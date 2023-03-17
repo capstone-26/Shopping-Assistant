@@ -11,3 +11,6 @@ def search(request):
 
 def watchlists(request):
     return render(request, 'watchlists.html')
+
+def aboutus(request):
+    return render(request, 'aboutus.html')
