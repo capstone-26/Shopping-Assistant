@@ -1,18 +1,39 @@
-<header>
-    This is the header in base.html
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>My Website</title>
+        <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'searchbar.css' %}">
+        
+    </head>
+<body>
+    <header>
+       
 
-    {% comment %} 
-    We should be pulling the navbar items from a model and then looping through them here.
-    - https://forum.djangoproject.com/t/create-navbar-in-django/605 
-    {% endcomment %}
-    <ul>
-        <li><a href="../">Home</a></li>
-        <li><a href="../profile">Profile</a></li>
-        <li><a href="../search">Search</a></li>
-        <li><a href="../watchlists">Watchlists</a></li>
-    </ul>
-</header>
-
+        {% comment %} 
+        We should be pulling the navbar items from a model and then looping through them here.
+        - https://forum.djangoproject.com/t/create-navbar-in-django/605 
+        {% endcomment %}
+        <div class="topnav">
+            <div class="search-container">
+              <form action="/action_page.php">
+                <input type="text" placeholder="Search for a product.." name="Search">
+                <button type="Search">Search</button>
+              </form>
+            </div>
+          </div>
+        <div>
+            <div class="navigation">
+                <a href="../">Home</a>
+                <a href="../profile">Profile</a>
+                <a href="../search">Search</a>
+                <a href="../watchlists">Watchlists</a>
+        </div>
+        </div>
+    </header> 
+</body>
+</html>
 {% block content %}{% endblock %}
 
 <footer>
