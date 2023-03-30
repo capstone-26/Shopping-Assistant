@@ -1,0 +1,26 @@
+.table-body {
+    font-family: Arial, Helvetica, sans-serif;
+    border-collapse:collapse;
+    width: 80%;
+    position: absolute;
+    left: 150px;
+  }
+  .table-body .title {
+    border-bottom: 3px solid #000000;
+    border-top: 0px solid #ffffff;
+  }
+  .table-body th, td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .table-body tr:hover {background-color: #ddd;}
+  
+  .table-body th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #ffffff;
+    color: rgb(0, 0, 0);
+  }
