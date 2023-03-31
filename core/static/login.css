@@ -1,0 +1,103 @@
+@import url('https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  outline: none;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  height: 100vh;
+  width: 100%;
+  background: #fff;
+}
+
+.center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.container {
+  background: #fff;
+  width: 410px;
+  padding: 30px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.1);
+}
+
+.container .close-btn {
+  position: absolute;
+  right: 20px;
+  top: 15px;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.container .close-btn:hover {
+  color: #3498db;
+}
+
+.container .text {
+  font-size: 35px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.container form {
+  margin-top: -20px;
+}
+
+.container form .data {
+  height: 45px;
+  width: 100%;
+  margin: 40px 0;
+}
+
+form .data label {
+  font-size: 18px;
+}
+
+form .data input {
+  height: 100%;
+  width: 100%;
+  padding-left: 10px;
+  font-size: 17px;
+  border: 1px solid silver;
+}
+
+form .data input:focus {
+  border-color: #3498db;
+  border-bottom-width: 2px;
+}
+form .forgot-pass{
+    margin-top: -8px;
+}
+form .forgot-pass a{
+    color: #3498db;
+    text-decoration: none;
+}
+form .forgot-pass a:hover{
+    text-decoration: underline;
+}
+form .btn button{
+    border-radius: 5px;
+    height: 100%;
+    width: 100%;
+    background:#3498db;
+    border:none;
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    cursor: pointer;
+  }
+  form .signup-link{
+    text-align: center;
+  }
+
+  form .signup-link a:hover{
+    text-decoration: underline;
+  }
