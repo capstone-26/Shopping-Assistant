@@ -14,3 +14,7 @@ def watchlists(request):
 
 def watchlistdetail(request):
     return render(request, 'watchlistdetail.html')
+def login(request):
+    return render(request, 'login.html')
+def signup(request):
+    return render(request, 'signup.html')
