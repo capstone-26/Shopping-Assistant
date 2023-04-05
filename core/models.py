@@ -14,8 +14,8 @@ class Location(models.Model):
 
 class Store(models.Model):
     name = models.CharField(max_length=100)
-    retailerID = models.ForeignKey(Retailer)
-    location = models.OneToOneField(Location)
+    retailerID = models.ForeignKey(Retailer,on_delete=models.DO_NOTHING)
+    location = models.OneToOneField(Location,on_delete=models.DO_NOTHING)
     product = models.ManyToManyField(Product)
 
 class User(models.Model):
@@ -26,12 +26,12 @@ class User(models.Model):
 class Watchlist(models.Model):
     name = models.CharField(max_length=100)
     itemCount = models.IntegerField()
-    userID = models.ForeignKey(User)
+    userID = models.ForeignKey(User,on_delete=models.DO_NOTHING)
     watchlistProduct = models.ManyToManyField(Product)
 
 class UserLocation(models.Model):
     #class Meta:
     #    unique_together = (('userID', 'locationID'),)
     
-    userID = models.ForeignKey(User)
-    locationID = models.ForeignKey(Location)
+    userID = models.ForeignKey(User,on_delete=models.DO_NOTHING)
+    locationID = models.ForeignKey(Location,on_delete=models.DO_NOTHING)
