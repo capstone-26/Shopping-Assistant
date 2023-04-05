@@ -18,3 +18,5 @@ def login(request):
     return render(request, 'login.html')
 def signup(request):
     return render(request, 'signup.html')
+def aboutus(request):
+    return render(request, 'aboutus.html')

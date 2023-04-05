@@ -26,5 +26,6 @@ urlpatterns = [
     path('watchlistdetail/', views.watchlistdetail),
     path('login/', views.login),
     path('signup/', views.signup),
+    path('aboutus/', views.aboutus),
     path('', views.home)
 ]
