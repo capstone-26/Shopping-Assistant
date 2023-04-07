@@ -13,15 +13,10 @@ class ProductSerializer(serializers.ModelSerializer):
         
 class WatchlistSerializer(serializers.ModelSerializer):
     itemCount = serializers.IntegerField()
-    userID = serializers.SlugRelatedField(
-        many=True,
-        read_only=True,
-        slug_field='title'
-    )
     watchlistProduct = serializers.SlugRelatedField(
         many=True,
         read_only=True,
-        slug_field='title'
+        slug_field='name'
     )
     
     class Meta:
