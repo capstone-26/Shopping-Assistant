@@ -20,8 +20,8 @@ def watchlists(request):
     # return render(request, 'watchlists.html')
     
     if request.method == 'GET': 
-        wlists = Watchlist.objects.all()
-        serializer = WatchlistSerializer(wlists, many=True)
+        watchlists = Watchlist.objects.all()
+        serializer = WatchlistSerializer(watchlists, many=True)
         return JsonResponse(serializer.data, safe=False)
 
     if request.method == 'POST': 
@@ -29,9 +29,24 @@ def watchlists(request):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        
-def watchlistdetail(request):
-    return render(request, 'watchlistdetail.html')
+
+@api_view(['GET', 'POST', 'PUT', 'DELETE'])      
+def watchlistdetail(request, id):
+    # return render(request, 'watchlistdetail.html')
+
+    try:
+        watchlist = Watchlist.objects.get(pk=id)
+    except Watchlist.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        serializer = WatchlistSerializer(watchlist)
+        return Response(serializer.data)
+    elif request.method == 'POST':
+        pass
+    elif request.method == 'PUT':
+        pass
+
 def login(request):
     return render(request, 'login.html')
 def signup(request):
