@@ -3,6 +3,9 @@ from django.db import models
 class Product(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
+    
+    def __str__(self):
+        return self.name
 
 class Retailer(models.Model):
     name = models.CharField(max_length=100)
@@ -14,8 +17,8 @@ class Location(models.Model):
 
 class Store(models.Model):
     name = models.CharField(max_length=100)
-    retailerID = models.ForeignKey(Retailer, on_delete=models.DO_NOTHING)
-    location = models.OneToOneField(Location, on_delete=models.DO_NOTHING)
+    retailerID = models.ForeignKey(Retailer,on_delete=models.DO_NOTHING)
+    location = models.OneToOneField(Location,on_delete=models.DO_NOTHING)
     product = models.ManyToManyField(Product)
 
 class User(models.Model):
@@ -23,15 +26,19 @@ class User(models.Model):
     email = models.EmailField()
     address = models.TextField()
 
+    def __str__(self):
+        return self.name
 class Watchlist(models.Model):
     name = models.CharField(max_length=100)
     itemCount = models.IntegerField()
-    userID = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    userID = models.ForeignKey(User,on_delete=models.DO_NOTHING)
     watchlistProduct = models.ManyToManyField(Product)
 
+    def __str__(self):
+        return self.name
 class UserLocation(models.Model):
     #class Meta:
     #    unique_together = (('userID', 'locationID'),)
     
-    userID = models.ForeignKey(User, on_delete=models.DO_NOTHING)
-    locationID = models.ForeignKey(Location, on_delete=models.DO_NOTHING)
+    userID = models.ForeignKey(User,on_delete=models.DO_NOTHING)
+    locationID = models.ForeignKey(Location,on_delete=models.DO_NOTHING)
