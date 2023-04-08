@@ -22,7 +22,7 @@ def watchlists(request):
     if request.method == 'GET': 
         watchlists = Watchlist.objects.all()
         serializer = WatchlistSerializer(watchlists, many=True)
-        return JsonResponse(serializer.data, safe=False)
+        return Response(serializer.data)
 
     if request.method == 'POST': 
         serializer = WatchlistSerializer(data=request.data)
@@ -51,7 +51,9 @@ def watchlistdetail(request, id):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
             
     elif request.method == 'DELETE':
-        pass
+        watchlist.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+        
 
 def login(request):
     return render(request, 'login.html')
