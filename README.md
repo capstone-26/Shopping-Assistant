@@ -8,7 +8,7 @@ Currently this is a Django web application that runs inside a Docker container. 
 
 - Docker Desktop
 
-### Running the Application
+<!-- ### Running the Application
 
 1. Clone the repository to your local machine.
 
@@ -30,7 +30,7 @@ Currently this is a Django web application that runs inside a Docker container. 
 
 4. Open your web browser and go to http://localhost:8000.
 
-5. You should now see the home page of the website.
+5. You should now see the home page of the website. -->
 
 ## Built With
 
