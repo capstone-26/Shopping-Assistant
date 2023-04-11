@@ -14,8 +14,8 @@ TODO:
     - Scrape a specific product's details
 """
 
-import util
-from scraper import Scraper
+import webscraper.util as util
+from webscraper.scraper import Scraper
 from selenium.webdriver.common.by import By # for finding side-menu button (woolworths only)
 
 from bs4 import BeautifulSoup 
@@ -82,7 +82,7 @@ class WoolworthsScraper(Scraper):
         # Extract product image
         product_image_url = self.get_product_image_url(product_code)
         product_details["image_url"] = product_image_url
-        product_details["nutrition_data"] = nutrition_data
+        # product_details["nutrition_data"] = nutrition_data
         product_details["description"] = description
 
         return product_details

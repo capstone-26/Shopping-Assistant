@@ -2,7 +2,7 @@
 - Parent class for scrapers to inherit from.
 - Acts as a template for all scrapers in the Shopping Assistant Application
 """
-import util
+import webscraper.util as util
 
 class Scraper:
     

@@ -6,9 +6,10 @@ from selenium.webdriver.firefox.service import Service
 # from webdriver_manager.firefox import GeckoDriverManager
 
 import csv
+import os
 
 # Change this to the path of the application's GeckoDriver
-GECKODRIVER_PATH = "./geckodriver"
+GECKODRIVER_PATH = "/usr/bin/geckodriver"
 
 def get_driver():
     # Create driver
