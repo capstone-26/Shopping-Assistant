@@ -41,49 +41,18 @@ class WoolworthsScraper(Scraper):
         # Create URL and load page
         product_url = f"{BASE_URL}shop/productdetails/{product_code}"
         self.driver.get(product_url)
-
-        # Create BeautifulSoup object
         soup = BeautifulSoup(self.driver.page_source, "html.parser")
 
-        # Extract product details
         product_details = {}
 
-        # Find bottom container where product details are
+        # Extract description
         bottom_container = soup.find("div", class_="bottom-container")
-
-        # Get "Product details" section
-        description = bottom_container.find("h2", class_="product-heading").find_next().text
-
-        # Extract data from nutrition table
-        table = soup.find('div', class_='nutrition-table')
-        rows = table.find_all('ul', class_='nutrition-row')
-        nutrition_data = [['' for _ in range(3)] for _ in range(len(rows))]
-        for i, row in enumerate(rows):
-            cells = row.find_all('li', class_='nutrition-column')
-            for j, cell in enumerate(cells):
-                nutrition_data[i][j] = cell.text.strip()
-
-
-        sections = soup.findAll("section")
-
-        for section in sections:
-            section_title_header = section.find("h3")
-            if section_title_header is None: section_title = section.find("h2")
-            if section_title_header is None: continue
-
-            section_title = section_title_header.text
-            
-            section_content_div = section.find("div", class_="viewMore-content")
-            if section_content_div is not None: section_content = section_content_div.text
-            else: section_content = "NO TEXT FOUND"
-
-            product_details[section_title] = section_content
+        description = bottom_container.find("h2", class_="product-heading").find_next("div").find("div", class_="viewMore-content").text
+        product_details["description"] = description
         
         # Extract product image
         product_image_url = self.get_product_image_url(product_code)
         product_details["image_url"] = product_image_url
-        # product_details["nutrition_data"] = nutrition_data
-        product_details["description"] = description
 
         return product_details
 

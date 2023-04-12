@@ -76,8 +76,9 @@ async def scrape_product(request):
     product_code = 603317 # Tip-top bread
     wwscraper = woolworths.WoolworthsScraper()
     product = wwscraper.scrape_specific_product(product_code)
+    return product
 
 async def testscraper(request):
     product = await scrape_product(request)
     print(product)
-    return HttpResponse(f"Product: {product}")
+    return HttpResponse(f"Product: {str(product)}")
