@@ -27,6 +27,6 @@ urlpatterns = [
     path('login/', views.login),
     path('signup/', views.signup),
     path('aboutus/', views.aboutus),
-    path('testscraper/', views.testscraper),
+    path('product/<int:product_code_ww>', views.product),
     path('', views.home)
 ]

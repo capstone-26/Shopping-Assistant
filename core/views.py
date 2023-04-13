@@ -66,19 +66,12 @@ def aboutus(request):
     return render(request, 'aboutus.html')
 
 # Testing webscraper
-""" 
-- Currently the product is not being returned properly.
-- I believe the issue is with the web scraper.
-- The async part seems to be running properly though, as the page loads
-"""
-async def scrape_product(request):
-    print("Scraping product...")
-    product_code = 603317 # Tip-top bread
-    wwscraper = woolworths.WoolworthsScraper()
-    product = wwscraper.scrape_specific_product(product_code)
-    return product
+async def product(request, product_code_ww):
 
-async def testscraper(request):
-    product = await scrape_product(request)
-    print(product)
+    # This subfunction is awaited on - there may be a better way to do this.
+    async def scrape_product(product_code):
+        return woolworths.WoolworthsScraper().scrape_specific_product(product_code)
+
+    product = await scrape_product(product_code_ww)
+
     return HttpResponse(f"Product: {str(product)}")
