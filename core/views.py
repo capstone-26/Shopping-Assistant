@@ -74,4 +74,5 @@ async def product(request, product_code_ww):
 
     product = await scrape_product(product_code_ww)
 
-    return HttpResponse(f"Product: {str(product)}")
+    # return HttpResponse(f"Product: {str(product)}")
+    return render(request, 'product.html', {'product': product})

@@ -37,27 +37,34 @@ class WoolworthsScraper(Scraper):
     
     def scrape_specific_product(self, product_code):
         """Returns a list of a specific product's details"""
+        product_details = {}
 
         # Create URL and load page
         product_url = f"{BASE_URL}shop/productdetails/{product_code}"
         self.driver.get(product_url)
+
         soup = BeautifulSoup(self.driver.page_source, "html.parser")
 
-        product_details = {}
+        # Extract product name
+        product_details["name"] = soup.find('h1', class_='shelfProductTile-title').text
+
+        # Extract product price
+        product_details["price"] = soup.find('div', class_='price price--large').text.replace("\n", "")
 
         # Extract description
         bottom_container = soup.find("div", class_="bottom-container")
         description = bottom_container.find("h2", class_="product-heading").find_next("div").find("div", class_="viewMore-content").text
         product_details["description"] = description
         
-        # Extract product image
+        # Generate product image
         product_image_url = self.get_product_image_url(product_code)
         product_details["image_url"] = product_image_url
 
         return product_details
 
 
-    def get_product_image_url(self, product_code, size="large"):
+    def get_product_image_url(self, product_code, size="medium"):
+        product_code = str(product_code).zfill(6) # Woolworths cdn seems to require 6 digits
         if size in ["large", "medium", "small"]:
             return f"https://cdn0.woolworths.media/content/wowproductimages/{size}/{product_code}.jpg"
         else:
