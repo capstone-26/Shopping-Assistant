@@ -76,3 +76,17 @@ async def product(request, product_code_ww):
 
     # return HttpResponse(f"Product: {str(product)}")
     return render(request, 'product.html', {'product': product})
+
+async def allproducts(request):
+
+    async def scrape_all_products():
+        return woolworths.WoolworthsScraper().scrape_all_products(testing=True)
+    
+    products = await scrape_all_products()
+
+    pretty_products = ""
+    for category in products:
+        for product in category:
+            pretty_products += f"{str(product)}<br>"
+
+    return HttpResponse(pretty_products)

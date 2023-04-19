@@ -27,13 +27,19 @@ EXPORT_PATH = "data/"
 class WoolworthsScraper(Scraper):
     """This class is responsible for scraping the Woolworths website for product information."""
     
-    def scrape_all_products(self):
+    def scrape_all_products(self, testing=False):
         """Returns a list of all products from the Woolworths website"""
         categories = self.scrape_categories()
 
+        all_products = []
         for category_name, category_url in categories.items():
-            products = self.scrape_products(category_url)
-            util.export_products(products, category_name, export_path=EXPORT_PATH)
+            category_products = self.scrape_products(category_url)
+            # util.export_products(category_products, category_name, export_path=EXPORT_PATH)
+            all_products.append(category_products)
+
+            if testing: break
+
+        return all_products
     
     def scrape_specific_product(self, product_code):
         """Returns a list of a specific product's details"""
@@ -119,7 +125,7 @@ class WoolworthsScraper(Scraper):
                 # something is wrong with the link. Lets debug
                 print("Found a KeyError. Writing problem product to debug.txt")
 
-                with open("debug.txt", "a") as file:
-                    file.write(f"{str(product_tile.find('a', class_='product-title-link').text)}\n")
+                with open("webscraper/debug.txt", "a") as file:
+                    file.write(f"{category_url}: {str(product_tile.find('a', class_='product-title-link').text)}\n")
         
         return products
