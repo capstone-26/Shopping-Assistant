@@ -24,6 +24,8 @@ urlpatterns = [
     path('search/', views.search),
     path('watchlists/', views.watchlists),
     path('watchlists/<int:id>', views.watchlistdetail),
+    path('watchlistsTest/', views.watchlistsTest),
+     path('watchlistdetailTest/', views.watchlistdetailTest),
     path('login/', views.login),
     path('signup/', views.signup),
     path('aboutus/', views.aboutus),
