@@ -3,15 +3,14 @@ body {
 	margin: 0;
 	padding: 0;
 }
-
-button {
+/*button {
 	background-color:#4586f7;
 	border: none;
 	color: #fff;
 	font-size: 16px;
 	padding: 10px 20px;
 	cursor: pointer;
-}
+}*/
 
 #popup {
 	display: none;
@@ -22,7 +21,7 @@ button {
 	background-color: rgba(0,0,0,0.5);
     z-index: 9999;
 }
-
+ 
 .popup-content {
 	background-color: white;
 	overflow-y: auto;
@@ -48,8 +47,11 @@ button {
 .popup-buttons {
 	margin-top: 20px;
 }
+.popup-content button{
+	 margin-right: auto;
+}
 
-.popup-buttons button {
+.popup-buttons  button {
 	background-color: #4586f7;
     border-radius:3px;
 	border: none;
@@ -60,3 +62,5 @@ button {
 	text-decoration:none;
 	text-shadow:0px 1px 0px #283966;
 }
+
+
