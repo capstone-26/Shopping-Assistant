@@ -6,8 +6,36 @@
 
 <div class="middle">
     <div class="buttons_container">
-        <a href="#" class="myButton">Create New</a>
-        <a href="#" class="myButton">Edit List</a>
+        <button id="open-btn">Create New</button>
+        <div id="popup">
+			<div class="popup-content">
+				<form>
+                <input type="text" id="windows-input" required placeholder="Enter Watchlist Name">
+                <input type="text" id="windows-input" required placeholder="Enter Product Name">
+                </form>
+                <button>Add</button>
+				<h4>Items added to Watchlist</h4>
+                <ul>
+					<li><label for="item1">Item 1</label><button>Remove</button></li>
+					<li><label for="item1">Item 2</label><button>Remove</button></li>
+					<li><label for="item1">Item 3</label><button>Remove</button></li>
+                    <li><label for="item1">Item 4</label><button>Remove</button></li>
+					<li><label for="item1">Item 5</label><button>Remove</button></li>
+					<li><label for="item1">Item 6</label><button>Remove</button></li>
+					<li><label for="item1">Item 7</label><button>Remove</button></li>
+					<li><label for="item1">Item 8</label><button>Remove</button></li>
+					<li><label for="item1">Item 9</label><button>Remove</button></li>
+					<li><label for="item1">Item 10</label><button>Remove</button></li>
+			
+				</ul>
+				<div class="popup-buttons">
+					<button id="cancel-btn">Cancel</button>
+					<button id="confirm-btn">Confirm Selection</button>
+				</div>
+			</div>
+		</div>
+        <button onclick="importData()">Add New</button>
+        
     </div>
 </div>
 <div class="list">
@@ -30,4 +58,46 @@
     
     </body>    
 </div>
+
+
+<script>
+
+    const openBtn = document.getElementById("open-btn");
+    const popup = document.getElementById("popup");
+    const cancelBtn = document.getElementById("cancel-btn");
+    const confirmBtn = document.getElementById("confirm-btn");
+
+    openBtn.addEventListener("click", function() {
+      popup.style.display = "block";
+    });
+    
+    cancelBtn.addEventListener("click", function() {
+      popup.style.display = "none";
+    });
+    
+    function importData() {
+        let input = document.createElement('input');
+        input.type = 'file';
+        input.onchange = _ => {
+        
+        let files =   Array.from(input.files);
+        console.log(files);
+    };
+     input.click();
+  
+    }
+    
+  
+   
+    
+</script>
+<style>
+    input[id=windows-input]{
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+}
+</style>
+
 {% endblock %}
