@@ -24,6 +24,10 @@
     position: absolute;
 
 }
+.middle .buttons_container .form{
+	position: relative;
+
+}
 .middle{
     overflow: hidden;
     background-color: #ffffff;
