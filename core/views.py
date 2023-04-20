@@ -32,7 +32,10 @@ def watchlists(request):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-
+def watchlistsTest(request):
+    return render(request, 'watchlists.html')
+def watchlistdetailTest(request):
+    return render(request, 'watchlistdetail.html')
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])      
 def watchlistdetail(request, id):
     # return render(request, 'watchlistdetail.html')
