@@ -31,9 +31,18 @@ class WoolworthsScraper(Scraper):
         """Returns a list of all products from the Woolworths website"""
         categories = self.scrape_categories()
 
+        all_products = {}
+
         for category_name, category_url in categories.items():
-            products = self.scrape_products(category_url)
-            util.export_products(products, category_name, export_path=EXPORT_PATH)
+            category_products = self.scrape_products(category_url)
+            # util.export_products(products, category_name, export_path=EXPORT_PATH)
+            all_products[category_name] = category_products
+            
+            break # testing
+    
+        return all_products
+
+
     
     def scrape_specific_product(self, product_code):
         """Returns a list of a specific product's details"""
