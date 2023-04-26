@@ -1,12 +1,14 @@
 from django.db import models
 
 class Product(models.Model):
-    django_id = models.UUIDField() # maybe unnecessary
+    id = models.AutoField(primary_key=True) # maybe unnecessary
     name = models.CharField(max_length=100, default="DEFAULT")
+    price = models.DecimalField(max_digits=6, decimal_places=2, default=0.00)
     retailer = models.CharField(max_length=100)
     retailer_code = models.CharField(max_length=150)
     description = models.TextField(default="DEFAULT")
-    image_url = models.URLField()
+    category = models.CharField(max_length=100, default="DEFAULT")
+    image_url = models.CharField(max_length=200, default="DEFAULT")
 
     def __str__(self):
         return self.name

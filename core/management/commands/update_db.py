@@ -1,27 +1,36 @@
 from django.core.management.base import BaseCommand
 
 from core import scrapers
-
 from core.models import Product
 
 class Command(BaseCommand):
-    help = 'Say hello to the world'
+    help = 'Scrapes Woolworths and updates the database with the latest products'
 
     def handle(self, *args, **options):
         # Gather latest products
-        self.stdout('Gathering latest products...')
-        woolworths_products = scrapers.AllProductsScraper().scrape("woolworths")
-        self.stdout.write(self.style.SUCCESS("OK"))
+        self.stdout.write('Gathering latest products...')
+        try:
+            woolworths_products = scrapers.AllProductsScraper().scrape("woolworths")
+        except Exception as e:
+            self.stdout.write(self.style.ERROR(f"FAILED: {e}"))
+            return
         
-        self.stdout('Updatinf database...')
-        for category_name, category_products in woolworths_products.items():
-            for product_details in category_products:
-                Product.objects.update_or_create(
-                    name=product_details["name"],
-                    retailer="woolworths",
-                    retailer_code=product_details["code"],
-                    description=product_details["description"],
-                    image_url=product_details["image_url"]
-                )
+        self.stdout.write(self.style.SUCCESS(f"OK"))
         
+        self.stdout.write('Updating database...')
+        try:
+            for category_name, category_products in woolworths_products.items():
+                for product in category_products:
+                    
+                    Product.objects.update_or_create(
+                        name = product['name'],
+                        price = float(product['price'].replace("$", "")),
+                        retailer = "woolworths",
+                        retailer_code = product['code'],
+                        category = category_name,
+                    )
+        except Exception as e:
+            self.stdout.write(self.style.ERROR(f"There is a problem with {product['name']}"))
+            self.stdout.write(self.style.ERROR(f"FAILED: {e}"))
+            return
         self.stdout.write(self.style.SUCCESS("OK"))
