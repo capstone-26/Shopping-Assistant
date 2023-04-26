@@ -6,9 +6,6 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 
-from webscraper import woolworths # for webscraping
-import asyncio # for asynchronous webscraping
-
 def home(request):
     return render(request, 'index.html')
 
@@ -70,15 +67,3 @@ def signup(request):
     return render(request, 'signup.html')
 def aboutus(request):
     return render(request, 'aboutus.html')
-
-# Testing webscraper
-async def product(request, product_code_ww):
-
-    # This subfunction is awaited on - there may be a better way to do this.
-    async def scrape_product(product_code):
-        return woolworths.WoolworthsScraper().scrape_specific_product(product_code)
-
-    product = await scrape_product(product_code_ww)
-
-    # return HttpResponse(f"Product: {str(product)}")
-    return render(request, 'product.html', {'product': product})

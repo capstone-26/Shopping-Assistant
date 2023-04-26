@@ -29,6 +29,5 @@ urlpatterns = [
     path('login/', views.login),
     path('signup/', views.signup),
     path('aboutus/', views.aboutus),
-    path('product/<int:product_code_ww>', views.product),
     path('', views.home)
 ]

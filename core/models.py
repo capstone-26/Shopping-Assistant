@@ -1,9 +1,13 @@
 from django.db import models
 
 class Product(models.Model):
-    name = models.CharField(max_length=100)
-    description = models.TextField()
-    
+    django_id = models.UUIDField() # maybe unnecessary
+    name = models.CharField(max_length=100, default="DEFAULT")
+    retailer = models.CharField(max_length=100)
+    retailer_code = models.CharField(max_length=150)
+    description = models.TextField(default="DEFAULT")
+    image_url = models.URLField()
+
     def __str__(self):
         return self.name
 
