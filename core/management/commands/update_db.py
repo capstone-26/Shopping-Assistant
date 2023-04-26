@@ -2,6 +2,8 @@ from django.core.management.base import BaseCommand
 
 from webscraper import woolworths
 
+from core.models import Product
+
 class Command(BaseCommand):
     helo = 'Say hello to the world'
 
