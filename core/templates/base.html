@@ -10,8 +10,8 @@
         <link rel="stylesheet" type="text/css" href="{% static 'list.css' %}">
         <link rel="stylesheet" type="text/css" href="{% static 'table.css' %}">
         <link rel="stylesheet" type="text/css" href="{% static 'window.css' %}">
-        
-        <link rel="stylesheet" type="text/css" href="{% static 'product.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'window.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'profile.css' %}">
         <script src="https://kit.fontawesome.com/52c8fc8373.js" crossorigin="anonymous"></script>
         <link rel="icon" href="https://em-content.zobj.net/thumbs/240/apple/354/shopping-cart_1f6d2.png">
     </head>
@@ -23,6 +23,8 @@
         We should be pulling the navbar items from a model and then looping through them here.
         - https://forum.djangoproject.com/t/create-navbar-in-django/605 
         {% endcomment %}
+        <lable>Welcome  username</lable>
+        <a style="color:  #4a66d7;" href="../login">log out</a>
         <div class="topnav">
             <div class="search-container">
               <form action="/action_page.php">
@@ -38,7 +40,9 @@
                 <a href="../search">Search</a>
                 <a href="../watchlists">Watchlists</a>
                 <a href="../aboutus">About Us</a>
-        </div>
+           
+            </div>
+            
         </div>
     </header> 
 </body>
@@ -46,5 +50,5 @@
 {% block content %}{% endblock %}
 
 <footer>
-    This is the footer in base.html
+    
 </footer>
