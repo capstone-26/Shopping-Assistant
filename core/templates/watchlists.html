@@ -6,27 +6,43 @@
 
 <div class="middle">
     <div class="buttons_container">
-        <button id="open-btn">Create New</button>
+        <button class="myButton" id="open-btn">Create New</button>
         <div id="popup">
 			<div class="popup-content">
 				<form>
+                <label> Name </label>
                 <input type="text" id="windows-input" required placeholder="Enter Watchlist Name">
-                <input type="text" id="windows-input" required placeholder="Enter Product Name">
+                
+                <label> Item Count </label>
+                <select>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                </select>
+
+                
+                <label> User ID </label>
+                <select>
+                    <option value="1">1001</option>
+                    <option value="2">2002</option>
+                    <option value="3">3002</option>
+                    <option value="4">4004</option>
+                </select>
                 </form>
-                <button>Add</button>
+        
 				<h4>Items added to Watchlist</h4>
-                <ul>
-					<li><label for="item1">Item 1</label><button>Remove</button></li>
-					<li><label for="item1">Item 2</label><button>Remove</button></li>
-					<li><label for="item1">Item 3</label><button>Remove</button></li>
-                    <li><label for="item1">Item 4</label><button>Remove</button></li>
-					<li><label for="item1">Item 5</label><button>Remove</button></li>
-					<li><label for="item1">Item 6</label><button>Remove</button></li>
-					<li><label for="item1">Item 7</label><button>Remove</button></li>
-					<li><label for="item1">Item 8</label><button>Remove</button></li>
-					<li><label for="item1">Item 9</label><button>Remove</button></li>
-					<li><label for="item1">Item 10</label><button>Remove</button></li>
-			
+				<ul>
+					<li><input type="checkbox" id="item1" name="item1"><label for="item1">Item 1</label></li>
+					<li><input type="checkbox" id="item2" name="item2"><label for="item2">Item 2</label></li>
+					<li><input type="checkbox" id="item3" name="item3"><label for="item3">Item 3</label></li>
+					<li><input type="checkbox" id="item4" name="item4"><label for="item4">Item 4</label></li>
+					<li><input type="checkbox" id="item5" name="item5"><label for="item5">Item 5</label></li>
+					<li><input type="checkbox" id="item6" name="item6"><label for="item6">Item 6</label></li>
+					<li><input type="checkbox" id="item7" name="item7"><label for="item7">Item 7</label></li>
+					<li><input type="checkbox" id="item8" name="item8"><label for="item8">Item 8</label></li>
+					<li><input type="checkbox" id="item9" name="item9"><label for="item9">Item 9</label></li>
+					<li><input type="checkbox" id="item10" name="item10"><label for="item10">Item 10</label></li>
 				</ul>
 				<div class="popup-buttons">
 					<button id="cancel-btn">Cancel</button>
@@ -34,7 +50,7 @@
 				</div>
 			</div>
 		</div>
-        <button onclick="importData()">Add New</button>
+        <button class="myButton" onclick="importData()">Add New</button>
         
     </div>
 </div>
