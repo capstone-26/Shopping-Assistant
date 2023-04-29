@@ -12,4 +12,4 @@ venv/
 DELETEDB.sh
 
 # Database - this should only be kept locally for now
-*.sqlite3
+db.sqlite3
