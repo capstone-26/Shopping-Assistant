@@ -13,7 +13,7 @@ class Scraper:
 
     # Installation of GeckoDriver is required for this application to work
     GECKODRIVER_PATH = "/usr/bin/geckodriver"
-    RETAILERS = ["woolworths"]
+    RETAILERS = ["woolworths","coles","aldi"]
     LOGGING_LEVEL = logging.DEBUG
     TIMEOUT = 10
 
