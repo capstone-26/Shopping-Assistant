@@ -20,14 +20,16 @@ from . import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('profile/', views.profile),
-    path('search/', views.search),
-    path('watchlists/', views.watchlists),
-    path('watchlists/<int:id>', views.watchlistdetail),
+    
+    # Navigable URLS: 
+    path('', views.home), # Home page: where you start your journey
+    # watchlists/
+    # watchlist/<int:watchlist_id>/
+
+    # API URLs
+    # ...
+
+    # Testing URLs
     path('watchlistsTest/', views.watchlistsTest),
-     path('watchlistdetailTest/', views.watchlistdetailTest),
-    path('login/', views.login),
-    path('signup/', views.signup),
-    path('aboutus/', views.aboutus),
-    path('', views.home)
+    path('watchlistdetailTest/', views.watchlistdetailTest),
 ]
