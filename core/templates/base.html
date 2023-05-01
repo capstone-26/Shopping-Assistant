@@ -3,51 +3,26 @@
 <html>
     <head>
         {% comment %} I am only adding this as a title so I dont have to look at 'My Website' anymore LMAO {% endcomment %}
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">   
+        
         <title>Shopping Assistant</title>
-        <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
-        <link rel="stylesheet" type="text/css" href="{% static 'searchbar.css' %}">
-        <link rel="stylesheet" type="text/css" href="{% static 'button.css' %}">
-        <link rel="stylesheet" type="text/css" href="{% static 'list.css' %}">
-        <link rel="stylesheet" type="text/css" href="{% static 'table.css' %}">
-        <link rel="stylesheet" type="text/css" href="{% static 'window.css' %}">
-        <link rel="stylesheet" type="text/css" href="{% static 'window.css' %}">
-        <link rel="stylesheet" type="text/css" href="{% static 'profile.css' %}">
-        <script src="https://kit.fontawesome.com/52c8fc8373.js" crossorigin="anonymous"></script>
         <link rel="icon" href="https://em-content.zobj.net/thumbs/240/apple/354/shopping-cart_1f6d2.png">
-    </head>
-<body>  
-    <header>
-       
 
-        {% comment %} 
-        We should be pulling the navbar items from a model and then looping through them here.
-        - https://forum.djangoproject.com/t/create-navbar-in-django/605 
-        {% endcomment %}
-        <lable>Welcome  username</lable>
-        <a style="color:  #4a66d7;" href="../login">log out</a>
-        <div class="topnav">
-            <div class="search-container">
-              <form action="/action_page.php">
-                <input type="text" placeholder="Search for a product.." name="Search">
-                <button type="Search">Search</button>
-              </form>
-            </div>
+        <script src="https://kit.fontawesome.com/52c8fc8373.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma-rtl.min.css">
+    </head>
+    <body>
+        {% include 'components/navbar.html'%}
+        <section class="section">
+          <div class="container">
+
+            {% block content %}{% endblock %}
+
           </div>
-        <div>
-            <div class="navigation">
-                <a href="../">Home</a>
-                <a href="../profile">Profile</a>
-                <a href="../search">Search</a>
-                <a href="../watchlists">Watchlists</a>
-                <a href="../aboutus">About Us</a>
-           
-            </div>
-            
-        </div>
-    </header> 
-</body>
+        </section>
+        </body> 
 </html>
-{% block content %}{% endblock %}
 
 <footer>
     
