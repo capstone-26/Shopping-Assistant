@@ -9,12 +9,10 @@ from rest_framework import status
 def home(request):
     return render(request, 'index.html')
 
-def profile(request):
-    return render(request, 'profile.html')
 
-def search(request):
-    return render(request, 'search.html')
-    
+# Please dont put unneccessary or bloaty views in here that arent being worked on. Add them when they make sense to add.
+
+
 @api_view(['GET', 'POST'])
 def watchlists(request):
     # return render(request, 'watchlists.html')
@@ -30,12 +28,6 @@ def watchlists(request):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         
-def watchlistsTest(request):
-    return render(request, 'watchlists.html')
-
-def watchlistdetailTest(request):
-    return render(request, 'watchlistdetail.html')
-
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])      
 def watchlistdetail(request, id):
     # return render(request, 'watchlistdetail.html')
@@ -59,11 +51,12 @@ def watchlistdetail(request, id):
     elif request.method == 'DELETE':
         watchlist.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-        
+    
 
-def login(request):
-    return render(request, 'login.html')
-def signup(request):
-    return render(request, 'signup.html')
-def aboutus(request):
-    return render(request, 'aboutus.html')
+# Test Views
+        
+def watchlistsTest(request):
+    return render(request, 'watchlists.html')
+
+def watchlistdetailTest(request):
+    return render(request, 'watchlistdetail.html')
