@@ -23,14 +23,16 @@ urlpatterns = [
     
     # Navigable URLS: 
     path('', views.home), # Home page: where you start your journey
+    path('search/', views.SearchView.as_view(), name='search'),
+    path('product/<int:product_id>', views.ProductView.as_view(), name='product'),
     # watchlists/
     # watchlist/<int:watchlist_id>/
 
-    # API URLs
+    # API/data URLs
+    path('get-product-details/', views.GetProductDetails, name='get_product_details'),
     # ...
 
     # Testing URLs
     path('watchlistsTest/', views.watchlistsTest),
     path('watchlistdetailTest/', views.watchlistdetailTest),
-    path('search/', views.Search.as_view(), name='search'),
 ]

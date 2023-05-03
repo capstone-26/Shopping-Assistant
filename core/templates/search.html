@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
-
 {% load static %}
+
 {% block content %}
 
 <div class="block">
@@ -37,7 +37,7 @@
                     <tbody>
                         {% for product in product_list %}      
                         <tr>
-                            <td>{{ product.name }}</td>
+                            <td><a href="{% url 'product' product.id %}">{{ product.name }}</a></td>
                             <td>${{ product.price }}</td>
                         </tr>
                         {% endfor %}

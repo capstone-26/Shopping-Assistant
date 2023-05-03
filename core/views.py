@@ -9,6 +9,7 @@ from rest_framework import status
 
 from .models import *
 from .serializers import *
+from core import scrapers
 
 def home(request):
     return render(request, 'index.html')
@@ -65,7 +66,7 @@ def watchlistsTest(request):
 def watchlistdetailTest(request):
     return render(request, 'watchlistdetail.html')
     
-class Search(ListView):
+class SearchView(ListView):
     model = Product
     template_name = 'search.html'
 
@@ -77,3 +78,31 @@ class Search(ListView):
             object_list = Product.objects.filter(name__icontains=query)
 
         return object_list
+
+class ProductView(View):
+    model = Product
+    template_name = 'product.html'
+
+    def get(self, request, product_id):
+        print(product_id)
+        product = Product.objects.get(id=product_id)
+        return render(request, 'product.html', {'product': product})
+    
+def GetProductDetails(request):
+
+    # Get product id from AJAX request
+    product_id = request.POST.get('product_id')
+
+    # Get product *retailer* id from the database
+    product = Product.objects.get(id=product_id)
+        
+    # Scrape for product details
+    scraper = scrapers.ProductDetailsScraper()
+    product_details = scraper.scrape(product.retailer_code, product.retailer)
+
+    ajax_response = {
+        "description": product_details["description"],
+        "image_url": product_details["image_url"],
+    }
+
+    return JsonResponse(ajax_response, status=200)

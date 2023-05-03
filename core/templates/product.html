@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="columns is-centered">
+    <div class="column is-half">
+        
+        <div class="card">
+            <div class="card-image">
+                <figure class="image is-4by3">
+                    <img id="product-image" src="" alt="Product image">
+                </figure>
+            </div>
+            <div class="card-content">
+                <h1 class="title is-3">{{ product.name }}</h1>
+                <h2 class="subtitle is-4">${{ product.price }}</h2>
+                <p id="product-description"></p>
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+
+{% endblock %}
+
+{% block javascript %}
+<script>
+    
+    $(document).ready(function() {
+        $.ajax({
+            url: "/get-product-details/",
+            type: "POST",
+            data: {
+                'product_id': '{{ product.id }}',
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success: function(response) {
+                $('#product-description').text(response.description);
+                $('#product-image').attr('src', response.image_url);
+            },
+            error: function(xhr, status, error) {
+                console.log(xhr.responseText);
+            }
+        });
+    });
+    
+    
+</script>
+
+{% endblock javascript %}
+
+

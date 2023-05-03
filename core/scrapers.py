@@ -76,7 +76,7 @@ class ProductDetailsScraper(Scraper):
         # bottom_container = self.driver.find_element(By.CSS_SELECTOR, "div.bottom-container")
         # product_description = bottom_container.find_element(By.XPATH, "//h2[@class='product-heading']/following-sibling::div")
 
-        size = "medium" # large, medium, small
+        size = "large" # large, medium, small
         product_image_url = f"https://cdn0.woolworths.media/content/wowproductimages/{size}/{str(product_code).zfill(6)}.jpg"
 
         product_details = {
