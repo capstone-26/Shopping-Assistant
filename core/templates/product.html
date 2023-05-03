@@ -5,16 +5,22 @@
 <div class="columns is-centered">
     <div class="column is-half">
         
-        <div class="card">
-            <div class="card-image">
-                <figure class="image is-4by3">
-                    <img id="product-image" src="" alt="Product image">
-                </figure>
-            </div>
-            <div class="card-content">
-                <h1 class="title is-3">{{ product.name }}</h1>
-                <h2 class="subtitle is-4">${{ product.price }}</h2>
-                <p id="product-description"></p>
+        <div class="block">
+            <progress id="loading-indicator" class="progress is-small is-primary is-hidden" max="100">15%</progress>
+        </div>
+
+        <div class="block">
+            <div class="card">
+                <div class="card-image">
+                    <figure class="image is-4by3">
+                        <img id="product-image" src="" alt="Product image">
+                    </figure>
+                </div>
+                <div class="card-content">
+                    <h1 class="title is-3">{{ product.name }}</h1>
+                    <h2 class="subtitle is-4">${{ product.price }}</h2>
+                    <p id="product-description"></p>
+                </div>
             </div>
         </div>
         
@@ -25,8 +31,12 @@
 {% endblock %}
 
 {% block javascript %}
+{% comment %} for some reason moving this js to a static/ file it causes csrf_token errors {% endcomment %}
 <script>
     
+    // unhide the loading indicator
+    $('#loading-indicator').removeClass('is-hidden');
+
     $(document).ready(function() {
         $.ajax({
             url: "/get-product-details/",
@@ -41,10 +51,13 @@
             },
             error: function(xhr, status, error) {
                 console.log(xhr.responseText);
+            },
+            complete: function() {
+                // hide the loading indicator
+                $('#loading-indicator').addClass('is-hidden');
             }
         });
     });
-    
     
 </script>
 
