@@ -32,4 +32,5 @@ urlpatterns = [
     # Testing URLs
     path('watchlistsTest/', views.watchlistsTest),
     path('watchlistdetailTest/', views.watchlistdetailTest),
+    path('search/', views.Search.as_view(), name='search'),
 ]

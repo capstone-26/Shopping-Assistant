@@ -1,10 +1,14 @@
+from typing import Any, Dict
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
-from .models import *
-from .serializers import *
+from django.views import View
+from django.views.generic import ListView
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
+
+from .models import *
+from .serializers import *
 
 def home(request):
     return render(request, 'index.html')
@@ -60,3 +64,16 @@ def watchlistsTest(request):
 
 def watchlistdetailTest(request):
     return render(request, 'watchlistdetail.html')
+    
+class Search(ListView):
+    model = Product
+    template_name = 'search.html'
+
+    def get_queryset(self):
+        if self.request.GET.get('q') == None:
+            object_list = Product.objects.none()
+        else:
+            query = self.request.GET.get('q')
+            object_list = Product.objects.filter(name__icontains=query)
+
+        return object_list

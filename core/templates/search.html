@@ -1,7 +1,40 @@
 {% extends 'base.html' %}
 
+{% load static %}
 {% block content %}
 
-<h1>Search</h1>
+<div class="block">
+    <h1 class="title">Search</h1>
+</div>
+
+<div class="block">
+
+    <form action="{% url 'search' %}" method="get">
+        <input name="q" type="text" placeholder="Search">
+    </form>
+
+    {% comment %} search results {% endcomment %}
+
+    {% if product_list %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in product_list %}      
+                    <tr>
+                        <td>{{ product.name }}</td>
+                        <td>{{ product.price }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+    {% endif %}
+
+</div>
 
 {% endblock %}
