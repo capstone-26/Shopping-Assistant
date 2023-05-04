@@ -68,7 +68,6 @@ class ProductDetailsScraper(Scraper):
             self.base_url = "https://www.woolworths.com.au/"
             return self._scrape_woolworths(product_code)
         
-
         # TODO: Implement Coles and Aldi
         if retailer == "coles" or retailer == None:
             # self.base_url = "https://shop.coles.com.au/"
@@ -93,13 +92,6 @@ class ProductDetailsScraper(Scraper):
         except TimeoutException:
             self.logger.error(f"Timed out waiting for product details to load")
             return
-
-        # product_name = self.driver.find_element(By.CSS_SELECTOR, "h1.shelfProductTile-title").text
-        # product_price = self.driver.find_element(By.CSS_SELECTOR, "div.price price--large").text.replace("\n", "")
-        
-        # bottom_container = self.driver.find_element(By.CSS_SELECTOR, "div.bottom-container")
-        # product_description = bottom_container.find_element(By.XPATH, "//h2[@class='product-heading']/following-sibling::div")
-
 
         # TODO: remove image stuff. this can be done in sweeping scraper
         size = "large" # large, medium, small
@@ -139,12 +131,7 @@ class AllProductsScraper(Scraper):
             self.base_url = "https://www.coles.com.au/browse"
             return self._scrape_coles()
         
-        # TODO: Implement Coles and Aldi
-        if retailer == "coles" or retailer == None:
-            # self.base_url = "https://shop.coles.com.au/"
-            # return self._scrape_coles()
-            pass
-
+        # TODO: Implement Aldi
         if retailer == "aldi" or retailer == None:
             # self.base_url = "https://www.aldi.com.au/"
             # return self._scrape_aldi()
