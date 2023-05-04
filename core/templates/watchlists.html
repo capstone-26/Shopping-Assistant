@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>Watchlists</h1>
+
+<div class="list">
+    <body class="list-bady">
+
+        <ul class="list-group">
+            {% for watchlist in watchlists %}
+            <li>
+                <a href="{% url 'watchlist-detail' watchlist.id %}">
+                {{ watchlist.name }}
+                </a>
+                <span class="badge">{{ watchlist.itemCount}}</span>
+                
+            </li>
+            {% endfor %}
+        </ul>
+
+            <div class="middle">
+                <div class="buttons_container">
+                    <button id="open-btn">Create New</button>
+                    <div id="popup">
+                        <div id="form-wrapper">
+                        <form id="form">
+                        <div class="popup-content">
+                            <input type="text" class="windows-input" id="name" required placeholder="Enter Watchlist Name">
+                            <input type="number" class="windows-input" id="itemCount" required placeholder="Enter Watchlist itemCount">
+                           
+                            <input type="text" [(ngmodel)]="watchlistProduct" class="windows-input" id="watchlistProduct" required placeholder="Enter Watchlist Product">
+                            <button type="button" onclick="addProduct()">Add Product</button>
+                            <h4>Items added to Watchlist</h4>
+                            <ul id="product-list">
+                                
+                            </ul> 
+                            
+                            <div class="popup-buttons">
+                                <button id="cancel-btn">Cancel</button>
+                                <input id="submit" class="btn" type="submit" value="Create Watchlist">
+                            </div>
+                        </div>
+                        </form>
+                        </div>
+                    </div>
+                    <button onclick="importData()">Add New</button>
+            </div>
+
+        <div id="watchlist-wrapper">
+            
+        </div>
+
+    </body>   
+</div>
+
+<script type="text/javascript">
+
+    // function to get csrf token for watchlist functions
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    var csrftoken = getCookie('csrftoken'); 
+
+    buildWatchlist()
+
+    // Retrieve watchlist
+    function buildWatchlist(){
+        var wrapper = document.getElementById('watchlist-wrapper')
+        wrapper.innerHTML = ''
+        var url = 'http://localhost:8000/watchlistList/'
+
+        fetch(url)
+        .then((response) => response.json())
+        .then(function(data){
+            console.log('Data:', data)
+        })
+    }
+
+    // Create watchlist
+    var form = document.getElementById('form-wrapper')
+    form.addEventListener('submit', function(e){
+        e.preventDefault()
+        console.log('Form Submitted')
+
+        var url = 'http://localhost:8000/watchlistCreate/'
+        var name = document.getElementById('name').value
+        var itemCount = document.getElementById('itemCount').value
+        var userID = 1
+        var watchlistProduct = 
+
+        fetch(url, {
+            method:'POST',
+            headers:{
+                'Content-type':'application/json',
+                'X-CSRFToken':csrftoken,
+            },
+            body:JSON.stringify({
+                'name':name,
+                'itemCount':itemCount,
+                'userID':userID,
+                'watchlistProduct': watchlistProduct
+            })
+        }
+        ).then(function(response){
+            buildWatchlist()
+            window.close()
+            window.parent.location.reload()
+        })
+    })
+
+    // Add product to watchlist
+    function addProduct(){
+        var ul = document.getElementById("product-list");
+        var watchlistProduct = document.getElementById("watchlistProduct");
+        var li = document.createElement("li");
+        li.setAttribute('id', watchlistProduct.value);
+        li.appendChild(document.createTextNode(watchlistProduct.value));
+        ul.appendChild(li);
+    }
+    
+    const openBtn = document.getElementById("open-btn");
+    const popup = document.getElementById("popup");
+    const cancelBtn = document.getElementById("cancel-btn");
+    const confirmBtn = document.getElementById("confirm-btn");
+
+    openBtn.addEventListener("click", function() {
+      popup.style.display = "block";
+    });
+    
+    cancelBtn.addEventListener("click", function() {
+      popup.style.display = "none";
+    });
+    
+    function importData() {
+        let input = document.createElement('input');
+        input.type = 'file';
+        input.onchange = _ => {
+        
+        let files =   Array.from(input.files);
+        console.log(files);
+    };
+     input.click();
+  
+    }
+    
+</script>
+
+<style>
+    input[class=windows-input]{
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+}
+</style>
+
+{% endblock %}

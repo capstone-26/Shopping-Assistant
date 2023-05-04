@@ -25,14 +25,16 @@ urlpatterns = [
     path('', views.home), # Home page: where you start your journey
     path('search/', views.SearchView.as_view(), name='search'),
     path('product/<str:product_id>', views.ProductView.as_view(), name='product'),
-    # watchlists/
-    # watchlist/<int:watchlist_id>/
+    path('watchlists/', views.Watchlists.as_view(), name = 'watchlists'),
+    path('watchlists/<int:id>', views.WatchlistDetails.as_view(), name = 'watchlist-detail'),
 
     # API/data URLs
     path('get-product-details/', views.GetProductDetails, name='get_product_details'),
+    path('watchlistList/', views.watchlists, name="watchlistList"),
+    path('watchlistCreate/', views.watchlistcreate, name="watchlistCreate"),
+    path('watchlistUpdate/<int:id>', views.watchlistupdate, name="watchlistUpdate"),
+    path('watchlistDelete/<int:id>/', views.watchlistdelete, name="watchlistDelete"),
     # ...
 
     # Testing URLs
-    path('watchlistsTest/', views.watchlistsTest),
-    path('watchlistdetailTest/', views.watchlistdetailTest),
 ]
