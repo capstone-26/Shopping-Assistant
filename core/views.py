@@ -79,6 +79,11 @@ class SearchView(ListView):
 
         return object_list
 
+    def get_context_data(self, **kwargs: Any):
+        context = super().get_context_data(**kwargs)
+        context['query'] = self.request.GET.get('q')
+        return context
+
 class ProductView(View):
     model = Product
     template_name = 'product.html'
