@@ -123,7 +123,7 @@ class AllProductsScraper(Scraper):
             self.base_url = "https://www.woolworths.com.au/"
             return self._scrape_woolworths()
             
-        if retailer == "coles":
+        if retailer == "coles" or retailer == None:
             self.base_url = "https://www.coles.com.au/browse"
             return self._scrape_coles()
         
