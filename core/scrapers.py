@@ -122,6 +122,10 @@ class AllProductsScraper(Scraper):
         if retailer == "woolworths" or retailer == None:
             self.base_url = "https://www.woolworths.com.au/"
             return self._scrape_woolworths()
+            
+        if retailer == "coles":
+            self.base_url = "https://www.coles.com.au/browse"
+            return self._scrape_coles()
         
     def _scrape_woolworths(self):
         """Returns details about all products from Woolworths"""
@@ -209,4 +213,57 @@ class AllProductsScraper(Scraper):
             
             all_category_products[category_name] = category_products
 
+        return all_category_products
+        
+    def _scrape_coles(self):
+        """Returns details about all products from coles"""
+        
+        # Scrape catgeories
+        self.driver.get(self.base_url)
+        categorie_anchors = WebDriverWait(self.driver, self.TIMEOUT).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "a.coles-targeting-ShopCategoriesShopCategoryStyledCategoryContainer")))
+        
+        categories = {} # {category_name: category_url}
+        # Iterate through each category and follow the link to get the products
+        for anchor in categorie_anchors:
+            # Get the link to the category page
+            category_name = anchor.text.strip()
+            category_url = anchor.get_attribute('href')
+            # Liqour breaks more often than not and the Tobacco category has an age check so stop here
+            if "tobacco" in category_url:
+                break
+            categories[category_name] = category_url
+            
+            all_category_products = {}
+            
+        for category_name, category_url in categories.items():
+            self.logger.info(f"Scraping coles category: {category_name}")
+            category_products = []
+            # Go to category page
+            self.driver.get(category_url)
+            
+            # Find all products header on the page
+            products = self.driver.find_elements(By.CSS_SELECTOR, "header.product__header")
+            for product in products:
+                try:
+                    name = product.find_element(By.CSS_SELECTOR, "h2.product__title").text.strip()
+                    price = product.find_element(By.CSS_SELECTOR, "span.price__value").get_attribute("innerHTML")
+                    productLink = product.find_element(By.CSS_SELECTOR, "a.product__link").get_attribute("href")
+                    retailer_code = productLink.split("-")[-1]
+                    image_url = f"https://productimages.coles.com.au/productimages/{retailer_code[0]}/{retailer_code}.jpg"
+
+                    category_products.append({
+                        "name": name,
+                        "price": price,
+                        "retailer_code": retailer_code,
+                        "category": category_name,
+                        "retailer": "coles",
+                        "image_url": image_url,
+                        })
+                except NoSuchElementException as nse_e:
+                    pass
+                except Exception as e:
+                    self.logger.error(f"Error scraping product tile: {e}")
+                    
+            all_category_products[category_name] = category_products
+            
         return all_category_products
