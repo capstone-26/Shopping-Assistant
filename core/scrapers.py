@@ -9,6 +9,12 @@ from selenium.common.exceptions import TimeoutException, NoSuchElementException
 
 import logging 
 
+
+"""
+CLASS:          Scraper
+DESCRIPTION:    This class is responsible for creating a Selenium driver and providing 
+                some common functionality to all scrapers
+"""
 class Scraper:
 
     # Installation of GeckoDriver is required for this application to work
@@ -44,6 +50,12 @@ class Scraper:
         """Returns True if the retailer is valid"""
         return retailer in self.RETAILERS
     
+"""
+CLASS:          AllProductsScraper
+DESCRIPTION:    Scrapes additional information from a product's page that is not available in the
+                retailer's browse view. This ma include description, ingredients etc.
+                This is expected to be run by an AJAX call from the front-end.
+"""
 class ProductDetailsScraper(Scraper):
     """This class is responsible for scraping a single product from a retailer's website"""
     
@@ -52,9 +64,20 @@ class ProductDetailsScraper(Scraper):
         if not self.valid_retailer(retailer):
             raise ValueError(f"Invalid retailer: {retailer}")
     
-        if retailer == "woolworths":
+        if retailer == "woolworths" or retailer == None:
             self.base_url = "https://www.woolworths.com.au/"
             return self._scrape_woolworths(product_code)
+        
+        # TODO: Implement Coles and Aldi
+        if retailer == "coles" or retailer == None:
+            # self.base_url = "https://shop.coles.com.au/"
+            # return self._scrape_coles(product_code)
+            pass
+
+        if retailer == "aldi" or retailer == None:
+            # self.base_url = "https://www.aldi.com.au/"
+            # return self._scrape_aldi(product_code)
+            pass
         
     def _scrape_woolworths(self, product_code):
         product_url = f"{self.base_url}shop/productdetails/{product_code}"
@@ -70,12 +93,7 @@ class ProductDetailsScraper(Scraper):
             self.logger.error(f"Timed out waiting for product details to load")
             return
 
-        # product_name = self.driver.find_element(By.CSS_SELECTOR, "h1.shelfProductTile-title").text
-        # product_price = self.driver.find_element(By.CSS_SELECTOR, "div.price price--large").text.replace("\n", "")
-        
-        # bottom_container = self.driver.find_element(By.CSS_SELECTOR, "div.bottom-container")
-        # product_description = bottom_container.find_element(By.XPATH, "//h2[@class='product-heading']/following-sibling::div")
-
+        # TODO: remove image stuff. this can be done in sweeping scraper
         size = "large" # large, medium, small
         product_image_url = f"https://cdn0.woolworths.media/content/wowproductimages/{size}/{str(product_code).zfill(6)}.jpg"
 
@@ -91,18 +109,34 @@ class ProductDetailsScraper(Scraper):
 
 
 
-# To be used by management commands:
+"""
+CLASS:          AllProductsScraper
+DESCRIPTION:    This class is responsible for scraping all products from the retailer's websites.
+                This is expected to be run by the update_db management command.
+
+"""
 class AllProductsScraper(Scraper):
     """This class is responsible for scraping all products from a retailer's website"""
 
-    def scrape(self, retailer):
+    def scrape(self, retailer = None):
         """Returns details about all products from a retailer"""
         if not self.valid_retailer(retailer):
             self.logger.error(f"Invalid retailer: {retailer}")
         
-        if retailer == "woolworths":
+        if retailer == "woolworths" or retailer == None:
             self.base_url = "https://www.woolworths.com.au/"
             return self._scrape_woolworths()
+            
+        if retailer == "coles" or retailer == None:
+            self.base_url = "https://www.coles.com.au/browse"
+            return self._scrape_coles()
+        
+        # TODO: Implement Aldi
+        if retailer == "aldi" or retailer == None:
+            # self.base_url = "https://www.aldi.com.au/"
+            # return self._scrape_aldi()
+            pass
+        
         
     def _scrape_woolworths(self):
         """Returns details about all products from Woolworths"""
@@ -190,4 +224,57 @@ class AllProductsScraper(Scraper):
             
             all_category_products[category_name] = category_products
 
+        return all_category_products
+        
+    def _scrape_coles(self):
+        """Returns details about all products from coles"""
+        
+        # Scrape catgeories
+        self.driver.get(self.base_url)
+        categorie_anchors = WebDriverWait(self.driver, self.TIMEOUT).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "a.coles-targeting-ShopCategoriesShopCategoryStyledCategoryContainer")))
+        
+        categories = {} # {category_name: category_url}
+        # Iterate through each category and follow the link to get the products
+        for anchor in categorie_anchors:
+            # Get the link to the category page
+            category_name = anchor.text.strip()
+            category_url = anchor.get_attribute('href')
+            # Liqour breaks more often than not and the Tobacco category has an age check so stop here
+            if "tobacco" in category_url:
+                break
+            categories[category_name] = category_url
+            
+            all_category_products = {}
+            
+        for category_name, category_url in categories.items():
+            self.logger.info(f"Scraping coles category: {category_name}")
+            category_products = []
+            # Go to category page
+            self.driver.get(category_url)
+            
+            # Find all products header on the page
+            products = self.driver.find_elements(By.CSS_SELECTOR, "header.product__header")
+            for product in products:
+                try:
+                    name = product.find_element(By.CSS_SELECTOR, "h2.product__title").text.strip()
+                    price = product.find_element(By.CSS_SELECTOR, "span.price__value").get_attribute("innerHTML")
+                    productLink = product.find_element(By.CSS_SELECTOR, "a.product__link").get_attribute("href")
+                    retailer_code = productLink.split("-")[-1]
+                    image_url = f"https://productimages.coles.com.au/productimages/{retailer_code[0]}/{retailer_code}.jpg"
+
+                    category_products.append({
+                        "name": name,
+                        "price": price,
+                        "retailer_code": retailer_code,
+                        "category": category_name,
+                        "retailer": "coles",
+                        "image_url": image_url,
+                        })
+                except NoSuchElementException as nse_e:
+                    pass
+                except Exception as e:
+                    self.logger.error(f"Error scraping product tile: {e}")
+                    
+            all_category_products[category_name] = category_products
+            
         return all_category_products
