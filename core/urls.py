@@ -24,6 +24,11 @@ urlpatterns = [
     # Navigable URLS: 
     path('', views.home), # Home page: where you start your journey
     path('search/', views.SearchView.as_view(), name='search'),
+
+    path('signup/',views.Signup,name='signup'),
+    path('login/',views.Login,name='login'),
+    path('signout/',views.Signout,name='signout'),
+    
     path('product/<str:product_id>', views.ProductView.as_view(), name='product'),
     path('watchlists/', views.Watchlists.as_view(), name = 'watchlists'),
     path('watchlists/<int:id>', views.WatchlistDetails.as_view(), name = 'watchlist-detail'),
