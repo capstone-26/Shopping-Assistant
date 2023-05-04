@@ -170,18 +170,24 @@ class AllProductsScraper(Scraper):
                     name = title_anchor.text.strip()
                     link = title_anchor.get_attribute("href")
                     price = info_container.find_element(By.CSS_SELECTOR, "div.product-tile-price").find_element(By.CSS_SELECTOR, "div.primary").text
-                    code = link.split("/")[-2]
+                    retailer_code = link.split("/")[-2]
+
+                    size = "large" # large, medium, small
+                    image_url = f"https://cdn0.woolworths.media/content/wowproductimages/{size}/{str(retailer_code).zfill(6)}.jpg"
 
                     category_products.append({
                         "name": name,
                         "price": price if price != "" else "$0.00",
-                        "code": code,
+                        "retailer_code": retailer_code,
+                        "category": category_name,
+                        "retailer": "woolworths",
+                        "image_url": image_url,
                     })
                 except NoSuchElementException as nse_e:
                     pass
                 except Exception as e:
                     self.logger.error(f"Error scraping product tile: {e}")
-
+            
             all_category_products[category_name] = category_products
 
         return all_category_products

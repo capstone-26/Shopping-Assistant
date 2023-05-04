@@ -24,7 +24,7 @@ urlpatterns = [
     # Navigable URLS: 
     path('', views.home), # Home page: where you start your journey
     path('search/', views.SearchView.as_view(), name='search'),
-    path('product/<int:product_id>', views.ProductView.as_view(), name='product'),
+    path('product/<str:product_id>', views.ProductView.as_view(), name='product'),
     # watchlists/
     # watchlist/<int:watchlist_id>/
 
