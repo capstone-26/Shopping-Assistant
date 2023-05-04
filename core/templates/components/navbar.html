@@ -19,17 +19,20 @@
             {% comment %} Add links to new pages here, but only when you have a useful page for it to link to {% endcomment %}
             <a href="/" class="navbar-item">Home</a>
             <a href="/watchlists" class="navbar-item">Watchlists</a>
+            
             {% comment %} <a href="#" class="navbar-item">Another Link</a> {% endcomment %}
+            <h2 class="help">Hello {{current_user}}!</h2>
         </div>
-        
+
         <div class="navbar-start">
-            <div class="is-flex navbar-item">
-                {% include 'components/product_searchbar.html' %}
-            </div>
             <div class="navbar-item">
                 <div class="buttons">
-                    <a class="button is-primary"><strong>Sign up</strong></a>
+                    <a class="button is-primary" type="button" href="/signout"><strong>Sign out</strong></a> 
                 </div>
+            </div>
+        
+            <div class="is-flex navbar-item">
+                {% include 'components/product_searchbar.html' %}
             </div>
         </div>
 
