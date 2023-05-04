@@ -9,6 +9,12 @@ from selenium.common.exceptions import TimeoutException, NoSuchElementException
 
 import logging 
 
+
+"""
+CLASS:          Scraper
+DESCRIPTION:    This class is responsible for creating a Selenium driver and providing 
+                some common functionality to all scrapers
+"""
 class Scraper:
 
     # Installation of GeckoDriver is required for this application to work
@@ -44,6 +50,12 @@ class Scraper:
         """Returns True if the retailer is valid"""
         return retailer in self.RETAILERS
     
+"""
+CLASS:          AllProductsScraper
+DESCRIPTION:    Scrapes additional information from a product's page that is not available in the
+                retailer's browse view. This ma include description, ingredients etc.
+                This is expected to be run by an AJAX call from the front-end.
+"""
 class ProductDetailsScraper(Scraper):
     """This class is responsible for scraping a single product from a retailer's website"""
     
@@ -76,6 +88,8 @@ class ProductDetailsScraper(Scraper):
         # bottom_container = self.driver.find_element(By.CSS_SELECTOR, "div.bottom-container")
         # product_description = bottom_container.find_element(By.XPATH, "//h2[@class='product-heading']/following-sibling::div")
 
+
+        # TODO: remove image stuff. this can be done in sweeping scraper
         size = "large" # large, medium, small
         product_image_url = f"https://cdn0.woolworths.media/content/wowproductimages/{size}/{str(product_code).zfill(6)}.jpg"
 
@@ -91,16 +105,21 @@ class ProductDetailsScraper(Scraper):
 
 
 
-# To be used by management commands:
+"""
+CLASS:          AllProductsScraper
+DESCRIPTION:    This class is responsible for scraping all products from the retailer's websites.
+                This is expected to be run by the update_db management command.
+
+"""
 class AllProductsScraper(Scraper):
     """This class is responsible for scraping all products from a retailer's website"""
 
-    def scrape(self, retailer):
+    def scrape(self, retailer = None):
         """Returns details about all products from a retailer"""
         if not self.valid_retailer(retailer):
             self.logger.error(f"Invalid retailer: {retailer}")
         
-        if retailer == "woolworths":
+        if retailer == "woolworths" or retailer == None:
             self.base_url = "https://www.woolworths.com.au/"
             return self._scrape_woolworths()
         
