@@ -64,9 +64,21 @@ class ProductDetailsScraper(Scraper):
         if not self.valid_retailer(retailer):
             raise ValueError(f"Invalid retailer: {retailer}")
     
-        if retailer == "woolworths":
+        if retailer == "woolworths" or retailer == None:
             self.base_url = "https://www.woolworths.com.au/"
             return self._scrape_woolworths(product_code)
+        
+
+        # TODO: Implement Coles and Aldi
+        if retailer == "coles" or retailer == None:
+            # self.base_url = "https://shop.coles.com.au/"
+            # return self._scrape_coles(product_code)
+            pass
+
+        if retailer == "aldi" or retailer == None:
+            # self.base_url = "https://www.aldi.com.au/"
+            # return self._scrape_aldi(product_code)
+            pass
         
     def _scrape_woolworths(self, product_code):
         product_url = f"{self.base_url}shop/productdetails/{product_code}"
@@ -122,6 +134,18 @@ class AllProductsScraper(Scraper):
         if retailer == "woolworths" or retailer == None:
             self.base_url = "https://www.woolworths.com.au/"
             return self._scrape_woolworths()
+        
+        # TODO: Implement Coles and Aldi
+        if retailer == "coles" or retailer == None:
+            # self.base_url = "https://shop.coles.com.au/"
+            # return self._scrape_coles()
+            pass
+
+        if retailer == "aldi" or retailer == None:
+            # self.base_url = "https://www.aldi.com.au/"
+            # return self._scrape_aldi()
+            pass
+        
         
     def _scrape_woolworths(self):
         """Returns details about all products from Woolworths"""
