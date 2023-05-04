@@ -1,10 +1,11 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
 
 <div class="columns is-centered">
     <div class="column is-half">
-
+        
         <div class="block">
             <div class="card">
                 <div class="card-image">
@@ -13,10 +14,20 @@
                     </figure>
                 </div>
                 <div class="card-content">
-                    <h1 class="title is-3">{{ product.name }}</h1>
-                    <h2 class="subtitle is-4">${{ product.price }}</h2>
-
-                    <progress id="loading-indicator" class="progress is-small is-primary is-hidden" max="100">15%</progress>
+                    
+                    <div class="media">
+                        <div class="media-right">
+                            <figure class="image is-64x64">
+                                <img src="{% static 'img/' %}{{ product.retailer }}.png" alt="">
+                            </figure>
+                        </div>
+                        <div class="media-right">
+                            <p class="title is-4">{{ product.name }}</p>
+                            <p class="subtitle is-6">${{ product.price }}</p>
+                        </div>
+                    </div>
+                    
+                    <progress id="loading-indicator" class="progress is-small is-primary is-hidden" max="100">30%</progress>
                     <p id="product-description"></p>
                 </div>
             </div>
@@ -33,7 +44,7 @@
     
     // unhide the loading indicator
     $('#loading-indicator').removeClass('is-hidden');
-
+    
     $(document).ready(function() {
         $.ajax({
             url: "/get-product-details/",

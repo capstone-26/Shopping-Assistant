@@ -10,7 +10,8 @@ class Command(BaseCommand):
 
         try: 
             self.stdout.write('Gathering latest products...')
-            woolworths_products = scrapers.AllProductsScraper().scrape("woolworths")
+            # woolworths_products = scrapers.AllProductsScraper().scrape("woolworths")
+            woolworths_products = scrapers.AllProductsScraper().scrape()
 
         except Exception as e:
             self.stdout.write(self.style.ERROR(f"FAILED: {e}"))
