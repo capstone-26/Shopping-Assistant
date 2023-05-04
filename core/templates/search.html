@@ -24,6 +24,7 @@
                 <table class="table">
                     <thead>
                         <tr>
+                            <th>Image</th>
                             <th>Product Name</th>
                             <th>Price</th>
                         </tr>
@@ -31,6 +32,11 @@
                     <tbody>
                         {% for product in product_list %}      
                         <tr>
+                            <td>
+                                <figure class="image is-64x64">
+                                    <img src="{{ product.image_url }}" alt="">
+                                </figure>
+                            </td>
                             <td><a href="{% url 'product' product.id %}">{{ product.name }}</a></td>
                             <td>${{ product.price }}</td>
                         </tr>
