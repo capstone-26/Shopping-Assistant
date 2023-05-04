@@ -22,10 +22,14 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('profile/', views.profile),
     path('search/', views.search),
-    path('watchlists/', views.watchlists),
-    path('watchlists/<int:id>', views.watchlistdetail),
-    path('watchlistsTest/', views.watchlistsTest),
-     path('watchlistdetailTest/', views.watchlistdetailTest),
+    path('watchlists/', views.Watchlists.as_view(), name = 'watchlists'),
+    path('watchlists/<int:id>', views.WatchlistDetails.as_view(), name = 'watchlist-detail'),
+    
+    path('watchlistList/', views.watchlists, name="watchlistList"),
+    path('watchlistCreate/', views.watchlistcreate, name="watchlistCreate"),
+    path('watchlistUpdate/<int:id>', views.watchlistupdate, name="watchlistUpdate"),
+    path('watchlistDelete/<int:id>/', views.watchlistdelete, name="watchlistDelete"),
+    
     path('login/', views.login),
     path('signup/', views.signup),
     path('aboutus/', views.aboutus),

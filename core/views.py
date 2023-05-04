@@ -1,10 +1,11 @@
-from django.shortcuts import render
-from django.http import JsonResponse, HttpResponse
+from django.shortcuts import render, get_object_or_404, redirect
 from .models import *
 from .serializers import *
-from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.renderers import TemplateHTMLRenderer
+from rest_framework.views import APIView
+from rest_framework.decorators import api_view
 
 from webscraper import woolworths # for webscraping
 import asyncio # for asynchronous webscraping
@@ -17,50 +18,54 @@ def profile(request):
 
 def search(request):
     return render(request, 'search.html')
-    
-@api_view(['GET', 'POST'])
-def watchlists(request):
-    # return render(request, 'watchlists.html')
-    
-    if request.method == 'GET': 
-        watchlists = Watchlist.objects.all()
-        serializer = WatchlistSerializer(watchlists, many=True)
-        return Response(serializer.data)
 
-    if request.method == 'POST': 
-        serializer = WatchlistSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-def watchlistsTest(request):
-    return render(request, 'watchlists.html')
-def watchlistdetailTest(request):
-    return render(request, 'watchlistdetail.html')
-@api_view(['GET', 'POST', 'PUT', 'DELETE'])      
-def watchlistdetail(request, id):
-    # return render(request, 'watchlistdetail.html')
+class Watchlists(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'watchlists.html'
 
-    try:
-        watchlist = Watchlist.objects.get(pk=id)
-    except Watchlist.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+    def get(self, request):
+        queryset = Watchlist.objects.all()
+        return Response({'watchlists': queryset}) 
 
-    if request.method == 'GET':
+class WatchlistDetails(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'watchlistdetail.html'
+
+    def get(self, request, id):
+        watchlist = get_object_or_404(Watchlist, id=id)
         serializer = WatchlistSerializer(watchlist)
+        return Response({'serializer': serializer, 'watchlist': watchlist})
+
+@api_view(['GET'])
+def watchlists(request):
+    watchlists = Watchlist.objects.all()
+    serializer = WatchlistSerializer(watchlists, many=True)
+    return Response(serializer.data)
+
+@api_view(['POST'])
+def watchlistcreate(request):
+    serializer = WatchlistSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
         return Response(serializer.data)
     
-    elif request.method == 'PUT':
-        serializer = WatchlistSerializer(watchlist, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-            
-    elif request.method == 'DELETE':
-        watchlist.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-        
-
+@api_view(['PUT'])
+def watchlistupdate(request, id):
+    watchlist = Watchlist.objects.get(id=id)
+    serializer = WatchlistSerializer(instance=watchlist, data=request.data)
+    
+    if serializer.is_valid():
+        serializer.save()
+    
+    return Response(serializer.data)
+    
+@api_view(['DELETE'])
+def watchlistdelete(request, id): 
+    watchlist = Watchlist.objects.get(id=id)           
+    watchlist.delete()
+    
+    return Response('Item deleted')
+    
 def login(request):
     return render(request, 'login.html')
 def signup(request):
