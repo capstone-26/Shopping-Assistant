@@ -41,18 +41,10 @@ class User(models.Model):
     
 class Watchlist(models.Model):
     id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=100)
-    itemCount = models.IntegerField()
-    userID = models.ForeignKey(User,on_delete=models.DO_NOTHING)
-    watchlistProduct = models.ManyToManyField(Product)
+    name = models.CharField(max_length=100, default="New Watchlist")
+    owner = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    products = models.ManyToManyField(Product)
 
     def __str__(self):
         return self.name
-
-# why is this here? what are we using it for?
-# class UserLocation(models.Model):
-#     #class Meta:
-#     #    unique_together = (('userID', 'locationID'),)
     
-#     userID = models.ForeignKey(User,on_delete=models.DO_NOTHING)
-#     locationID = models.ForeignKey(Location,on_delete=models.DO_NOTHING)
