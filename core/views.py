@@ -1,5 +1,5 @@
 from typing import Any
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404,redirect
 from django.http import JsonResponse
 from django.views import View
 from django.views.generic import ListView
@@ -8,13 +8,18 @@ from rest_framework.response import Response
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
-
+from django.contrib import messages
 from .models import *
 from .serializers import *
 from core import scrapers
 
 def home(request):
-    return render(request, 'index.html')
+     if 'user' in request.session:
+        current_user = request.session['user']
+        param = {'current_user': current_user}
+        return render(request, 'index.html',param)
+     else:
+        return redirect(Login)
 
 
 # Please dont put unneccessary or bloaty views in here that arent being worked on. Add them when they make sense to add.
@@ -114,3 +119,38 @@ def GetProductDetails(request):
     return JsonResponse(ajax_response, status=200)
 
 # Test Views
+
+def Signup(request):
+    if request.method == "POST":
+        name = request.POST.get('username' )
+        email = request.POST.get('useremail')
+        if User.objects.filter(name=name).exists():
+            messages.info(request,"User is exist")
+            return redirect(Signup)
+        else:
+            user = User.objects.create(name=name ,email=email)
+            user.save()
+            messages.success(request, f'Your account has been created. You can log in now!')
+            return redirect(Login)
+    
+    return render (request,'signup.html')
+
+def Login(request):
+    if request.method == "POST":
+        name = request.POST.get('username')
+        email = request.POST.get('useremail')    
+        if  User.objects.filter(name=name ,email=email).exists():
+            request.session['user'] = name
+            return redirect(home)
+        else:
+            print(name+"22"+email)
+            messages.error(request,"Invalid username or password.")
+    return render(request=request, template_name="login.html")
+
+def Signout(request):
+    try:
+        del request.session['user']
+        messages.success(request, "Logged Out Successfully!!")
+    except:
+        redirect(Login)
+    return redirect(Login)
