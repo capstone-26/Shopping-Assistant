@@ -1,4 +1,7 @@
 from django.db import models
+from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 
 class Product(models.Model):
     id = models.CharField(max_length=100, primary_key=True)
@@ -38,7 +41,8 @@ class User(models.Model):
 
     def __str__(self):
         return self.name
-    
+
+
 class Watchlist(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100, default="New Watchlist")
