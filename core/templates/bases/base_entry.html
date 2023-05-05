@@ -1,0 +1,18 @@
+{% include 'bases/base.html' %}
+
+{% block body %}
+<section class="hero is-primary is-fullheight">
+    <div class="hero-body">
+        <div class="container">
+            <div class="columns is-centered">
+                <div class="column is-5-tablet is-4-desktop is-3-widescreen">
+        
+                {% block content %}
+                {% endblock content %}
+                
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock body %}
