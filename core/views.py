@@ -12,51 +12,55 @@ from django.contrib import messages
 from .models import *
 from .serializers import *
 from core import scrapers
+from django.contrib.auth import login
+from django.contrib.auth.models import User
+from django.contrib import auth
 
 def home(request):
-     if 'user' in request.session:
-        current_user = request.session['user']
-        param = {'current_user': current_user}
-        return render(request, 'index.html',param)
-     else:
+    if request.user.is_authenticated:
+        return render(request, 'index.html')
+    else:
         return redirect(SignIn)
+
      
 def SignUp(request):
     if request.method == "POST":
         name = request.POST.get('username' )
         email = request.POST.get('useremail')
-         
+        password1 = request.POST.get('password1')
+        password2 = request.POST.get('password2')
         
-        
-        if User.objects.filter(name=name).exists():
-            messages.info(request,"User is exist")
-            return redirect(SignUp)
+        if password1 == password2:
+            if User.objects.filter(username=name):
+                messages.info(request,"User is exist")
+                return redirect(SignUp)
+            else:
+                user = User.objects.create_user(username=name,password=password1,email=email)
+                user.save()
+                messages.success(request, f'Your account has been created. You can log in now!')
+                return redirect(SignIn)
         else:
-            user = User.objects.create(name=name ,email=email)
-            user.save()
-            messages.success(request, f'Your account has been created. You can log in now!')
-            return redirect(SignIn)
-    
+            messages.success(request, 'Password does not match!')
     return render (request,'signup.html')
 
 def SignIn(request):
     if request.method == "POST":
         name = request.POST.get('username')
-        email = request.POST.get('useremail')    
-        if  User.objects.filter(name=name ,email=email).exists():
-            request.session['user'] = name
+        password = request.POST.get('password')    
+        user = auth.authenticate(username=name,password = password)
+        if user is not None:
+            auth.login(request,user)
             return redirect(home)
         else:
-            print(name+"22"+email)
+
             messages.error(request,"Invalid username or password.")
     return render(request=request, template_name="signin.html")
 
 def SignOut(request):
-    try:
-        del request.session['user']
+    if request.method == 'POST':
+        auth.logout(request)
         messages.success(request, "Logged Out Successfully!!")
-    except:
-        redirect(SignIn)
+
     return redirect(SignIn)
 
 #### Please dont put unneccessary or bloaty views in here that arent being worked on. Add them when they make sense to add.
