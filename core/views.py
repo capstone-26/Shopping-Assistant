@@ -19,8 +19,9 @@ def home(request):
         param = {'current_user': current_user}
         return render(request, 'index.html',param)
      else:
-        return redirect(Login)
-def Signup(request):
+        return redirect(SignIn)
+     
+def SignUp(request):
     if request.method == "POST":
         name = request.POST.get('username' )
         email = request.POST.get('useremail')
@@ -29,16 +30,16 @@ def Signup(request):
         
         if User.objects.filter(name=name).exists():
             messages.info(request,"User is exist")
-            return redirect(Signup)
+            return redirect(SignUp)
         else:
             user = User.objects.create(name=name ,email=email)
             user.save()
             messages.success(request, f'Your account has been created. You can log in now!')
-            return redirect(Login)
+            return redirect(SignIn)
     
     return render (request,'signup.html')
 
-def Login(request):
+def SignIn(request):
     if request.method == "POST":
         name = request.POST.get('username')
         email = request.POST.get('useremail')    
@@ -48,15 +49,15 @@ def Login(request):
         else:
             print(name+"22"+email)
             messages.error(request,"Invalid username or password.")
-    return render(request=request, template_name="login.html")
+    return render(request=request, template_name="signin.html")
 
-def Signout(request):
+def SignOut(request):
     try:
         del request.session['user']
         messages.success(request, "Logged Out Successfully!!")
     except:
-        redirect(Login)
-    return redirect(Login)
+        redirect(SignIn)
+    return redirect(SignIn)
 
 #### Please dont put unneccessary or bloaty views in here that arent being worked on. Add them when they make sense to add.
 
