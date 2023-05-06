@@ -91,6 +91,7 @@
                 success: function(data) {
                     console.log('Watchlist created with ID ' + data.watchlist_id);
                     // Add code here to update the page as needed
+                    location.reload();
                 },
                 error: function(data) {
                     // unhides the error message
