@@ -19,14 +19,14 @@
                 <thead>
                     <tr>
                         <th>Id</th>
-                        <th>Name</th>
+                        <th>Title</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for watchlist in watchlists %}
                     <tr>
                         <td>{{ watchlist.id }}</td>
-                        <td>{{ watchlist.name }}</td>
+                        <td>{{ watchlist.title }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -44,9 +44,9 @@
                 <form id="create-watchlist-form" method="POST">
                     {% csrf_token %}
                     <div class="field">
-                        <label class="label">Name</label>
+                        <label class="label">Title</label>
                         <div class="control">
-                            <input class="input" type="text" placeholder="My New Watchlist">
+                            <input name="watchlist_title" class="input" type="text" placeholder="My New Watchlist">
                         </div>
                     </div>
                     <div class="field is-grouped">

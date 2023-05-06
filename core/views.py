@@ -99,8 +99,12 @@ class WatchlistsView(View):
 
     def get(self, request):
         user = request.user
+        
         if user.is_anonymous: watchlists = []
-        else: watchlists = Watchlist.objects.filter(owner=user)
+        else:
+            user_instance = User.objects.get(username=user.username)
+            print(type(user_instance))
+            watchlists = Watchlist.objects.filter(owner=user_instance)
 
         return render(request, self.template_name, {'watchlists': watchlists})
     
@@ -124,23 +128,31 @@ def GetProductDetails(request):
 
     return JsonResponse(ajax_response, status=200)
 
+@auth.decorators.login_required
 def CreateNewWatchlist(request):
-    # Get watchlist name from AJAX request
-    watchlist_name = request.POST.get('watchlist_name')
+    if request.method == 'POST':
+        # Get watchlist title from AJAX request
+        watchlist_title = request.POST.get('watchlist_title')
+        
+        # Check if watchlist title is empty
+        if watchlist_title is None: return JsonResponse({"error": "Watchlist title is required"}, status=400)
 
-    # Get logged in user details
-    user = request.user
-    if user.is_anonymous:
-        return JsonResponse({}, status=401)
+        # Check if user is authenticated
+        if not request.user.is_authenticated: return JsonResponse({"error": "User is not authenticated"}, status=401)
+            
+        # Create new watchlist
+        user_instance = request.user
 
-    watchlist = Watchlist.objects.create(name=watchlist_name, owner=user)
+        watchlist = Watchlist.objects.create(title=watchlist_title, owner=user_instance)
+        ajax_response = {
+            "message": "Watchlist created successfully",
+            "watchlist_id": watchlist.id,
+            "watchlist_title": watchlist.title,
+        }
 
-    # Not sure what else to put in the response
-    ajax_response = {
-        "watchlist_id": watchlist.id,
-    }
+        return JsonResponse(ajax_response, status=200)
 
-    return JsonResponse(ajax_response, status=200)
+    
 
 
 # Test Views
