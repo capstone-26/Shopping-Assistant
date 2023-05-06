@@ -35,6 +35,7 @@ urlpatterns = [
     # API/data URLs
     path('get-product-details/', views.GetProductDetails, name='get_product_details'),
     path('create-watchlist/', views.CreateNewWatchlist, name='create_watchlist'),
+    path('delete-watchlist/', views.DeleteWatchlist, name='delete_watchlist'),
 
     # path('watchlistList/', views.watchlists, name="watchlistList"),
     # path('watchlistCreate/', views.watchlistcreate, name="watchlistCreate"),

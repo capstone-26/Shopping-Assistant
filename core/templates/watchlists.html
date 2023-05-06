@@ -15,11 +15,12 @@
             <h2 class="heading">My Watchilsts</h2>
             
             {% if watchlists|length > 0 %}
-            <table class="table">
+            <table class="table is-hoverable is-fullwidth">
                 <thead>
                     <tr>
                         <th>Id</th>
-                        <th>Title</th>
+                        <th class="is-expanded">Title</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -27,6 +28,11 @@
                     <tr>
                         <td>{{ watchlist.id }}</td>
                         <td>{{ watchlist.title }}</td>
+                        <td>
+                            <button class="delete-watchlist button is-danger is-small is-outlined" data-watchlist-id="{{ watchlist.id }}">
+                                <span>Delete</span>
+                              </button>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -78,6 +84,7 @@
 
 {% block javascript %}
 <script>
+    // Create watchlist
     $(document).ready(function() {
         $('#create-watchlist-form').submit(function(event) {
             event.preventDefault();
@@ -102,10 +109,33 @@
         });
     });
 
-    // hides the error message
-    $('.delete').click(function() {
+    // Hides the error message
+    $('#form-error.delete').click(function() {
         $('#form-error').addClass('is-hidden');
     });
 
+    // Delete watchlist
+    $(document).ready(function() {
+        $('.delete-watchlist').click(function() {
+            var watchlist_id = $(this).data('watchlist-id');
+
+            $.ajax({
+                type: 'POST',
+                url: '/delete-watchlist/', // Replace with the URL of your AJAX endpoint
+                data: {
+                    'watchlist_id': watchlist_id,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function(data) {
+                    console.log('Watchlist deleted with ID ' + data.watchlist_id);
+                    // Add code here to update the page as needed
+                    location.reload();
+                },
+                error: function(data) {
+                    console.log('An error occurred while deleting the watchlist.');
+                }
+            });
+        })
+    });
 </script>
 {% endblock javascript%}

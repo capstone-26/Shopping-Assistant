@@ -135,10 +135,12 @@ def CreateNewWatchlist(request):
         watchlist_title = request.POST.get('watchlist_title')
         
         # Check if watchlist title is empty
-        if watchlist_title is None: return JsonResponse({"error": "Watchlist title is required"}, status=400)
+        if watchlist_title is None: 
+            return JsonResponse({"error": "Watchlist title is required"}, status=400)
 
         # Check if user is authenticated
-        if not request.user.is_authenticated: return JsonResponse({"error": "User is not authenticated"}, status=401)
+        if not request.user.is_authenticated: 
+            return JsonResponse({"error": "User is not authenticated"}, status=401)
             
         # Create new watchlist
         user_instance = request.user
@@ -151,6 +153,31 @@ def CreateNewWatchlist(request):
         }
 
         return JsonResponse(ajax_response, status=200)
+
+@auth.decorators.login_required
+def DeleteWatchlist(request):
+    if request.method == 'POST':
+
+        # Get watchlist id from AJAX request
+        watchlist_id = request.POST.get('watchlist_id')
+
+        # Check if user is authenticated
+        if not request.user.is_authenticated: 
+            return JsonResponse({"error": "User is not authenticated"}, status=401)
+
+        # Check if watchlist exists
+        if not Watchlist.objects.filter(id=watchlist_id).exists(): 
+            return JsonResponse({"error": "Watchlist does not exist"}, status=400)
+        
+        # Check if user owns watchlist
+        watchlist = Watchlist.objects.get(id=watchlist_id)
+        if watchlist.owner != request.user:
+            return JsonResponse({"error": "User does not own watchlist"}, status=401)
+        
+        # Delete watchlist
+        watchlist.delete()
+
+        return JsonResponse({"message": "Watchlist deleted successfully"}, status=200)
 
     
 
