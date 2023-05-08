@@ -7,7 +7,8 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 
-import logging 
+import logging
+import pathlib
 
 
 """
@@ -17,14 +18,14 @@ DESCRIPTION:    This class is responsible for creating a Selenium driver and pro
 """
 class Scraper:
 
-    # Installation of GeckoDriver is required for this application to work
     GECKODRIVER_PATH = "/usr/bin/geckodriver"
     RETAILERS = ["woolworths","coles","aldi"]
     LOGGING_LEVEL = logging.DEBUG
     TIMEOUT = 10
 
     def __init__(self):
-        # Logging
+        
+        # Logger will track scraping progress in Django/Docker CLI
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(self.LOGGING_LEVEL)
         self.handler = logging.StreamHandler()
@@ -36,14 +37,21 @@ class Scraper:
         pass
 
     def _get_driver(self):
-        """Returns a Selenium Firefox driver"""
+        """Returns Selenium Firefox driver from installed executable"""
         self.logger.info("Creating driver...")
         options = Options()
         options.add_argument("--headless")
         options.add_argument("--window-size=1920,1200") # Ensures a consistent scraping experience
+
+        # Check if geckodriver (Firefox driver) executable exists
+        if not pathlib.Path(self.GECKODRIVER_PATH).is_file():
+            self.logger.error(f"Geckodriver exectuable not found at {self.GECKODRIVER_PATH} -> May have to rebuild Docker image")
+            return
+
         service = Service(executable_path=self.GECKODRIVER_PATH)
         driver = webdriver.Firefox(service=service, options=options)
         self.logger.info("Driver created.")
+
         return driver
     
     def valid_retailer(self, retailer):
@@ -67,25 +75,25 @@ class ProductDetailsScraper(Scraper):
         if retailer == "woolworths" or retailer == None:
             self.base_url = "https://www.woolworths.com.au/"
             return self._scrape_woolworths(product_code)
-        
-        # TODO: Implement Coles and Aldi
-        if retailer == "coles" or retailer == None:
+
+        elif retailer == "coles" or retailer == None:
             # self.base_url = "https://shop.coles.com.au/"
             # return self._scrape_coles(product_code)
             pass
 
-        if retailer == "aldi" or retailer == None:
+        elif retailer == "aldi" or retailer == None:
             # self.base_url = "https://www.aldi.com.au/"
             # return self._scrape_aldi(product_code)
             pass
-        
+
+
+    # Scrapes details from a specific product's page 
     def _scrape_woolworths(self, product_code):
         product_url = f"{self.base_url}shop/productdetails/{product_code}"
         self.driver.get(product_url)
         
         try:
-            product_name = WebDriverWait(self.driver, self.TIMEOUT).until(EC.presence_of_element_located((By.CSS_SELECTOR, "h1.shelfProductTile-title"))).text
-            product_price = WebDriverWait(self.driver, self.TIMEOUT).until(EC.presence_of_element_located((By.CSS_SELECTOR, "div.price"))).text.replace("\n", "").replace(" ", "")
+            # Wait for containing elements to load
             bottom_container = WebDriverWait(self.driver, self.TIMEOUT).until(EC.presence_of_element_located((By.CSS_SELECTOR, "div.bottom-container")))
             product_description_div = WebDriverWait(bottom_container, self.TIMEOUT).until(EC.presence_of_element_located((By.XPATH, "//h2[@class='product-heading']/following-sibling::div")))
             product_description = product_description_div.find_element(By.CSS_SELECTOR, "div.viewMore-content").text
@@ -93,15 +101,8 @@ class ProductDetailsScraper(Scraper):
             self.logger.error(f"Timed out waiting for product details to load")
             return
 
-        # TODO: remove image stuff. this can be done in sweeping scraper
-        size = "large" # large, medium, small
-        product_image_url = f"https://cdn0.woolworths.media/content/wowproductimages/{size}/{str(product_code).zfill(6)}.jpg"
-
         product_details = {
-            "name": product_name,
-            "price": product_price,
             "description": product_description,
-            "image_url": product_image_url
         }
         
         return product_details
