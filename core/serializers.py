@@ -12,8 +12,7 @@ class ProductSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'description']
         
 class WatchlistSerializer(serializers.ModelSerializer):
-    itemCount = serializers.IntegerField()
-    watchlistProduct = serializers.SlugRelatedField(
+    products = serializers.SlugRelatedField(
         many=True,
         read_only=True,
         slug_field='name'
@@ -21,4 +20,4 @@ class WatchlistSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Watchlist
-        fields = ['id', 'name', 'itemCount', 'userID', 'watchlistProduct']
+        fields = ['id', 'title', 'owner', 'products']
