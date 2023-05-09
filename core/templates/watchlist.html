@@ -8,26 +8,37 @@
 </div>
 
 <div class="block">
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Image</th>
-                <th>Name</th>
-                <th>Price</th>
-                <th>Retailer</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in watchlist.items %}
-                <tr>
-                    <td><img class="image is-48x48" src="{{ item.image_url }}" alt="{{ item.name }}" width="100px"></td>
-                    <td><a href="{{ item.url }}">{{ item.name }}</a></td>
-                    <td>{{ item.price }}</td>
-                    <td>{{ item.retailer }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="columns is-centered">
+        <div class="column">
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Retailer</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in watchlist.items %}
+                        <tr>
+                            <td><img class="image is-48x48" src="{{ item.image_url }}" alt="{{ item.name }}" width="100px"></td>
+                            <td><a href="{{ item.url }}">{{ item.name }}</a></td>
+                            <td>{{ item.price }}</td>
+                            <td>{{ item.retailer }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+        <div class="column has-background-link-light">
+
+            <p>This is where I will add "edit watchlist stuff"</p>
+
+        </div>
+    </div>
 </div>
 
 {% endblock content %}

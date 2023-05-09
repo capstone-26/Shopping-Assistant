@@ -43,11 +43,6 @@ class Scraper:
         options.add_argument("--headless")
         options.add_argument("--window-size=1920,1200") # Ensures a consistent scraping experience
 
-        # Check if geckodriver (Firefox driver) executable exists
-        if not pathlib.Path(self.GECKODRIVER_PATH).is_file():
-            self.logger.error(f"Geckodriver exectuable not found at {self.GECKODRIVER_PATH} -> May have to rebuild Docker image")
-            return
-
         service = Service(executable_path=self.GECKODRIVER_PATH)
         driver = webdriver.Firefox(service=service, options=options)
         self.logger.info("Driver created.")
@@ -69,7 +64,7 @@ class ProductDetailsScraper(Scraper):
     
     def scrape(self, product_code, retailer):
         """Returns details about a specific product"""
-        if not self.valid_retailer(retailer):
+        if retailer is not None and not self.valid_retailer(retailer):
             raise ValueError(f"Invalid retailer: {retailer}")
     
         if retailer == "woolworths" or retailer == None:
@@ -121,7 +116,7 @@ class AllProductsScraper(Scraper):
 
     def scrape(self, retailer = None):
         """Returns details about all products from a retailer"""
-        if not self.valid_retailer(retailer):
+        if retailer is not None and not self.valid_retailer(retailer):
             self.logger.error(f"Invalid retailer: {retailer}")
         
         if retailer == "woolworths" or retailer == None:

@@ -121,8 +121,41 @@ class WatchlistView(View):
 
         return render(request, self.template_name, {'watchlist': watchlist})
 
+class SearchView(ListView):
+    model = Product
+    template_name = 'search.html'
+
+    def get_queryset(self):
+        if self.request.GET.get('q') == None:
+            object_list = Product.objects.none()
+        else:
+            query = self.request.GET.get('q')
+            object_list = Product.objects.filter(name__icontains=query)
+
+        return object_list
+
+    def get_context_data(self, **kwargs: Any):
+        context = super().get_context_data(**kwargs)
+        context['query'] = self.request.GET.get('q')
+        return context
+
+class ProductView(View):
+    model = Product
+    template_name = 'product.html'
+
+    def get(self, request, product_id):
+        print(product_id)
+        product = Product.objects.get(id=product_id)
+        watchlists = Watchlist.objects.filter(owner=request.user)
+        return render(request, 'product.html', {
+            'product': product,
+            'watchlists': watchlists,
+            })
+
+
+
 # API  or Data Views
-def GetProductDetails(request):
+def get_product_details(request):
     # Get product id from AJAX request
     product_id = request.POST.get('product_id')
 
@@ -135,13 +168,12 @@ def GetProductDetails(request):
 
     ajax_response = {
         "description": product_details["description"],
-        "image_url": product_details["image_url"],
     }
 
     return JsonResponse(ajax_response, status=200)
 
 @auth.decorators.login_required
-def CreateNewWatchlist(request):
+def create_new_watchlist(request):
     if request.method == 'POST':
         # Get watchlist title from AJAX request
         watchlist_title = request.POST.get('watchlist_title')
@@ -167,7 +199,7 @@ def CreateNewWatchlist(request):
         return JsonResponse(ajax_response, status=200)
 
 @auth.decorators.login_required
-def DeleteWatchlist(request):
+def delete_watchlist(request):
     if request.method == 'POST':
 
         # Get watchlist id from AJAX request
@@ -190,10 +222,54 @@ def DeleteWatchlist(request):
         watchlist.delete()
 
         return JsonResponse({"message": "Watchlist deleted successfully"}, status=200)
+    
+def get_product_details(request):
+
+    # Get product id from AJAX request
+    product_id = request.POST.get('product_id')
+
+    # Get product *retailer* id from the database
+    product = Product.objects.get(id=product_id)
+        
+    # Scrape for product details
+    scraper = scrapers.ProductDetailsScraper()
+    product_details = scraper.scrape(product.retailer_code, product.retailer)
+
+    ajax_response = {
+        "description": product_details["description"],
+    }
+
+    return JsonResponse(ajax_response, status=200)
+
+def add_product_to_watchlist(request, watchlist_id, product_id):
+    watchlist = Watchlist.objects.get(id=watchlist_id)
+    product = Product.objects.get(id=product_id)
+
+    # Check if user owns watchlist
+    if watchlist.owner != request.user:
+        return JsonResponse({"error": "User does not own watchlist"}, status=401)
+
+    # Check if product is already in watchlist
+    if product not in watchlist.products.all():
+        watchlist.products.add(product)
+        return JsonResponse({"message": "Product added to watchlist"}, status=200)
+
+    return JsonResponse({"message": "Product already in watchlist"}, status=200)
+
+
 
 
 # Test Views
 # ...
+
+
+
+
+
+
+
+
+
 
 
 
@@ -245,52 +321,5 @@ def watchlistdelete(request, id):
     watchlist.delete()
     
     return Response('Item deleted')
-
-
-class SearchView(ListView):
-    model = Product
-    template_name = 'search.html'
-
-    def get_queryset(self):
-        if self.request.GET.get('q') == None:
-            object_list = Product.objects.none()
-        else:
-            query = self.request.GET.get('q')
-            object_list = Product.objects.filter(name__icontains=query)
-
-        return object_list
-
-    def get_context_data(self, **kwargs: Any):
-        context = super().get_context_data(**kwargs)
-        context['query'] = self.request.GET.get('q')
-        return context
-
-class ProductView(View):
-    model = Product
-    template_name = 'product.html'
-
-    def get(self, request, product_id):
-        print(product_id)
-        product = Product.objects.get(id=product_id)
-        return render(request, 'product.html', {'product': product})
-    
-def GetProductDetails(request):
-
-    # Get product id from AJAX request
-    product_id = request.POST.get('product_id')
-
-    # Get product *retailer* id from the database
-    product = Product.objects.get(id=product_id)
-        
-    # Scrape for product details
-    scraper = scrapers.ProductDetailsScraper()
-    product_details = scraper.scrape(product.retailer_code, product.retailer)
-
-    ajax_response = {
-        "description": product_details["description"],
-        "image_url": product_details["image_url"],
-    }
-
-    return JsonResponse(ajax_response, status=200)
 
 # Test Views

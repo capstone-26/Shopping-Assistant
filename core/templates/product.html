@@ -4,7 +4,7 @@
 {% block content %}
 
 <div class="columns is-centered">
-    <div class="column is-half">
+    <div class="column">
         
         <div class="block">
             <div class="card">
@@ -17,12 +17,12 @@
                     
                     <div class="media">
                         <div class="media-right">
-                            <figure class="image is-64x64">
+                            <figure class="image is-48x48">
                                 <img src="{% static 'img/' %}{{ product.retailer }}.png" alt="">
                             </figure>
                         </div>
                         <div class="media-right">
-                            <p class="title is-4">{{ product.name }}</p>
+                            <h1 class="title is-6">{{ product.name }}</h1>
                             <p class="subtitle is-6">${{ product.price }}</p>
                         </div>
                     </div>
@@ -33,6 +33,24 @@
             </div>
         </div>
         
+    </div>
+
+    <div class="column">
+
+        <h1 class="title">Add to watchlist</h1>
+        <form action="">
+            <label class="label">Watchlist</label>
+            <div class="control">
+                <div class="select">
+                    <select>
+                        {% for watchlist in watchlists %}
+                        <option value="{{ watchlist.id }}">{{ watchlist.title }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </form>
+
     </div>
 </div>
 
