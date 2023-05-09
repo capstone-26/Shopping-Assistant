@@ -27,7 +27,7 @@
                     {% for watchlist in watchlists %}
                     <tr>
                         <td>{{ watchlist.id }}</td>
-                        <td>{{ watchlist.title }}</td>
+                        <td><a href="{% url 'watchlist' watchlist.id %}">{{ watchlist.title }}</td></a>
                         <td>
                             <button class="delete-watchlist button is-danger is-small is-outlined" data-watchlist-id="{{ watchlist.id }}">
                                 <span>Delete</span>

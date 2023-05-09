@@ -37,7 +37,7 @@ urlpatterns = [
     path('get-product-details/', views.get_product_details, name='get_product_details'),
     path('create-watchlist/', views.create_new_watchlist, name='create_watchlist'),
     path('delete-watchlist/', views.delete_watchlist, name='delete_watchlist'),
-    path('watchlist/add/<int:watchlist_id>/<int:product_id>', views.add_product_to_watchlist, name='add_product_to_watchlist'),
+    path('watchlist/add/<int:watchlist_id>/<str:product_id>', views.add_product_to_watchlist, name='add_product_to_watchlist'),
 
     # path('watchlistList/', views.watchlists, name="watchlistList"),
     # path('watchlistCreate/', views.watchlistcreate, name="watchlistCreate"),

@@ -114,6 +114,10 @@ class WatchlistView(View):
     
     def get(self, request, watchlist_id):
         watchlist = Watchlist.objects.get(id=watchlist_id)
+
+        # DEBUG
+        for product in watchlist.products.all():
+            print(product.name)
         
         # Ensure user owns the watchlist they are trying to view
         if request.user != watchlist.owner:
@@ -245,16 +249,32 @@ def add_product_to_watchlist(request, watchlist_id, product_id):
     watchlist = Watchlist.objects.get(id=watchlist_id)
     product = Product.objects.get(id=product_id)
 
+    response = {
+        "message": "",
+        "error": "",
+        "productAlreadyAdded": False
+    }
+    status = 200
+
+    # Check if user is authenticated
+    if not request.user.is_authenticated:
+        response["error"] = "User is not authenticated"
+        status = 401
+
     # Check if user owns watchlist
-    if watchlist.owner != request.user:
-        return JsonResponse({"error": "User does not own watchlist"}, status=401)
+    if request.user != watchlist.owner:
+        response["error"] = "User does not own watchlist"
+        status = 401
 
     # Check if product is already in watchlist
-    if product not in watchlist.products.all():
+    if product in watchlist.products.all():
+        response["message"] = "Product already in watchlist"
+        response["productAlreadyAdded"] = True
+    else:
         watchlist.products.add(product)
-        return JsonResponse({"message": "Product added to watchlist"}, status=200)
-
-    return JsonResponse({"message": "Product already in watchlist"}, status=200)
+        response["message"] = "Product added to watchlist"
+    
+    return JsonResponse(response, status=status)
 
 
 

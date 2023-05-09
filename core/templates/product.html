@@ -34,23 +34,31 @@
         </div>
         
     </div>
-
+    
     <div class="column">
-
-        <h1 class="title">Add to watchlist</h1>
-        <form action="">
-            <label class="label">Watchlist</label>
-            <div class="control">
-                <div class="select">
-                    <select>
-                        {% for watchlist in watchlists %}
-                        <option value="{{ watchlist.id }}">{{ watchlist.title }}</option>
-                        {% endfor %}
-                    </select>
+        
+        <div class="container">
+            <h1 class="title">Add to Watchlist</h1>
+            
+            <div class="field">
+                <div class="control">
+                    <div class="select is-fullwidth">
+                        <select id="watchlist-dropdown">
+                            {% for watchlist in watchlists %}
+                            <option value="{{ watchlist.id }}">{{ watchlist.title }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
                 </div>
             </div>
-        </form>
-
+            
+            <div class="field">
+                <div class="control">
+                    <button id="add-to-watchlist-button" class="button is-primary">Add</button>
+                </div>
+            </div>
+        </div>
+        
     </div>
 </div>
 
@@ -63,6 +71,7 @@
     // unhide the loading indicator
     $('#loading-indicator').removeClass('is-hidden');
     
+    // Get product details
     $(document).ready(function() {
         $.ajax({
             url: "/get-product-details/",
@@ -82,6 +91,38 @@
                 // hide the loading indicator
                 $('#loading-indicator').addClass('is-hidden');
             }
+        });
+    });
+
+    // Add product to watchlist
+    $(document).ready(function() {
+        $('#add-to-watchlist-button').click(function() {
+            var selectedWatchlistId = $('#watchlist-dropdown').val();
+            var productId = '{{ product.id }}';
+            
+            $.ajax({
+                url: "/watchlist/add/" + selectedWatchlistId + "/" + productId,
+                method: "POST",
+                data: {
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function(response) {
+                    
+                    if (response.productAlreadyAdded) {
+                        $('#add-to-watchlist-button').addClass('is-warning');
+                        $('#add-to-watchlist-button').text('Already Added');
+                        $('#add-to-watchlist-button').prop('disabled', true);
+                        return;
+                    } else {
+                        $('#add-to-watchlist-button').addClass('is-success');
+                        $('#add-to-watchlist-button').text('Added');
+                        $('#add-to-watchlist-button').prop('disabled', true);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.log(error);
+                }
+            });
         });
     });
     
