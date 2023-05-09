@@ -31,6 +31,7 @@ urlpatterns = [
     
     path('product/<str:product_id>', views.ProductView.as_view(), name='product'),
     path('watchlists/', views.WatchlistsView.as_view(), name = 'watchlists'),
+    path('watchlist/<int:watchlist_id>', views.WatchlistView.as_view(), name = 'watchlist'),
 
     # API/data URLs
     path('get-product-details/', views.GetProductDetails, name='get_product_details'),

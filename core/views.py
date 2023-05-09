@@ -107,7 +107,19 @@ class WatchlistsView(View):
             watchlists = Watchlist.objects.filter(owner=user_instance)
 
         return render(request, self.template_name, {'watchlists': watchlists})
+
+class WatchlistView(View):
+    model = Watchlist
+    template_name = 'watchlist.html'
     
+    def get(self, request, watchlist_id):
+        watchlist = Watchlist.objects.get(id=watchlist_id)
+        
+        # Ensure user owns the watchlist they are trying to view
+        if request.user != watchlist.owner:
+            return redirect('watchlists')
+
+        return render(request, self.template_name, {'watchlist': watchlist})
 
 # API  or Data Views
 def GetProductDetails(request):
@@ -179,11 +191,9 @@ def DeleteWatchlist(request):
 
         return JsonResponse({"message": "Watchlist deleted successfully"}, status=200)
 
-    
-
 
 # Test Views
-
+# ...
 
 
 

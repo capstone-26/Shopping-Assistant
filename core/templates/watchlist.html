@@ -1,0 +1,34 @@
+{% extends 'bases/base_page.html' %}
+
+
+{% block content %}
+    
+<div class="block">
+    <h1 class="title">{{ watchlist.title }}</h1>
+</div>
+
+<div class="block">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Retailer</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in watchlist.items %}
+                <tr>
+                    <td><img class="image is-48x48" src="{{ item.image_url }}" alt="{{ item.name }}" width="100px"></td>
+                    <td><a href="{{ item.url }}">{{ item.name }}</a></td>
+                    <td>{{ item.price }}</td>
+                    <td>{{ item.retailer }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock content %}
+    
