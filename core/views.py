@@ -199,7 +199,7 @@ class Watchlists(APIView):
 
 class WatchlistDetails(APIView):
     renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'watchlistdetail.html'
+    template_name = 'watchlistdetails.html'
 
     def get(self, request, id):
         watchlist = get_object_or_404(Watchlist, id=id)
