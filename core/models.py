@@ -2,6 +2,8 @@ from django.db import models
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 class Product(models.Model):
     id = models.CharField(max_length=100, primary_key=True)
@@ -23,7 +25,29 @@ class Watchlist(models.Model):
     products = models.ManyToManyField(Product)
 
     def __str__(self):
-        return self.name
+        return self.title
+    
+
+class Profile(models.Model):
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE, related_name='profile')
+    # Add additional fields for the user profile
+    bio = models.TextField(max_length=500, default='')
+    location = models.TextField(max_length=500, default='')
+    #avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
+
+    @receiver(post_save, sender=User)
+    def create_user_profile(sender, instance, created, **kwargs):
+        if created:
+            Profile.objects.create(user=instance)
+
+
+    @receiver(post_save, sender=User)
+    def save_user_profile(sender, instance, **kwargs):
+        instance.profile.save()
+
+    def __str__(self):
+        return self.user.username
 
 # class Retailer(models.Model):
 #     id = models.AutoField(primary_key=True)
