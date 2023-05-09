@@ -3,6 +3,7 @@ from django.shortcuts import render, get_object_or_404,redirect
 from django.http import JsonResponse
 from django.views import View
 from django.views.generic import ListView
+from core.forms import ProfileForm, UserForm
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.renderers import TemplateHTMLRenderer
@@ -15,6 +16,8 @@ from core import scrapers
 from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.contrib import auth
+from django.contrib.auth.decorators import login_required
+from django.db import transaction
 
 def home(request):
     if request.user.is_authenticated:
@@ -32,7 +35,7 @@ def SignUp(request):
         
         if password1 == password2:
             if User.objects.filter(username=name):
-                messages.info(request,"User is exist")
+                messages.info(request,"User already exists")
                 return redirect(SignUp)
             else:
                 user = User.objects.create_user(username=name,password=password1,email=email)
@@ -284,3 +287,35 @@ def GetProductDetails(request):
     return JsonResponse(ajax_response, status=200)
 
 # Test Views
+
+# User Profile views
+
+def profile(request):
+    User = request.user
+#    user_profile = User.userprofile
+#    return render(request, 'profile.html', {'user': User, 'user_profile': user_profile})
+    return render(request, 'profile.html', {'user': User})
+
+
+@login_required(login_url='signin/')
+@transaction.atomic
+def update_profile(request):
+    if request.method == 'POST':
+        user_form = UserForm(request.POST, instance=request.user)
+        profile_form = ProfileForm(request.POST, instance=request.user.profile)
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            messages.success(request, _(
+                'Your profile was successfully updated!'))
+            return redirect('settings:profile')
+        else:
+            messages.error(request, _('Please correct the error below.'))
+    else:
+        user_form = UserForm(instance=request.user)
+        profile_form = ProfileForm(instance=request.user.profile)
+    return render(request, 'profiles/profile.html', {
+        'user_form': user_form,
+        'profile_form': profile_form
+    })
+

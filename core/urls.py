@@ -44,4 +44,5 @@ urlpatterns = [
     # ...
 
     # Testing URLs
+    path('profile/', views.profile, name='profile'),
 ]
