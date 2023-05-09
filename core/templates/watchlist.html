@@ -23,7 +23,7 @@
                 <tbody>
                     {% for product in watchlist.products.all %}
                         <tr>
-                            <td><img class="image is-48x48" src="{{ item.image_url }}" alt="{{ item.name }}" width="100px"></td>
+                            <td><img class="image is-32x32" src="{{ product.image_url }}" alt="{{ product.name }}" width="100px"></td>
                             <td><a href="{% url 'product' product.id %}"> {{ product.name }}</a></td>
                             <td>{{ product.price }}</td>
                             <td>{{ product.retailer }}</td>
