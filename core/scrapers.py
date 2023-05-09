@@ -129,9 +129,9 @@ class AllProductsScraper(Scraper):
         
         # TODO: Implement Aldi
         if retailer == "aldi" or retailer == None:
-            # self.base_url = "https://www.aldi.com.au/"
-            # return self._scrape_aldi()
-            pass
+            self.base_url = "https://www.aldi.com.au/en/groceries/"
+            return self._scrape_aldi()
+
         
         
     def _scrape_woolworths(self):
@@ -271,6 +271,87 @@ class AllProductsScraper(Scraper):
                 except Exception as e:
                     self.logger.error(f"Error scraping product tile: {e}")
                     
+            all_category_products[category_name] = category_products
+            
+        return all_category_products
+        
+    def _scrape_aldi(self):
+        self.driver.get(self.base_url)
+        try: 
+            categorie_anchors = WebDriverWait(self.driver,self.TIMEOUT).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "div.productworld--list-item")))
+        except TimeoutException:
+            self.logger.error(f"Timed out waiting for loading categories")
+            pass
+
+        categories = {} # {category_name: category_url}
+        for anchor in categorie_anchors:
+        # Get the link to the category page
+            category_name = anchor.find_element(By.CSS_SELECTOR, "span.ellipsis--text").text.strip()
+            category_name = category_name.replace("\n…", "")
+            category_url = anchor.find_element(By.CSS_SELECTOR,"a.productworld--list-item--link").get_attribute("href")
+            #get rid of unnecessary categories
+            if category_name != "Returns Policy" and category_name != "Fresh Produce":
+                categories[category_name] = category_url
+        
+        all_category_products = {}
+        
+        for category_name, category_url in categories.items():
+            self.logger.info(f"Scraping aldi category: {category_name}")
+            category_products = []
+            # Go to category page
+            self.driver.get(category_url)
+            # Check the sub link to the category page
+            sub_category_links = []
+            
+            try:
+                sub_categories = WebDriverWait(self.driver, self.TIMEOUT).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "div.csc-textpic-imagecolumn")))
+                for sub_category in sub_categories:
+                    sub_category_link = sub_category.find_element(By.XPATH, ".//a")
+                    sub_category_link = sub_category_link.get_attribute("href")
+                    if sub_category_link is not None and category_url in sub_category_link:
+                        sub_category_links.append(sub_category_link)
+                    # Check if the sub link to the category page is empty reload category page if its empty
+            except TimeoutException:
+                # no sub categories
+                pass
+            # Check if the sub link to the category page is empty reload category page if its empty   
+            if not sub_category_links:
+                sub_category_links.append(category_url)
+            
+            for link in sub_category_links:
+                self.driver.get(link)
+                # Find all product data on the page
+                try:
+                    products = WebDriverWait(self.driver, self.TIMEOUT).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "a.box--wrapper")))
+                    # Extract content from each of the product tiles
+                    for product in products:
+                        try:
+                            name = product.find_element(By.CSS_SELECTOR, "div.box--description--header").text.strip()
+                            value = product.find_element(By.CSS_SELECTOR, "span.box--value")
+                            decimal = product.find_element(By.CSS_SELECTOR, "span.box--decimal")
+                            image_url = product.find_element(By.TAG_NAME, "img").get_attribute("src")
+                            product_link = product.get_attribute("href")
+                            # Split the URL by "/"
+                            parts = product_link.split("/")
+                            # Find the index of the desired section
+                            index = parts.index("groceries") + 1
+                            # Join the parts starting from the groceires to make retailer_code
+                            retailer_code = "/".join(parts[index:])
+                            category_products.append({
+                                "name": name,
+                                "price": value.text.strip() + decimal.text.strip(),
+                                "retailer_code": retailer_code,
+                                "category": category_name,
+                                "retailer": "aldi",
+                                "image_url": image_url,
+                            })
+                        except NoSuchElementException as nse_e:
+                            #skip this product if not find data
+                            pass
+                except TimeoutException:
+                    # time out in loading product
+                    pass
+            
             all_category_products[category_name] = category_products
             
         return all_category_products
