@@ -1,19 +1,13 @@
-{% extends 'bases/base_entry.html' %}
+{% extends 'bases/base_page.html' %}
 
 {% block content %}
 
 <div class="block">
     <h1 class="title">Profile</h1>
 </div>  
-
+<button onclick="window.location.href='/editprofile'">Edit Profile</button>
 <h1>{{ user.username }}'s Profile</h1>
 <p>Bio: {{ user_profile.bio }}</p>
-
-<form method="post">
-    {% csrf_token %}
-    {{ user_form.as_p }}
-    {{ profile_form.as_p }}
-    #<button type="submit">Save changes</button>
-</form>
+<p>Location: {{ user_profile.location}}</p>
 
 {% endblock %}
