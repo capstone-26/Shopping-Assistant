@@ -12,13 +12,15 @@ from django.contrib import messages
 from .models import *
 from .serializers import *
 from core import scrapers
-from django.contrib.auth import login
+from django.contrib.auth import login,logout
 from django.contrib.auth.models import User
 from django.contrib import auth
 
 def home(request):
-    if request.user.is_authenticated:
-        return render(request, 'index.html')
+     
+    if  request.user.is_authenticated:
+            
+            return render(request, 'index.html')
     else:
         return redirect(SignIn)
 
@@ -50,16 +52,18 @@ def SignIn(request):
         user = auth.authenticate(username=name,password = password)
         if user is not None:
             auth.login(request,user)
+            request.session['user'] = name
             return redirect(home)
         else:
 
             messages.error(request,"Invalid username or password.")
     return render(request=request, template_name="signin.html")
 
+
 def SignOut(request):
-    if request.method == 'POST':
-        auth.logout(request)
-        messages.success(request, "Logged Out Successfully!!")
+    logout(request)
+    print("goooddddd")
+    messages.success(request, "Logged Out Successfully!!")
 
     return redirect(SignIn)
 
