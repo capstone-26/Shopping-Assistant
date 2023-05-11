@@ -318,4 +318,10 @@ def editProfile(request):
     #     'user_form': user_form,
     #     'profile_form': profile_form
     # }) """
-    return render(request, 'editprofile.html')
+    #return render(request, 'editprofile.html')
+
+
+    user_form = UserForm()
+    profile_form = ProfileForm()
+    context = {'user_form': user_form, 'profile_form': profile_form}
+    return render(request, 'editprofile.html', context)

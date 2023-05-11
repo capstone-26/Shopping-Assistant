@@ -1,8 +1,16 @@
 {% extends 'bases/base_page.html' %}
 
+{% block content %}
+
+<div class="block">
+    <h1 class="title">Edit Profile</h1>
+</div>
+
 <form method="post">
     {% csrf_token %}
     {{ user_form.as_p }}
     {{ profile_form.as_p }}
     <button>Submit</button>
 </form>
+
+{% endblock %}
