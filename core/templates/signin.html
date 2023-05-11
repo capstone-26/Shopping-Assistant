@@ -24,17 +24,17 @@
 			</span>
 		</div>
 	</div> 
-	{% comment %} 
+
 	<div class="field">
 		<label for="" class="checkbox">
-			<input type="checkbox">
+			<input type="checkbox" name="rememberme" id="rememberme"  >
 			Remember me
 		</label>
 	</div> 
-	{% endcomment %}
+
 	<div class="field ">
 		<div class="control">
-			<button type="submit" class="button is-success">Login</button>
+			<button type="submit" class="button is-success" onclick="RememberMe()">Login</button>
 		</div>
 	</div>
 </form>
@@ -45,5 +45,40 @@
 {% for message in messages %}
 <p class="help is-danger">{{ message }}</p>
 {% endfor %}
+
+<script>
+	
+	const rmCheck = document.getElementById("rememberme"),
+    nameInput = document.getElementById("username"),
+	passwordInput = document.getElementById("password");
+	
+	if (localStorage.checkbox && localStorage.checkbox !== "") {
+		rmCheck.setAttribute("checked", "checked");
+  		nameInput.value = localStorage.username;
+		passwordInput.value = localStorage.password;
+	} else {
+  		rmCheck.removeAttribute("checked");
+  		nameInput.value = "";
+		passwordInput.value =""
+	}
+	
+	function  RememberMe() {
+		 
+  		if (rmCheck.checked && nameInput.value !== ""&& passwordInput.value !=="") {
+ 
+			localStorage.password = passwordInput.value;
+    		localStorage.username = nameInput.value;
+    		localStorage.checkbox = rmCheck.value;
+			
+		} 
+		else {
+			localStorage.password = ""
+    		localStorage.username = "";
+    		localStorage.checkbox = "";
+  		}
+	}
+
+</script>
+
 
 {% endblock content %}
