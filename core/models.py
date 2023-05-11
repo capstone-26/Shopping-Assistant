@@ -5,13 +5,13 @@ from django.contrib.auth.models import User
 
 class Product(models.Model):
     id = models.CharField(max_length=100, primary_key=True)
-    name = models.CharField(max_length=100, default="DEFAULT")
+    name = models.CharField(max_length=100, default="")
     price = models.DecimalField(max_digits=6, decimal_places=2, default=0.00)
     retailer = models.CharField(max_length=100)
     retailer_code = models.CharField(max_length=150)
-    description = models.TextField(default="DEFAULT")
-    category = models.CharField(max_length=100, default="DEFAULT")
-    image_url = models.CharField(max_length=200, default="DEFAULT")
+    description = models.TextField(default="")
+    category = models.CharField(max_length=100, default="")
+    image_url = models.CharField(max_length=200, default="")
 
     def __str__(self):
         return self.name
