@@ -1,13 +1,16 @@
 {% extends 'bases/base_page.html' %}
-
 {% block content %}
 
 <div class="block">
     <h1 class="title">Profile</h1>
-</div>  
-<button onclick="window.location.href='/editprofile'">Edit Profile</button>
-<h1>{{ user.username }}'s Profile</h1>
-<p>Bio: {{ user_profile.bio }}</p>
-<p>Location: {{ user_profile.location}}</p>
+</div>
+
+<button class="button" onclick="window.location.href='/editprofile'">Edit Profile</button>
+
+<div class="block">
+    <h1 class="title">{{ user.username }}'s Profile</h1>
+    <p>Bio: {{ user_profile.bio }}</p>
+    <p>Location: {{ user_profile.location}}</p>
+</div>
 
 {% endblock %}
