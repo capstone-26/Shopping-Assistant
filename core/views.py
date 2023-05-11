@@ -170,6 +170,10 @@ def get_product_details(request):
     scraper = scrapers.ProductDetailsScraper()
     product_details = scraper.scrape(product.retailer_code, product.retailer)
 
+    # Update product details in database
+    product.description = product_details["description"]
+    product.save()
+
     ajax_response = {
         "description": product_details["description"],
     }
@@ -226,24 +230,6 @@ def delete_watchlist(request):
         watchlist.delete()
 
         return JsonResponse({"message": "Watchlist deleted successfully"}, status=200)
-    
-def get_product_details(request):
-
-    # Get product id from AJAX request
-    product_id = request.POST.get('product_id')
-
-    # Get product *retailer* id from the database
-    product = Product.objects.get(id=product_id)
-        
-    # Scrape for product details
-    scraper = scrapers.ProductDetailsScraper()
-    product_details = scraper.scrape(product.retailer_code, product.retailer)
-
-    ajax_response = {
-        "description": product_details["description"],
-    }
-
-    return JsonResponse(ajax_response, status=200)
 
 def add_product_to_watchlist(request, watchlist_id, product_id):
     watchlist = Watchlist.objects.get(id=watchlist_id)
