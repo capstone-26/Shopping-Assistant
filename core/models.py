@@ -35,6 +35,7 @@ class Profile(models.Model):
     bio = models.TextField(max_length=500, default='')
     location = models.TextField(max_length=500, default='')
     #avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
+    birthdate = models.DateField(null=True, blank=True)
 
     @receiver(post_save, sender=User)
     def create_user_profile(sender, instance, created, **kwargs):
