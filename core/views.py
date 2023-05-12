@@ -262,6 +262,48 @@ def add_product_to_watchlist(request, watchlist_id, product_id):
     
     return JsonResponse(response, status=status)
 
+def remove_product_from_watchlist(request):
+    if request.method == 'POST':
+        watchlist_id = request.POST.get('watchlist_id')
+        product_id = request.POST.get('product_id')
+        try:
+            watchlist = Watchlist.objects.get(id=watchlist_id)
+            watchlist.products.remove(product_id)
+            return JsonResponse({'status': 'success'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+    
+    # watchlist = Watchlist.objects.get(id=watchlist_id)
+    # product = Product.objects.get(id=product_id)
+
+    # response = {
+    #     "message": "",
+    #     "error": "",
+    #     "productAlreadyRemoved": False
+    # }
+    # status = 200
+
+    # # Check if user is authenticated
+    # if not request.user.is_authenticated:
+    #     response["error"] = "User is not authenticated"
+    #     status = 401
+
+    # # Check if user owns watchlist
+    # if request.user != watchlist.owner:
+    #     response["error"] = "User does not own watchlist"
+    #     status = 401
+
+    # # Check if product is already in watchlist
+    # if product in watchlist.products.all():
+    #     response["message"] = "Product already removed from watchlist"
+    #     response["productAlreadyRemoved"] = True
+    # else:
+    #     watchlist.products.add(product)
+    #     response["message"] = "Product removed from watchlist"
+        
+    # # Remove watchlist product
+    #     watchlist.products.remove(product)
+    # return JsonResponse(response, status=status)
 
 
 
