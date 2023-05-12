@@ -130,22 +130,21 @@
     $(document).ready(function() {
         $('#remove-from-watchlist-button').click(function(e) {
             e.preventDefault();
-            var selectedWatchlistId = $('#watchlist-dropdown').val();
-            var productId = '{{ product.id }}';
-            console.log(selectedWatchlistId, productId);
-            removeProductFromWatchlist(selectedWatchlistId, productId);
+            var watchlist_id = $('#watchlist-dropdown').val();
+            var product_id = '{{ product.id }}';
+            removeProductFromWatchlist(watchlist_id, product_id);
         });
     });
 
     // Remove product from watchlist
-    function removeProductFromWatchlist(selectedWatchlistId, productId) {
+    function removeProductFromWatchlist(watchlist_id, product_id) {
         $.ajax({
-            url: "/watchlist/remove/" + selectedWatchlistId + "/" + productId,
+            url: "/watchlist/remove/" + watchlist_id + "/" + product_id,
             type: 'POST',
             data: {
-                'selectedWatchlistId': selectedWatchlistId,
-                'productId': productId,
-                'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
+                'watchlist_id': watchlist_id,
+                'product_id': product_id,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
             },
             success: function(response) {
                 if (response.status === 'success') {
