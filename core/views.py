@@ -266,7 +266,16 @@ def add_product_to_watchlist(request, watchlist_id, product_id):
     
     return JsonResponse(response, status=status)
 
-
+def remove_product_from_watchlist(request, watchlist_id, product_id):
+    if request.method == 'POST':
+        watchlist_id = request.POST.get('watchlist_id')
+        product_id = request.POST.get('product_id')
+        try:
+            watchlist = Watchlist.objects.get(id=watchlist_id)
+            watchlist.products.remove(product_id)
+            return JsonResponse({'status': 'success'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
 
 
 # Test Views

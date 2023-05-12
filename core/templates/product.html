@@ -55,6 +55,7 @@
             <div class="field">
                 <div class="control">
                     <button id="add-to-watchlist-button" class="button is-primary">Add</button>
+                    <button id="remove-from-watchlist-button" class="button is-danger">Remove</button>
                 </div>
             </div>
         </div>
@@ -125,6 +126,38 @@
             });
         });
     });
+
+    $(document).ready(function() {
+        $('#remove-from-watchlist-button').click(function(e) {
+            e.preventDefault();
+            var watchlist_id = $('#watchlist-dropdown').val();
+            var product_id = '{{ product.id }}';
+            removeProductFromWatchlist(watchlist_id, product_id);
+        });
+    });
+
+    // Remove product from watchlist
+    function removeProductFromWatchlist(watchlist_id, product_id) {
+        $.ajax({
+            url: "/watchlist/remove/" + watchlist_id + "/" + product_id,
+            type: 'POST',
+            data: {
+                'watchlist_id': watchlist_id,
+                'product_id': product_id,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success: function(response) {
+                if (response.status === 'success') {
+                    // Do something on success, such as removing the product from the DOM
+                } else {
+                    alert(response.message);
+                }
+            },
+            error: function(xhr, status, error) {
+                alert('An error occurred: ' + error);
+            }
+        });
+    };
     
 </script>
 
