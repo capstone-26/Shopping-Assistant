@@ -32,6 +32,7 @@ urlpatterns = [
     path('product/<str:product_id>', views.ProductView.as_view(), name='product'),
     path('watchlists/', views.WatchlistsView.as_view(), name = 'watchlists'),
     path('watchlist/<int:watchlist_id>', views.WatchlistView.as_view(), name = 'watchlist'),
+    path('watchlistAddProduct/<int:watchlist_id>', views.WatchlistAddProductView.as_view(), name = 'watchlistAddProduct'),
 
     # API/data URLs
     path('get-product-details/', views.get_product_details, name='get_product_details'),
@@ -39,6 +40,9 @@ urlpatterns = [
     path('delete-watchlist/', views.delete_watchlist, name='delete_watchlist'),
     path('watchlist/add/<int:watchlist_id>/<str:product_id>', views.add_product_to_watchlist, name='add_product_to_watchlist'),
     path('watchlist/remove/<int:watchlist_id>/<str:product_id>', views.remove_product_from_watchlist, name='remove_product_from_watchlist'),
+
+    #path('displayProducts/<str:product_id>', views.displayAllProducts, name='display_Products'),
+
 
     # path('watchlistList/', views.watchlists, name="watchlistList"),
     # path('watchlistCreate/', views.watchlistcreate, name="watchlistCreate"),

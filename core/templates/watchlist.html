@@ -4,7 +4,11 @@
 {% block content %}
     
 <div class="block">
-    <h1 class="title">{{ watchlist.title }}</h1>
+    <div class="columns">
+        <div class="column is-three-quarters">
+            <h1 class="title">{{ watchlist.title }}</h1>
+        </div>
+    </div>
 </div>
 
 <div class="block">
@@ -35,9 +39,9 @@
 
         </div>
         <div class="column has-background-link-light">
-
-            <p>This is where I will add "edit watchlist stuff"</p>
-
+            <div class="column">
+                <button class="button is-link is-light" onclick="redirectToWatchlistAddProductPage('{{ watchlist.id }}')">Add product to Watchlist</button>
+            </div>
         </div>
     </div>
 </div>
@@ -77,6 +81,11 @@ $(document).ready(function() {
             }
         });
     };
+
+    function redirectToWatchlistAddProductPage(watchlistId) {
+        window.location.href = "/watchlistAddProduct/" + watchlistId;
+    }
+
 </script>
 
 {% endblock javascript %}

@@ -1,0 +1,46 @@
+{% extends 'bases/base_page.html' %}
+
+
+{% block content %}
+    
+<div class="block">
+    <h1 class="title">{{ watchlist.title }}</h1>
+</div>
+<div class="block">
+    <form>
+        <input type="text" class="input is-primary" type="text" placeholder="Search for a product..." id="input-field" name="input-field" onkeydown="if(event.keyCode == 13) { event.preventDefault(); displayAlert(); }">
+    </form>   
+</div>
+
+{% endblock content %}
+
+{% block javascript %}
+<script>
+    
+    function displayAlert() {
+        var input = document.getElementById("input-field").value;
+        alert(input);
+        /*
+        $.ajax({
+            url: "/displayProducts/"+input,
+            type: "POST",
+            data: {
+                'product_id': input,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success: function(response) {
+                alert(response);
+            },
+            error: function(xhr, status, error) {
+                console.log(xhr.responseText);
+            },
+            complete: function() {
+                // hide the loading indicator
+                $('#loading-indicator').addClass('is-hidden');
+            }
+        });
+        */
+    }
+    
+    </script>
+  {% endblock javascript %}

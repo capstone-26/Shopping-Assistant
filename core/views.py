@@ -128,6 +128,19 @@ class WatchlistView(View):
             return redirect('watchlists')
 
         return render(request, self.template_name, {'watchlist': watchlist})
+    
+class WatchlistAddProductView(View):
+    model = Watchlist
+    template_name = 'addProduct.html'
+    
+    def get(self, request, watchlist_id):
+        watchlist = Watchlist.objects.get(id=watchlist_id)
+
+        if request.user != watchlist.owner:
+            return redirect('watchlists')
+
+        return render(request, self.template_name, {'watchlist': watchlist})
+    
 
 class SearchView(ListView):
     model = Product
@@ -163,6 +176,12 @@ class ProductView(View):
 
 
 # API  or Data Views
+
+#def displayAllProducts(request, product_id):
+   
+   #API call to return the search results
+   # May have to speak to Shey
+
 def get_product_details(request):
     # Get product id from AJAX request
     product_id = request.POST.get('product_id')
