@@ -43,7 +43,7 @@
             <div class="field">
                 <div class="control">
                     <div class="select is-fullwidth">
-                        <select id="watchlist-dropdown">
+                        <select id="watchlist-dropdown" onChange="buttonReset()">
                             {% for watchlist in watchlists %}
                             <option value="{{ watchlist.id }}">{{ watchlist.title }}</option>
                             {% endfor %}
@@ -127,37 +127,45 @@
         });
     });
 
+    // Remove product from watchlist
     $(document).ready(function() {
         $('#remove-from-watchlist-button').click(function(e) {
             e.preventDefault();
             var watchlist_id = $('#watchlist-dropdown').val();
             var product_id = '{{ product.id }}';
-            removeProductFromWatchlist(watchlist_id, product_id);
+            
+            $.ajax({
+                url: "/watchlist/remove/" + watchlist_id + "/" + product_id,
+                type: 'POST',
+                data: {
+                    'watchlist_id': watchlist_id,
+                    'product_id': product_id,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function(response) {
+
+                    if (response.status) {
+                        $('#remove-from-watchlist-button').addClass('is-success');
+                        $('#remove-from-watchlist-button').text('Removed');
+                        $('#remove-from-watchlist-button').prop('disabled', true);
+                        return;
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.log(error);
+                }
+            });
         });
     });
 
-    // Remove product from watchlist
-    function removeProductFromWatchlist(watchlist_id, product_id) {
-        $.ajax({
-            url: "/watchlist/remove/" + watchlist_id + "/" + product_id,
-            type: 'POST',
-            data: {
-                'watchlist_id': watchlist_id,
-                'product_id': product_id,
-                'csrfmiddlewaretoken': '{{ csrf_token }}'
-            },
-            success: function(response) {
-                if (response.status === 'success') {
-                    // Do something on success, such as removing the product from the DOM
-                } else {
-                    alert(response.message);
-                }
-            },
-            error: function(xhr, status, error) {
-                alert('An error occurred: ' + error);
-            }
-        });
-    };
+    function buttonReset(){
+        $('#add-to-watchlist-button').removeClass(['is-success', 'is-warning']);
+        $('#add-to-watchlist-button').text('Add');
+        $('#add-to-watchlist-button').prop('disabled', false);
+        $('#remove-from-watchlist-button').removeClass('is-success');
+        $('#remove-from-watchlist-button').text('Remove');
+        $('#remove-from-watchlist-button').prop('disabled', false);
+    }
     
 </script>
 
