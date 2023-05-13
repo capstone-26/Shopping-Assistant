@@ -27,6 +27,7 @@
                             <td><a href="{% url 'product' product.id %}"> {{ product.name }}</a></td>
                             <td>{{ product.price }}</td>
                             <td>{{ product.retailer }}</td>
+                            <td><button class="remove-from-watchlist-button button is-danger" data-product-id="{{ product.id }}">Remove</button></td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -42,4 +43,41 @@
 </div>
 
 {% endblock content %}
+
+{% block javascript %}
+<script>
+
+$(document).ready(function() {
+    $('.remove-from-watchlist-button').click(function(e) {
+        e.preventDefault();
+        var watchlist_id = '{{ watchlist.id }}';
+        var product_id = $(this).data('product-id');
+        removeProductFromWatchlist(watchlist_id, product_id);
+    });
+});
+    // Remove product from watchlist
+    function removeProductFromWatchlist(watchlist_id, product_id) {
+        $.ajax({
+            url: "/watchlist/remove/" + watchlist_id + "/" + product_id,
+            type: 'POST',
+            data: {
+                'watchlist_id': watchlist_id,
+                'product_id': product_id,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success: function(response) {
+                if (response.status === 'success') {
+                    location.reload();
+                } else {
+                    alert(response.message);
+                }
+            },
+            error: function(xhr, status, error) {
+                alert('An error occurred: ' + error);
+            }
+        });
+    };
+</script>
+
+{% endblock javascript %}
     
