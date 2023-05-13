@@ -43,7 +43,7 @@
             <div class="field">
                 <div class="control">
                     <div class="select is-fullwidth">
-                        <select id="watchlist-dropdown" onChange="buttonReset()">
+                        <select id="watchlist-dropdown" onChange="updateActionButtons()">
                             {% for watchlist in watchlists %}
                             <option value="{{ watchlist.id }}">{{ watchlist.title }}</option>
                             {% endfor %}
@@ -69,17 +69,21 @@
 {% comment %} for some reason moving this js to a static/ file it causes csrf_token errors {% endcomment %}
 <script>
     
-    // unhide the loading indicator
-    $('#loading-indicator').removeClass('is-hidden');
-    
-    // Get product details
     $(document).ready(function() {
+
+        updateActionButtons();
+
+        // Get product details
         $.ajax({
             url: "/get-product-details/",
             type: "POST",
             data: {
                 'product_id': '{{ product.id }}',
                 'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            beforeSend: function() {
+                // unhide the loading indicator
+                $('#loading-indicator').removeClass('is-hidden');   
             },
             success: function(response) {
                 $('#product-description').text(response.description);
@@ -93,14 +97,14 @@
                 $('#loading-indicator').addClass('is-hidden');
             }
         });
-    });
 
-    // Add product to watchlist
-    $(document).ready(function() {
+
+        // Add product to watchlist button
         $('#add-to-watchlist-button').click(function() {
             var selectedWatchlistId = $('#watchlist-dropdown').val();
             var productId = '{{ product.id }}';
             
+            // Send add request via ajax
             $.ajax({
                 url: "/watchlist/add/" + selectedWatchlistId + "/" + productId,
                 method: "POST",
@@ -108,32 +112,21 @@
                     'csrfmiddlewaretoken': '{{ csrf_token }}'
                 },
                 success: function(response) {
-                    
-                    if (response.productAlreadyAdded) {
-                        $('#add-to-watchlist-button').addClass('is-warning');
-                        $('#add-to-watchlist-button').text('Already Added');
-                        $('#add-to-watchlist-button').prop('disabled', true);
-                        return;
-                    } else {
-                        $('#add-to-watchlist-button').addClass('is-success');
-                        $('#add-to-watchlist-button').text('Added');
-                        $('#add-to-watchlist-button').prop('disabled', true);
-                    }
+                    updateActionButtons();
                 },
                 error: function(xhr, status, error) {
                     console.log(error);
                 }
             });
         });
-    });
 
-    // Remove product from watchlist
-    $(document).ready(function() {
+        // Remove product from watchlist
         $('#remove-from-watchlist-button').click(function(e) {
             e.preventDefault();
             var watchlist_id = $('#watchlist-dropdown').val();
             var product_id = '{{ product.id }}';
             
+            // Send remove request via ajax
             $.ajax({
                 url: "/watchlist/remove/" + watchlist_id + "/" + product_id,
                 type: 'POST',
@@ -143,13 +136,7 @@
                     'csrfmiddlewaretoken': '{{ csrf_token }}'
                 },
                 success: function(response) {
-
-                    if (response.status) {
-                        $('#remove-from-watchlist-button').addClass('is-success');
-                        $('#remove-from-watchlist-button').text('Removed');
-                        $('#remove-from-watchlist-button').prop('disabled', true);
-                        return;
-                    }
+                    updateActionButtons();
                 },
                 error: function(xhr, status, error) {
                     console.log(error);
@@ -158,15 +145,37 @@
         });
     });
 
-    function buttonReset(){
-        $('#add-to-watchlist-button').removeClass(['is-success', 'is-warning']);
-        $('#add-to-watchlist-button').text('Add');
-        $('#add-to-watchlist-button').prop('disabled', false);
-        $('#remove-from-watchlist-button').removeClass('is-success');
-        $('#remove-from-watchlist-button').text('Remove');
-        $('#remove-from-watchlist-button').prop('disabled', false);
+    function updateActionButtons () {
+        // Get the currently selected watchlist from the dropdown
+        var selectedWatchlistId = $('#watchlist-dropdown').val();
+        var productId = '{{ product.id }}';
+
+        // If the product is already in the watchlist, disable the add button
+        $.ajax({
+            url: "/is-product-in-watchlist/" + selectedWatchlistId + "/" + productId,
+            type: "POST",
+            data: {
+                watchlist_id: selectedWatchlistId,
+                product_id: productId,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success: function(response) {
+                if (response.status == true) {
+                    // Product is already in the watchlist
+                    $('#add-to-watchlist-button').addClass('is-hidden');
+                    $('#remove-from-watchlist-button').removeClass('is-hidden');
+                    return;
+                } else if (response.status == false) {
+                    // Product is not in the watchlist
+                    $('#add-to-watchlist-button').removeClass('is-hidden');
+                    $('#remove-from-watchlist-button').addClass('is-hidden');
+                } else {
+                    console.log("error");
+                }
+            },
+        })
     }
-    
+
 </script>
 
 {% endblock javascript %}
