@@ -49,4 +49,6 @@ urlpatterns = [
     # ...
 
     # Testing URLs
+    path('profile/', views.profile, name='profile'),
+    path('editprofile/', views.editProfile, name='editprofile'),
 ]

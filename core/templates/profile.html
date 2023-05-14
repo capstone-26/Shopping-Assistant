@@ -1,0 +1,81 @@
+{% extends 'bases/base_page.html' %}
+{% block content %}
+
+<!-- <div class="block">
+    <h1 class="title">{{ user.first_name }}'s Profile</h1>
+</div>
+
+<button class="button is-link is-primary" onclick="window.location.href='/editprofile'">Edit Profile</button>
+
+<div class="block">
+    <h1 class="title">Username : {{ user.username }}</h1>
+    <h1 class="title">First Name : {{ user.first_name }}</h1>
+    <h1 class="title">Last Name : {{ user.last_name }}</h1>
+    <h3 class="title">Bio: {{ user.profile.bio }}</h3>
+    <h3 class="title">Location: {{ user.profile.location}}</h3>
+    <h3 class="title">Birthday: {{ user.profile.birthdate}}</h3>
+</div> -->
+
+<section class="hero is-primary">
+    <div class="hero-body">
+        <div class="container">
+            <div class="columns">
+                <div class="column">
+                    <h1 class="title">
+                        Welcome, {{ user.first_name }}!
+                    </h1>
+                    <h2 class="subtitle">
+                        User Profile
+                    </h2>
+                </div>
+                <div class="column">
+                    <button class="button is-link is-primary is-pulled-right"
+                        onclick="window.location.href='/editprofile'">Edit Profile</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="columns is-multiline">
+            <div class="column is-half">
+                <div class="box">
+                    <h1 class="title">User Profile</h1>
+                    <div class="columns is-multiline">
+                        <div class="column is-half">
+                            <p class="subtitle is-6"><strong>Username:</strong></p>
+                            <p>{{ user.username }}</p>
+                        </div>
+                        <div class="column is-half">
+                            <p class="subtitle is-6"><strong>First Name:</strong></p>
+                            <p>{{ user.first_name }}</p>
+                        </div>
+                        <div class="column is-half">
+                            <p class="subtitle is-6"><strong>Last Name:</strong></p>
+                            <p>{{ user.last_name }}</p>
+                        </div>
+                        <div class="column is-half">
+                            <p class="subtitle is-6"><strong>Bio:</strong></p>
+                            <p>{{ user.profile.bio }}</p>
+                        </div>
+                        <div class="column is-half">
+                            <p class="subtitle is-6"><strong>Location:</strong></p>
+                            <p>{{ user.profile.location }}</p>
+                        </div>
+                        <div class="column is-half">
+                            <p class="subtitle is-6"><strong>Birthday:</strong></p>
+                            <p>{{ user.profile.birthdate }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+
+{% endblock %}

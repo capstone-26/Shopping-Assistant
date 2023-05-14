@@ -3,6 +3,7 @@ from django.shortcuts import render, get_object_or_404,redirect
 from django.http import JsonResponse
 from django.views import View
 from django.views.generic import ListView
+from core.forms import ProfileForm, UserForm
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.renderers import TemplateHTMLRenderer
@@ -15,6 +16,8 @@ from core import scrapers
 from django.contrib.auth import login,logout
 from django.contrib.auth.models import User
 from django.contrib import auth
+from django.contrib.auth.decorators import login_required
+from django.db import transaction
 
 def home(request):
      
@@ -34,7 +37,7 @@ def SignUp(request):
         
         if password1 == password2:
             if User.objects.filter(username=name):
-                messages.info(request,"User is exist")
+                messages.info(request,"User already exists")
                 return redirect(SignUp)
             else:
                 user = User.objects.create_user(username=name,password=password1,email=email)
@@ -292,6 +295,38 @@ def is_product_in_watchlist(request, watchlist_id, product_id):
                 return JsonResponse({'status': False})
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)})
+        
+# User Profile views
+
+
+def profile(request):
+    User = request.user
+    return render(request, 'profile.html', {'user': User})
+
+
+@login_required(login_url='signin/')
+@transaction.atomic
+def editProfile(request):
+    if request.method == 'POST':
+        user_form = UserForm(request.POST, instance=request.user)
+        profile_form = ProfileForm(request.POST, instance=request.user.profile)
+        if user_form.is_valid() and profile_form.is_valid():
+            user = user_form.save()
+            profile = profile_form.save(commit=False)
+            profile.user = user
+            profile.save()
+            messages.success(request, (
+                'Your profile was successfully updated!'))
+            return redirect('/profile')
+        else:
+            messages.error(request, ('Please correct the error below.'))
+    else:
+        user_form = UserForm(instance=request.user)
+        profile_form = ProfileForm(instance=request.user.profile)
+    return render(request, 'editprofile.html', {
+        'user_form': user_form,
+        'profile_form': profile_form
+    })
 
 # Test Views
 # ...

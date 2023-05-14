@@ -1,0 +1,75 @@
+{% extends 'bases/base_page.html' %}
+
+{% block content %}
+
+<section class="hero is-primary">
+    <div class="hero-body">
+        <div class="container">
+            <div class="columns">
+                <div class="column">
+                    <h1 class="title">
+                        Welcome, {{ user.first_name }}!
+                    </h1>
+                    <h2 class="subtitle">
+                        Edit Profile
+                    </h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="columns is-multiline">
+            <div class="column is-half">
+                <div class="box">
+                    <h1 class="title">Edit Profile</h1>
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="columns">
+                            <div class="column">
+                                {{ user_form.first_name.label_tag }}
+                                {{ user_form.first_name }}
+                            </div>
+                            <div class="column">
+                                {{ user_form.last_name.label_tag }}
+                                {{ user_form.last_name }}
+                            </div>
+                        </div>
+
+                        <div class="columns">
+                            <div class="column">
+                                {{ user_form.email.label_tag }}
+                                {{ user_form.email }}
+                            </div>
+                        </div>
+
+                        <div class="columns">
+                            <div class="column">
+                                {{ profile_form.bio.label_tag }}
+                                {{ profile_form.bio }}
+                            </div>
+                            <div class="column">
+                                {{ profile_form.location.label_tag }}
+                                {{ profile_form.location }}
+                            </div>
+                        </div>
+
+                        <div class="columns">
+                            <div class="column">
+                                {{ profile_form.birthdate.label_tag }}
+                                {{ profile_form.birthdate }}
+                            </div>
+                        </div>
+
+                        <button class="button is-link is-primary" type="submit">Update</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+{% endblock %}
