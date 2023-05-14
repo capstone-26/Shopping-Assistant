@@ -32,6 +32,8 @@ urlpatterns = [
     path('product/<str:product_id>', views.ProductView.as_view(), name='product'),
     path('watchlists/', views.WatchlistsView.as_view(), name = 'watchlists'),
     path('watchlist/<int:watchlist_id>', views.WatchlistView.as_view(), name = 'watchlist'),
+    path('profile/', views.profile, name='profile'),
+    path('editprofile/', views.editProfile, name='editprofile'),
 
     # API/data URLs
     path('get-product-details/', views.get_product_details, name='get_product_details'),
@@ -49,6 +51,4 @@ urlpatterns = [
     # ...
 
     # Testing URLs
-    path('profile/', views.profile, name='profile'),
-    path('editprofile/', views.editProfile, name='editprofile'),
 ]
