@@ -5,61 +5,79 @@
 
 <div class="columns is-centered">
     <div class="column">
-        
         <div class="block">
+    
+            
             <div class="card">
+
+                <!-- Product image -->
                 <div class="card-image">
-                    <figure class="image is-4by3">
-                        <img id="product-image" src="{{ product.image_url }}" alt="Product image">
+                    <figure class="image">
+                        <img id="product-image" class="p-4" src="{{ product.image_url }}" alt="Product image">
                     </figure>
                 </div>
+
                 <div class="card-content">
-                    
-                    <div class="media">
-                        <div class="media-right">
-                            <figure class="image is-48x48">
-                                <img src="{% static 'img/' %}{{ product.retailer }}.png" alt="">
-                            </figure>
-                        </div>
-                        <div class="media-right">
-                            <h1 class="title is-6">{{ product.name }}</h1>
-                            <p class="subtitle is-6">${{ product.price }}</p>
-                        </div>
+
+                    <div class="block">
+                        <p class="title">{{ product.name }}</p>
+
+                        <!-- Price tag -->
+                        <span class="tag has-addons is-white is-medium px-0">
+                            <span class="tag is-white is-medium">
+                                <figure class="image is-32x32">
+                                    <img src="{% static 'img/' %}{{ product.retailer }}.png" alt="{{ product.retailer }}">
+                                </figure>
+                            </span>
+                            <span class="tag is-medium has-background-primary-light"><strong>${{ product.price }}</strong></span>
+                        </span>
                     </div>
-                    
-                    <p id="product-description">{{ product.description }}</p>
-                    <progress id="loading-indicator" class="progress is-small is-primary is-hidden" max="100">30%</progress>
+
+                    <!-- Product description box -->
+                    <div id="product-description" class="box mb-0">
+                        <p class="heading">Product Description</p>
+                        <p id="product-description-content">{{ product.description }}</p>
+                    </div>
+
+                    <!-- Loading indicator for when additional details are being gotten -->
+                    <progress id="loading-indicator" class="progress is-small is-primary is-hidden mt-4" max="100">30%</progress>
                 </div>
             </div>
         </div>
         
     </div>
     
+
+    <!-- This is the right side where we have actions related to the products-->
     <div class="column">
         
         <div class="container">
-            <h1 class="title">Add to Watchlist</h1>
+
+            <!-- This is the "Add to watchlist" action -->
+            <div class="box">
+                <h1 class="title is-6">Add to Watchlist</h1>
             
-            <div class="field">
-                <div class="control">
-                    <div class="select is-fullwidth">
-                        <select id="watchlist-dropdown" onChange="updateActionButtons()">
-                            {% for watchlist in watchlists %}
-                            <option value="{{ watchlist.id }}">{{ watchlist.title }}</option>
-                            {% endfor %}
-                        </select>
+                <div class="field">
+                    <div class="control">
+                        <div class="select is-fullwidth">
+                            <select id="watchlist-dropdown" onChange="updateActionButtons()">
+                                {% for watchlist in watchlists %}
+                                <option value="{{ watchlist.id }}">{{ watchlist.title }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="field">
+                    <div class="control">
+                        <button id="add-to-watchlist-button" class="button is-primary">Add</button>
+                        <button id="remove-from-watchlist-button" class="button is-danger">Remove</button>
                     </div>
                 </div>
             </div>
-            
-            <div class="field">
-                <div class="control">
-                    <button id="add-to-watchlist-button" class="button is-primary">Add</button>
-                    <button id="remove-from-watchlist-button" class="button is-danger">Remove</button>
-                </div>
-            </div>
         </div>
-        
+
     </div>
 </div>
 
@@ -68,11 +86,10 @@
 {% block javascript %}
 {% comment %} for some reason moving this js to a static/ file it causes csrf_token errors {% endcomment %}
 <script>
-    
     $(document).ready(function() {
-
+        
         updateActionButtons();
-
+        
         // Get product details
         $.ajax({
             url: "/get-product-details/",
@@ -83,11 +100,18 @@
             },
             beforeSend: function() {
                 // unhide the loading indicator
-                $('#loading-indicator').removeClass('is-hidden');   
+                $('#loading-indicator').removeClass('is-hidden');
+
+                // if the product-description-content text is empty, hide the product description box
+                if ($('#product-description-content').text() == "") {
+                    $('#product-description').addClass('is-hidden');
+                }
             },
             success: function(response) {
-                $('#product-description').text(response.description);
-                // $('#product-image').attr('src', response.image_url);
+                $('#product-description-content').text(response.description);
+
+                // unhide the product description box
+                $('#product-description').removeClass('is-hidden');
             },
             error: function(xhr, status, error) {
                 console.log(xhr.responseText);
@@ -97,8 +121,8 @@
                 $('#loading-indicator').addClass('is-hidden');
             }
         });
-
-
+        
+        
         // Add product to watchlist button
         $('#add-to-watchlist-button').click(function() {
             var selectedWatchlistId = $('#watchlist-dropdown').val();
@@ -119,7 +143,7 @@
                 }
             });
         });
-
+        
         // Remove product from watchlist
         $('#remove-from-watchlist-button').click(function(e) {
             e.preventDefault();
@@ -144,12 +168,12 @@
             });
         });
     });
-
+    
     function updateActionButtons () {
         // Get the currently selected watchlist from the dropdown
         var selectedWatchlistId = $('#watchlist-dropdown').val();
         var productId = '{{ product.id }}';
-
+        
         // If the product is already in the watchlist, disable the add button
         $.ajax({
             url: "/is-product-in-watchlist/" + selectedWatchlistId + "/" + productId,
@@ -175,7 +199,7 @@
             },
         })
     }
-
+    
 </script>
 
 {% endblock javascript %}
