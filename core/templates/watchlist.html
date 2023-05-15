@@ -1,45 +1,70 @@
 {% extends 'bases/base_page.html' %}
 
+{% load static %}
+
 
 {% block content %}
-    
+
+
+
 <div class="block">
-    <h1 class="title">{{ watchlist.title }}</h1>
+    
+    <nav class="level">
+        <div class="level-left">
+            <div class="level-item">
+                <a href="#" onclick="history.back();" class="title is-4 has-text-weight-light has-text-link">My Watchlists</a>
+            </div>
+            <div class="level-item">
+                <span class="mr-2 icon is-small">
+                    <i class="fas fa-caret-right"></i>
+                </span>
+            </div>
+            <div class="level-item">
+                <h1 class="title is-4">{{ watchlist.title }}</h1>
+            </div>
+        </div>
+    </nav>
+    
 </div>
 
 <div class="block">
-    <div class="columns is-centered">
-        <div class="column">
-
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Image</th>
-                        <th>Name</th>
-                        <th>Price</th>
-                        <th>Retailer</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for product in watchlist.products.all %}
-                        <tr>
-                            <td><img class="image is-32x32" src="{{ product.image_url }}" alt="{{ product.name }}" width="100px"></td>
-                            <td><a href="{% url 'product' product.id %}"> {{ product.name }}</a></td>
-                            <td>{{ product.price }}</td>
-                            <td>{{ product.retailer }}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-
+    <!-- Actions for the watchlist go here -->
+    <!-- Replace this article with the edit and other buttons :) -->
+    <article class="message is-warning">
+        <div class="message-body">
+            <strong>Development in progress</strong>
+            <p>Watchlist actions are still in development. Please check back later.</p>
         </div>
-        <div class="column has-background-link-light">
+    </article>
+    
+</div>
 
-            <p>This is where I will add "edit watchlist stuff"</p>
-
-        </div>
-    </div>
+<div class="block">
+    <!-- Watchlist products list-->
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Retailer</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in watchlist.products.all %}
+            <tr>
+                <td><img class="image is-32x32" src="{{ product.image_url }}" alt="{{ product.name }}" width="100px"></td>
+                <td><a href="{% url 'product' product.id %}"> {{ product.name }}</a></td>
+                <td>{{ product.price }}</td>
+                <td>
+                    <figure class="image is-32x32">
+                        <img src="{% static 'img/' %}{{ product.retailer }}.png" alt="">
+                    </figure>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 
 {% endblock content %}
-    
