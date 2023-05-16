@@ -87,6 +87,26 @@ class SearchView(ListView):
         context = super().get_context_data(**kwargs)
         context['query'] = self.request.GET.get('q')
         return context
+    
+
+class SearchView_Watchlist(ListView):
+    model = Product
+    template_name = 'addProduct.html'
+
+    def get_queryset(self):
+        if self.request.GET.get('q') == None:
+            object_list = Product.objects.none()
+        else:
+            query = self.request.GET.get('q')
+            object_list = Product.objects.filter(name__icontains=query)
+
+        return object_list
+
+    def get_context_data(self, **kwargs: Any):
+        context = super().get_context_data(**kwargs)
+        context['query'] = self.request.GET.get('q')
+        context['another_value'] = self.request.GET.get('another_value')
+        return context
 
 class ProductView(View):
     model = Product
@@ -176,11 +196,6 @@ class ProductView(View):
 
 
 # API  or Data Views
-
-#def displayAllProducts(request, product_id):
-   
-   #API call to return the search results
-   # May have to speak to Shey
 
 def get_product_details(request):
     # Get product id from AJAX request

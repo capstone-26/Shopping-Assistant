@@ -32,6 +32,7 @@
                             <td>{{ product.price }}</td>
                             <td>{{ product.retailer }}</td>
                             <td><button class="remove-from-watchlist-button button is-danger" data-product-id="{{ product.id }}">Remove</button></td>
+                            
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -40,7 +41,17 @@
         </div>
         <div class="column has-background-link-light">
             <div class="column">
-                <button class="button is-link is-light" onclick="redirectToWatchlistAddProductPage('{{ watchlist.id }}')">Add product to Watchlist</button>
+                <form action="{% url 'addProduct' %}" method="get">
+                    <div class="field">
+                        <p class="control has-icons-left">
+                            <input id="searchbar" class="input is-primary" name="q" type="text" placeholder="Search for a product...">
+                            <span class="icon is-small is-left">
+                                <i class="fas fa-search"></i>
+                            </span>
+                        </p>
+                    </div>
+                    <input type="hidden" name="another_value" value="{{ watchlist.id }}">
+                </form>
             </div>
         </div>
     </div>
