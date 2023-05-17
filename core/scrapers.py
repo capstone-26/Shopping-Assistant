@@ -72,14 +72,12 @@ class ProductDetailsScraper(Scraper):
             return self._scrape_woolworths(product_code)
 
         elif retailer == "coles" or retailer == None:
-            # self.base_url = "https://shop.coles.com.au/"
-            # return self._scrape_coles(product_code)
-            pass
+            self.base_url = "https://shop.coles.com.au/product/"
+            return self._scrape_coles(product_code)
 
         elif retailer == "aldi" or retailer == None:
-            # self.base_url = "https://www.aldi.com.au/"
-            # return self._scrape_aldi(product_code)
-            pass
+            self.base_url = "https://www.aldi.com.au/groceries/"
+            return self._scrape_aldi(product_code)
 
 
     # Scrapes details from a specific product's page 
@@ -102,7 +100,38 @@ class ProductDetailsScraper(Scraper):
         
         return product_details
 
-
+    # Scrapes details from a specific product's page 
+    def _scrape_coles(self, product_code):
+        product_url = f"{self.base_url}{product_code}"
+        self.driver.get(product_url)
+        try:
+            # Wait for containing elements to load
+            product_description = WebDriverWait(self.driver, self.TIMEOUT).until(EC.presence_of_element_located((By.CSS_SELECTOR, "div.coles-targeting-SectionHeaderDescription"))).text
+        except TimeoutException:
+            self.logger.error(f"Timed out waiting for product details to load")
+            return
+        product_details = {
+            "description": product_description,
+        }
+        
+        return product_details
+        
+    # Scrapes details from a specific product's page 
+    def _scrape_aldi(self, product_code):
+        product_url = f"{self.base_url}{product_code}"
+        self.driver.get(product_url)
+        try:
+            # Wait for containing elements to load
+            product_description = WebDriverWait(self.driver, self.TIMEOUT).until(EC.presence_of_element_located((By.CSS_SELECTOR, "div.detail-tabcontent"))).text
+        except TimeoutException:
+            self.logger.error(f"Timed out waiting for product details to load")
+            return
+        product_details = {
+            "description": product_description,
+        }
+        return product_details
+        
+    
 
 
 """
