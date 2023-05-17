@@ -1,0 +1,96 @@
+{% extends 'bases/base_page.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="block">
+    {% comment %} <h1 class="title">Search</h1> {% endcomment %}
+</div>
+
+<div class="block">
+    
+    <div class="columns is-centered">
+        <div class="column is-half">
+
+            <div class="block">
+                {% comment %} {% include 'components/product_searchbar.html' %} {% endcomment %}
+                <h1 class="title">Showing results for "<span class="is-italic">{{ query }}</span>"</h1>
+                <h1 class="title">Showing results for watchlist id = "<span class="is-italic">{{ another_value }}</span>"</h1>
+            </div>
+
+            <div class="block">
+
+                {% comment %} search results {% endcomment %}
+                {% if product_list %}
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Retailer</th>
+                            <th>Image</th>
+                            <th>Product Name</th>
+                            <th>Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in product_list %}      
+                        <tr>
+                            <td>
+                                <figure class="image is-32x32">
+                                    <img src="{% static 'img/' %}{{ product.retailer }}.png" alt="">
+                                </figure>
+                            </td>
+                            <td>
+                                <figure class="image is-64x64">
+                                    <img src="{{ product.image_url }}" alt="">
+                                </figure>
+                            </td>
+                            <td><a href="{% url 'product' product.id %}">{{ product.name }}</a></td>
+                            <td>${{ product.price }}</td>
+                            <td><button class="add-to-watchlist-button button is-primary" data-product-id="{{ product.id }}">Add</button></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+    
+</div>
+
+{% endblock content %}
+
+{% block javascript %}
+<script>
+
+    $(document).ready(function() {
+        $('.add-to-watchlist-button').click(function() {
+            var selectedWatchlistId = '{{ another_value }}';
+            let watchlist_ID_Int = parseInt(selectedWatchlistId);
+            var product_id = $(this).data('product-id');
+
+            $.ajax({
+                url: "/watchlist/add/" + watchlist_ID_Int + "/" + product_id,
+                method: "POST",
+                data: {
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        //alert("hello");
+                    } else {
+                        //alert(response.message);
+                    }
+                    window.location.href = '/watchlist/'+watchlist_ID_Int;
+                },
+                error: function(xhr, status, error) {
+                    alert('An error occurred: ' + error);
+                }
+            });
+        });
+    });
+
+</script>
+{% endblock javascript %}

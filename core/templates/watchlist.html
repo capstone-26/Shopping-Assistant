@@ -28,43 +28,96 @@
 </div>
 
 <div class="block">
-    <!-- Actions for the watchlist go here -->
-    <!-- Replace this article with the edit and other buttons :) -->
-    <article class="message is-warning">
-        <div class="message-body">
-            <strong>Development in progress</strong>
-            <p>Watchlist actions are still in development. Please check back later.</p>
-        </div>
-    </article>
-    
-</div>
+    <div class="columns is-centered">
+        <div class="column">
 
-<div class="block">
-    <!-- Watchlist products list-->
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Image</th>
-                <th>Name</th>
-                <th>Price</th>
-                <th>Retailer</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for product in watchlist.products.all %}
-            <tr>
-                <td><img class="image is-32x32" src="{{ product.image_url }}" alt="{{ product.name }}" width="100px"></td>
-                <td><a href="{% url 'product' product.id %}"> {{ product.name }}</a></td>
-                <td>{{ product.price }}</td>
-                <td>
-                    <figure class="image is-32x32">
-                        <img src="{% static 'img/' %}{{ product.retailer }}.png" alt="">
-                    </figure>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Retailer</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in watchlist.products.all %}
+                        <tr>
+                            <td><img class="image is-32x32" src="{{ product.image_url }}" alt="{{ product.name }}" width="100px"></td>
+                            <td><a href="{% url 'product' product.id %}"> {{ product.name }}</a></td>
+                            <td>{{ product.price }}</td>
+                            <td>
+                                <figure class="image is-32x32">
+                                    <img src="{% static 'img/' %}{{ product.retailer }}.png" alt="">
+                                </figure>
+                            </td>
+                            <td><button class="remove-from-watchlist-button button is-danger" data-product-id="{{ product.id }}">Remove</button></td>
+                            
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+        <div class="column has-background-link-light">
+            <div class="column">
+                <form action="{% url 'addProduct' %}" method="get">
+                    <div class="field">
+                        <p class="control has-icons-left">
+                            <input id="searchbar" class="input is-primary" name="q" type="text" placeholder="Search for a product...">
+                            <span class="icon is-small is-left">
+                                <i class="fas fa-search"></i>
+                            </span>
+                        </p>
+                    </div>
+                    <input type="hidden" name="another_value" value="{{ watchlist.id }}">
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
 {% endblock content %}
+
+{% block javascript %}
+<script>
+
+$(document).ready(function() {
+    $('.remove-from-watchlist-button').click(function(e) {
+        e.preventDefault();
+        var watchlist_id = '{{ watchlist.id }}';
+        var product_id = $(this).data('product-id');
+        removeProductFromWatchlist(watchlist_id, product_id);
+    });
+});
+    // Remove product from watchlist
+    function removeProductFromWatchlist(watchlist_id, product_id) {
+        $.ajax({
+            url: "/watchlist/remove/" + watchlist_id + "/" + product_id,
+            type: 'POST',
+            data: {
+                'watchlist_id': watchlist_id,
+                'product_id': product_id,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success: function(response) {
+                if (response.status === 'success') {
+                    location.reload();
+                } else {
+                    alert(response.message);
+                }
+            },
+            error: function(xhr, status, error) {
+                alert('An error occurred: ' + error);
+            }
+        });
+    };
+
+    function redirectToWatchlistAddProductPage(watchlistId) {
+        window.location.href = "/watchlistAddProduct/" + watchlistId;
+    }
+
+</script>
+
+{% endblock javascript %}
+    

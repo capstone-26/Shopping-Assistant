@@ -34,6 +34,7 @@ urlpatterns = [
     path('watchlist/<int:watchlist_id>', views.WatchlistView.as_view(), name = 'watchlist'),
     path('profile/', views.profile, name='profile'),
     path('editprofile/', views.editProfile, name='editprofile'),
+    path('addProductToWatchlist/', views.SearchView_Watchlist.as_view(), name = 'addProduct'),
 
     # API/data URLs
     path('get-product-details/', views.get_product_details, name='get_product_details'),
