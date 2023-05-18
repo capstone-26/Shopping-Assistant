@@ -9,18 +9,40 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
 
         try: 
-            self.stdout.write('Gathering latest products...')
-            # woolworths_products = scrapers.AllProductsScraper().scrape("woolworths")
-            woolworths_products = scrapers.AllProductsScraper().scrape()
-
+            self.stdout.write('Gathering latest woolworth products...')
+            woolworths_products = scrapers.AllProductsScraper().scrape("woolworths")
         except Exception as e:
             self.stdout.write(self.style.ERROR(f"FAILED: {e}"))
             return
+        self.stdout.write(self.style.SUCCESS(f"woolworth OK")) 
+        self.update_database(woolworths_products)
         
-        self.stdout.write(self.style.SUCCESS(f"OK"))        
+        
+        try: 
+            self.stdout.write('Gathering latest coles products...')
+            coles_products = scrapers.AllProductsScraper().scrape("coles")
+        except Exception as e:
+            self.stdout.write(self.style.ERROR(f"FAILED: {e}"))
+            return
+        self.stdout.write(self.style.SUCCESS(f"coles OK")) 
+        self.update_database(coles_products)
+        
 
+        try: 
+            self.stdout.write('Gathering latest aldi products...')
+            aldi_products = scrapers.AllProductsScraper().scrape("aldi")
+        except Exception as e:
+            self.stdout.write(self.style.ERROR(f"FAILED: {e}"))
+            return
+        self.stdout.write(self.style.SUCCESS(f"aldi OK")) 
+        self.update_database(aldi_products)
+        
+        
+        
+    def update_database(self, productes):
+    
         self.stdout.write('Updating database...')
-        for category_name, category_products in woolworths_products.items():
+        for category_name, category_products in products.items():
             for product in category_products:
                 try:
                     # Get existing or create new product
@@ -43,3 +65,4 @@ class Command(BaseCommand):
                     self.stdout.write(self.style.ERROR(f"FAILED: {product[e]}"))
                     pass
         self.stdout.write(self.style.SUCCESS("OK"))
+        
