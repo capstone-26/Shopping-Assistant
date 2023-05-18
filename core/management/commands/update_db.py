@@ -39,7 +39,7 @@ class Command(BaseCommand):
         
         
         
-    def update_database(self, productes):
+    def update_database(self, products):
     
         self.stdout.write('Updating database...')
         for category_name, category_products in products.items():
