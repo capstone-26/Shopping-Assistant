@@ -46,7 +46,9 @@ class Command(BaseCommand):
             for product in category_products:
                 try:
                     # Get existing or create new product
-                    product_id = f"{product['retailer']}-{product['retailer_code']}"
+                    # !!! replace for aldi issue
+                    replace = product['retailer_code'].replace("/", "")
+                    product_id = f"{product['retailer']}-{replace}"
                     product_obj = Product.objects.filter(id=product_id).first() or Product(id=product_id)
 
                     # Update product fields
