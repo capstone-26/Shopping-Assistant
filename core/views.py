@@ -18,7 +18,7 @@ from django.contrib.auth.models import User
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
-
+ 
 def home(request):
      
     if  request.user.is_authenticated:
@@ -118,7 +118,7 @@ class ProductView(View):
     def get(self, request, product_id):
         print(product_id)
         product = Product.objects.get(id=product_id)
-        return render(request, 'product.html', {'product': product})
+        return render(request, 'product.html', {'viewingProduct': product})
     
 class WatchlistsView(View):
     model = Watchlist
@@ -191,13 +191,46 @@ class ProductView(View):
         print(product_id)
         product = Product.objects.get(id=product_id)
         watchlists = Watchlist.objects.filter(owner=request.user)
+        stop_words = set(['the', 'and', 'a', 'an', 'in', 'on', 'at', 'is', 'it', 'of', 'for','woolworths', 'coles', 'aldi'])  # Define your own set of stopwords
+        description = product.name
+        description = description.lower()
+
+        # Remove punctuation
+        punctuation = '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~'
+        description = description.translate(str.maketrans('', '', punctuation))
+
+        # Split into words
+        words = description.split()
+
+        # Remove stopwords and words containing digits
+        keywords = [word for word in words if word not in stop_words and not any(char.isdigit() for char in word)]
+
+        combined_list = []
+
+        for keyword in keywords:
+            similar_lists = Product.objects.filter(name__icontains=keyword)
+            combined_list.extend(similar_lists)
+
+        combined_list = list(set(combined_list))  # Remove duplicate items
+
+        
         return render(request, 'product.html', {
-            'product': product,
+            'viewingProduct': product,
             'watchlists': watchlists,
+            'similarlists':combined_list,
             })
-
-
-
+class CompareProductView(View):
+    model = Product
+    template_name = 'compareProduct.html'
+    def get(self, request, product_id,viewingproduct_id):
+        
+        product = Product.objects.get(id=product_id)
+        product2 = Product.objects.get(id=viewingproduct_id)
+        return render(request, 'compareProduct.html', {
+            'viewingProduct': product2,
+            'Product': product,
+             
+            })
 # API  or Data Views
 
 def get_product_details(request):
