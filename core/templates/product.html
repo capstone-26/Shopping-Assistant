@@ -30,6 +30,7 @@
                                 </figure>
                             </span>
                             <span class="tag is-medium has-background-primary-light"><strong>${{ viewingProduct.price }}</strong></span>
+                            <button id="store-price-button" class="button is-info">Save Price</button>
                         </span>
                     </div>
 
@@ -239,6 +240,28 @@
         })
     }
     
+
+    // Save historical price of product
+    $('#store-price-button').click(function() {
+        var productId = '{{ viewingProduct.id }}';
+        var price = parseFloat('{{ viewingProduct.price }}');
+        
+        // Send add request via ajax
+        $.ajax({
+            url: "/store-historical-price/" + productId,
+            method: "POST",
+            data: {
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success: function(response) {
+                updateActionButtons();
+            },
+            error: function(xhr, status, error) {
+                console.log(error);
+            }
+        });
+    });
+
 </script>
 
 {% endblock javascript %}
