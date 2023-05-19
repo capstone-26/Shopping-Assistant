@@ -13,30 +13,30 @@
                 <!-- Product image -->
                 <div class="card-image">
                     <figure class="image">
-                        <img id="product-image" class="p-4" src="{{ product.image_url }}" alt="Product image">
+                        <img id="product-image" class="p-4" src="{{ viewingProduct.image_url }}" alt="Product image">
                     </figure>
                 </div>
 
                 <div class="card-content">
 
                     <div class="block">
-                        <p class="title">{{ product.name }}</p>
+                        <p class="title">{{ viewingProduct.name }}</p>
 
                         <!-- Price tag -->
                         <span class="tag has-addons is-white is-medium px-0">
                             <span class="tag is-white is-medium">
                                 <figure class="image is-32x32">
-                                    <img src="{% static 'img/' %}{{ product.retailer }}.png" alt="{{ product.retailer }}">
+                                    <img src="{% static 'img/' %}{{ viewingProduct.retailer }}.png" alt="{{ viewingProduct.retailer }}">
                                 </figure>
                             </span>
-                            <span class="tag is-medium has-background-primary-light"><strong>${{ product.price }}</strong></span>
+                            <span class="tag is-medium has-background-primary-light"><strong>${{ viewingProduct.price }}</strong></span>
                         </span>
                     </div>
 
                     <!-- Product description box -->
                     <div id="product-description" class="box mb-0">
                         <p class="heading">Product Description</p>
-                        <p id="product-description-content">{{ product.description }}</p>
+                        <p id="product-description-content">{{ viewingProduct.description }}</p>
                     </div>
 
                     <!-- Loading indicator for when additional details are being gotten -->
@@ -77,8 +77,47 @@
                 </div>
             </div>
         </div>
+        <div class="container">
+            <div class="box">
+                <h1 class="title is-6">You May Also Like</h1>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Name</th>
+                            <th>Price</th>
+                            <th>Retailer</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in similarlists %}
+                            <tr>
+                                <td><img class="image is-32x32" src="{{ product.image_url }}" alt="{{ product.name }}" width="100px"></td>
+                                <td><a href="{% url 'product' product.id %}"> {{ product.name }}</a></td>
+                                <td>{{ product.price }}</td>
+                                <td>
+                                    <figure class="image is-32x32">
+                                        <img src="{% static 'img/' %}{{ product.retailer }}.png" alt="">
+                                    </figure>
+                                </td>
+                                <td><a  href="{% url 'compareProduct' product.id viewingProduct.id %}" data-product-id="{{ product.id }}">Compare</a></td>  
+                            </tr>
+                        {% endfor %}
+                        <tr>
+                          <td colspan="3" align="right"><span id="total-cost" style="font-weight: bold;"></td>
+                        </tr>
+                      </tbody>
+                </table>
+            </div>
+
+        </div>
 
     </div>
+   
+        
+       
+
+    
 </div>
 
 {% endblock %}
