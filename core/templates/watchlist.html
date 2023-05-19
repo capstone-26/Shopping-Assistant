@@ -1,0 +1,203 @@
+{% extends 'bases/base_page.html' %}
+
+{% load static %}
+
+
+{% block content %}
+
+
+
+<div class="block">
+    
+    <nav class="level">
+        <div class="level-left">
+            <div class="level-item">
+                <a href="#" onclick="history.back();" class="title is-4 has-text-weight-light has-text-link">My Watchlists</a>
+            </div>
+            <div class="level-item">
+                <span class="mr-2 icon is-small">
+                    <i class="fas fa-caret-right"></i>
+                </span>
+            </div>
+            <div class="level-item">
+                <h1 class="title is-4">{{ watchlist.title }}</h1>
+            </div>
+        </div>
+    </nav>
+    
+</div>
+
+<div class="block">
+    <div class="columns is-centered">
+        <div class="column">
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Retailer</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in watchlist.products.all %}
+                        <tr>
+                            <td><img class="image is-32x32" src="{{ product.image_url }}" alt="{{ product.name }}" width="100px"></td>
+                            <td><a href="{% url 'product' product.id %}"> {{ product.name }}</a></td>
+                            <td>{{ product.price }}</td>
+                            <td>
+                                <figure class="image is-32x32">
+                                    <img src="{% static 'img/' %}{{ product.retailer }}.png" alt="">
+                                </figure>
+                            </td>
+                            <td><button class="remove-from-watchlist-button button is-danger" data-product-id="{{ product.id }}">Remove</button></td>
+                            
+                        </tr>
+                    {% endfor %}
+                    <tr>
+                      <td colspan="3" align="right"><span id="total-cost" style="font-weight: bold;"></td>
+                    </tr>
+                  </tbody>
+            </table>
+
+        </div>
+
+        <button class="js-modal-trigger button is-link is-primary" data-target="add-modal">
+            Add Product to watchlist
+        </button>
+
+        <div class="modal" id="add-modal">
+            <div class="modal-background"></div>
+            <div class="modal-card">
+                <header class="modal-card-head">
+                    <p class="modal-card-title">Add Product to {{ watchlist.title }}</p>
+                    <button class="delete" aria-label="close"></button>
+                </header>
+                <section class="modal-card-body">
+                    <div class="block">
+                        <form action="{% url 'addProduct' %}" method="get">
+                            <div class="field">
+                                <p class="control has-icons-left">
+                                    <input id="searchbar" class="input is-primary" name="q" type="text" placeholder="Search for a product...">
+                                    <span class="icon is-small is-left">
+                                        <i class="fas fa-search"></i>
+                                    </span>
+                                </p>
+                            </div>
+                            <input type="hidden" name="another_value" value="{{ watchlist.id }}">
+                        </form>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block javascript %}
+<script>
+
+$(document).ready(function() {
+    $('.remove-from-watchlist-button').click(function(e) {
+        e.preventDefault();
+        var watchlist_id = '{{ watchlist.id }}';
+        var product_id = $(this).data('product-id');
+        removeProductFromWatchlist(watchlist_id, product_id);
+    });
+});
+    // Remove product from watchlist
+    function removeProductFromWatchlist(watchlist_id, product_id) {
+        $.ajax({
+            url: "/watchlist/remove/" + watchlist_id + "/" + product_id,
+            type: 'POST',
+            data: {
+                'watchlist_id': watchlist_id,
+                'product_id': product_id,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success: function(response) {
+                if (response.status === 'success') {
+                    location.reload();
+                } else {
+                    alert(response.message);
+                }
+            },
+            error: function(xhr, status, error) {
+                alert('An error occurred: ' + error);
+            }
+        });
+    };
+
+    function redirectToWatchlistAddProductPage(watchlistId) {
+        window.location.href = "/watchlistAddProduct/" + watchlistId;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Functions to open and close a modal
+        function openModal($el) {
+          $el.classList.add('is-active');
+        }
+      
+        function closeModal($el) {
+          $el.classList.remove('is-active');
+        }
+      
+        function closeAllModals() {
+          (document.querySelectorAll('.modal') || []).forEach(($modal) => {
+            closeModal($modal);
+          });
+        }
+      
+        // Add a click event on buttons to open a specific modal
+        (document.querySelectorAll('.js-modal-trigger') || []).forEach(($trigger) => {
+          const modal = $trigger.dataset.target;
+          const $target = document.getElementById(modal);
+      
+          $trigger.addEventListener('click', () => {
+            openModal($target);
+          });
+        });
+      
+        // Add a click event on various child elements to close the parent modal
+        (document.querySelectorAll('.modal-close, .modal-card-head .delete, .modal-card-foot .button, .modal-card-body .close') || []).forEach(($close) => {
+          const $target = $close.closest('.modal');
+      
+          $close.addEventListener('click', () => {
+            closeModal($target);
+          });
+        });
+      
+        // Add a keyboard event to close all modals
+        document.addEventListener('keydown', (event) => {
+          const e = event || window.event;
+      
+          if (e.keyCode === 27) { // Escape key
+            closeAllModals();
+          }
+        });
+
+        function calculateTotalCost() {
+            // Retrieve all product prices from the table rows
+            var prices = document.querySelectorAll("tbody td:nth-child(3)");
+
+            // Calculate the total cost
+            var totalCost = 0;
+            for (var i = 0; i < prices.length; i++) {
+                totalCost += parseFloat(prices[i].textContent);
+            }
+
+            // Update the total cost element
+            var totalCostElement = document.getElementById("total-cost");
+            totalCostElement.textContent = "Total Cost: " + totalCost.toFixed(2); // Adjust decimal places as needed
+        }
+
+        // Call the calculateTotalCost function when the page loads
+        calculateTotalCost();
+      });
+
+</script>
+
+{% endblock javascript %}
+    

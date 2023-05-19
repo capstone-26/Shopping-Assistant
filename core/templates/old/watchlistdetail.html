@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% load rest_framework %}
+
+<h1>{{ watchlist.name }}</h1>
+
+<div class="middle">
+    <div class="buttons_container">
+        <button class="myButton" id="open-btn">Add Item</button>
+	    <div id="popup">
+			<div class="popup-content">
+				<h2>Select Item</h2>
+				<ul>
+					<li><input type="checkbox" id="item1" name="item1"><label for="item1">Item 1</label></li>
+				</ul>
+				<div class="popup-buttons">
+					<button id="cancel-btn">Cancel</button>
+					<button id="confirm-btn">Confirm Selection</button>
+				</div>
+			</div>
+		</div>
+        <a href="#" class="myButton">Export Watchlist</a>
+        <a href="#" class="myButton">Export As Shopping List</a>
+    </div>
+</div>
+<div class="table">
+    <table class="table-body">
+        <tr class="title">
+          <th><input type="checkbox"></th>
+          <th></th>
+          <th>Product Name</th>
+          <th></th>
+        </tr>
+        <tr>
+          <td><input type="checkbox"></td>
+          <td><i class="fas fa-ellipsis-v"></i><i class="fas fa-ellipsis-v"></i></td>
+          <td>{{ watchlist.userID }}</td>
+          <td><a style="color: deepskyblue;" href="#">Detail</a></td>
+           <td><a style="color: deepskyblue;" href="#">Remove</a></td>
+        </tr>
+      </table>
+</div>
+<script>
+
+const openBtn = document.getElementById("open-btn");
+const popup = document.getElementById("popup");
+const cancelBtn = document.getElementById("cancel-btn");
+const confirmBtn = document.getElementById("confirm-btn");
+
+openBtn.addEventListener("click", function() {
+  popup.style.display = "block";
+});
+
+cancelBtn.addEventListener("click", function() {
+  popup.style.display = "none";
+});
+
+confirmBtn.addEventListener
+
+
+
+</script>
+
+{% endblock %}

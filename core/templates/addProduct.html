@@ -15,6 +15,7 @@
             <div class="block">
                 {% comment %} {% include 'components/product_searchbar.html' %} {% endcomment %}
                 <h1 class="title">Showing results for "<span class="is-italic">{{ query }}</span>"</h1>
+                <h1 class="title">Showing results for watchlist id = "<span class="is-italic">{{ another_value }}</span>"</h1>
             </div>
 
             <div class="block">
@@ -45,6 +46,7 @@
                             </td>
                             <td><a href="{% url 'product' product.id %}">{{ product.name }}</a></td>
                             <td>${{ product.price }}</td>
+                            <td><button class="add-to-watchlist-button button is-primary" data-product-id="{{ product.id }}">Add</button></td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -62,9 +64,33 @@
 
 {% block javascript %}
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        document.getElementById("searchbar").value = "{{ query }}";
-        document.getElementById("searchbar").focus();
+
+    $(document).ready(function() {
+        $('.add-to-watchlist-button').click(function() {
+            var selectedWatchlistId = '{{ another_value }}';
+            let watchlist_ID_Int = parseInt(selectedWatchlistId);
+            var product_id = $(this).data('product-id');
+
+            $.ajax({
+                url: "/watchlist/add/" + watchlist_ID_Int + "/" + product_id,
+                method: "POST",
+                data: {
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        //alert("hello");
+                    } else {
+                        //alert(response.message);
+                    }
+                    window.location.href = '/watchlist/'+watchlist_ID_Int;
+                },
+                error: function(xhr, status, error) {
+                    alert('An error occurred: ' + error);
+                }
+            });
+        });
     });
+
 </script>
 {% endblock javascript %}

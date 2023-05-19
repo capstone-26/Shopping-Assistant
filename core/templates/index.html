@@ -1,7 +1,16 @@
-{% extends 'base.html' %}
+{% extends 'bases/base_page.html' %}
 
 {% block content %}
 
-<h1>Home page</h1>
+<div class="block">
+    {% if user.is_authenticated %}
+        <h1 class="title">Hello, {{ user.username }}!</h1>      
+    {% endif %}   
+</div>
+<div class="block">
+    <h2 class="subtitle">This is the landing page and everything should begin from here.</h2>
+</div>
+<hr>
+
 
 {% endblock %}

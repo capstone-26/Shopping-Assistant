@@ -30,7 +30,6 @@
                                 </figure>
                             </span>
                             <span class="tag is-medium has-background-primary-light"><strong>${{ viewingProduct.price }}</strong></span>
-                            <button id="store-price-button" class="button is-info">Save Price</button>
                         </span>
                     </div>
 
@@ -51,68 +50,43 @@
 
     <!-- This is the right side where we have actions related to the products-->
     <div class="column">
-        
-        <div class="container">
+        <div class="card">
 
-            <!-- This is the "Add to watchlist" action -->
-            <div class="box">
-                <h1 class="title is-6">Add to Watchlist</h1>
-            
-                <div class="field">
-                    <div class="control">
-                        <div class="select is-fullwidth">
-                            <select id="watchlist-dropdown" onChange="updateActionButtons()">
-                                {% for watchlist in watchlists %}
-                                <option value="{{ watchlist.id }}">{{ watchlist.title }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="field">
-                    <div class="control">
-                        <button id="add-to-watchlist-button" class="button is-primary">Add</button>
-                        <button id="remove-from-watchlist-button" class="button is-danger">Remove</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="container">
-            <div class="box">
-                <h1 class="title is-6">You May Also Like</h1>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Image</th>
-                            <th>Name</th>
-                            <th>Price</th>
-                            <th>Retailer</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for product in similarlists %}
-                            <tr>
-                                <td><img class="image is-32x32" src="{{ product.image_url }}" alt="{{ product.name }}" width="100px"></td>
-                                <td><a href="{% url 'product' product.id %}"> {{ product.name }}</a></td>
-                                <td>{{ product.price }}</td>
-                                <td>
-                                    <figure class="image is-32x32">
-                                        <img src="{% static 'img/' %}{{ product.retailer }}.png" alt="">
-                                    </figure>
-                                </td>
-                                <td><a  href="{% url 'compareProduct' product.id viewingProduct.id %}" data-product-id="{{ product.id }}">Compare</a></td>  
-                            </tr>
-                        {% endfor %}
-                        <tr>
-                          <td colspan="3" align="right"><span id="total-cost" style="font-weight: bold;"></td>
-                        </tr>
-                      </tbody>
-                </table>
+            <!-- Product image -->
+            <div class="card-image">
+                <figure class="image">
+                    <img id="product-image" class="p-4" src="{{ Product.image_url }}" alt="Product image">
+                </figure>
             </div>
 
-        </div>
+            <div class="card-content">
 
+                <div class="block">
+                    <p class="title">{{ Product.name }}</p>
+
+                    <!-- Price tag -->
+                    <span class="tag has-addons is-white is-medium px-0">
+                        <span class="tag is-white is-medium">
+                            <figure class="image is-32x32">
+                                <img src="{% static 'img/' %}{{ Product.retailer }}.png" alt="{{ Product.retailer }}">
+                            </figure>
+                        </span>
+                        <span class="tag is-medium has-background-primary-light"><strong>${{ Product.price }}</strong></span>
+                    </span>
+                </div>
+
+                <!-- Product description box -->
+                <div id="product-description" class="box mb-0">
+                    <p class="heading">Product Description</p>
+                    <p id="product-description-content">{{ Product.description }}</p>
+                </div>
+
+                <!-- Loading indicator for when additional details are being gotten -->
+                <progress id="loading-indicator" class="progress is-small is-primary is-hidden mt-4" max="100">30%</progress>
+            </div>
+        </div>
+       
+    
     </div>
    
         
@@ -240,28 +214,6 @@
         })
     }
     
-
-    // Save historical price of product
-    $('#store-price-button').click(function() {
-        var productId = '{{ viewingProduct.id }}';
-        var price = parseFloat('{{ viewingProduct.price }}');
-        
-        // Send add request via ajax
-        $.ajax({
-            url: "/store-historical-price/" + productId,
-            method: "POST",
-            data: {
-                'csrfmiddlewaretoken': '{{ csrf_token }}'
-            },
-            success: function(response) {
-                updateActionButtons();
-            },
-            error: function(xhr, status, error) {
-                console.log(error);
-            }
-        });
-    });
-
 </script>
 
 {% endblock javascript %}

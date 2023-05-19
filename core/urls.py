@@ -20,14 +20,37 @@ from . import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('profile/', views.profile),
-    path('search/', views.search),
-    path('watchlists/', views.watchlists),
-    path('watchlists/<int:id>', views.watchlistdetail),
-    path('watchlistsTest/', views.watchlistsTest),
-     path('watchlistdetailTest/', views.watchlistdetailTest),
-    path('login/', views.login),
-    path('signup/', views.signup),
-    path('aboutus/', views.aboutus),
-    path('', views.home)
+    
+    # Navigable URLS: 
+    path('', views.home), # Home page: where you start your journey
+    path('search/', views.SearchView.as_view(), name='search'),
+
+    path('signup/',views.SignUp,name='signup'),
+    path('signin/',views.SignIn,name='signin'),
+    path('signout/',views.SignOut,name='signout'),
+    
+    path('product/<str:product_id>', views.ProductView.as_view(), name='product'),
+    path('productcompare/<str:product_id>/<str:viewingproduct_id>', views.CompareProductView.as_view(), name='compareProduct'),
+    path('watchlists/', views.WatchlistsView.as_view(), name = 'watchlists'),
+    path('watchlist/<int:watchlist_id>', views.WatchlistView.as_view(), name = 'watchlist'),
+    path('profile/', views.profile, name='profile'),
+    path('editprofile/', views.editProfile, name='editprofile'),
+    path('addProductToWatchlist/', views.SearchView_Watchlist.as_view(), name = 'addProduct'),
+
+    # API/data URLs
+    path('get-product-details/', views.get_product_details, name='get_product_details'),
+    path('create-watchlist/', views.create_new_watchlist, name='create_watchlist'),
+    path('delete-watchlist/', views.delete_watchlist, name='delete_watchlist'),
+    path('watchlist/add/<int:watchlist_id>/<str:product_id>', views.add_product_to_watchlist, name='add_product_to_watchlist'),
+    path('watchlist/remove/<int:watchlist_id>/<str:product_id>', views.remove_product_from_watchlist, name='remove_product_from_watchlist'),
+    path('is-product-in-watchlist/<int:watchlist_id>/<str:product_id>', views.is_product_in_watchlist, name='is_product_in_watchlist'),
+    path('store-historical-price/<str:product_id>', views.store_historical_price, name='store_historical_price')
+
+    # path('watchlistList/', views.watchlists, name="watchlistList"),
+    # path('watchlistCreate/', views.watchlistcreate, name="watchlistCreate"),
+    # path('watchlistUpdate/<int:id>', views.watchlistupdate, name="watchlistUpdate"),
+    # path('watchlistDelete/<int:id>/', views.watchlistdelete, name="watchlistDelete"),
+    # ...
+
+    # Testing URLs
 ]

@@ -1,0 +1,84 @@
+{% extends 'bases/base_entry.html' %}
+	
+
+{% block content %}
+<h1 class="title">Sign In</h1>
+<form action="{% url 'signin' %}" method="post" class="box">
+	{% csrf_token %}
+	<div class="field">
+		<label for="" class="label">Username</label>
+		<div class="control has-icons-left">
+			<input id="username" class="input" type="text" required placeholder="john_appleseed" name="username">
+			<span class="icon is-small is-left">
+				<i class="fa fa-person"></i>
+			</span>
+		</div>
+	</div>
+
+	<div class="field">
+		<label for="" class="label">Password</label>
+		<div class="control has-icons-left">
+			<input type="password" id="password" name="password" placeholder="*******" class="input" required>
+			<span class="icon is-small is-left">
+				<i class="fa fa-lock"></i>
+			</span>
+		</div>
+	</div> 
+
+	<div class="field">
+		<label for="" class="checkbox">
+			<input type="checkbox" name="rememberme" id="rememberme"  >
+			Remember me
+		</label>
+	</div> 
+
+	<div class="field ">
+		<div class="control">
+			<button type="submit" class="button is-success" onclick="RememberMe()">Login</button>
+		</div>
+	</div>
+</form>
+<div class="content">
+	Dont have an account? <a href="/signup">Sign up</a>
+</div>
+
+{% for message in messages %}
+<p class="help is-danger">{{ message }}</p>
+{% endfor %}
+
+<script>
+	
+	const rmCheck = document.getElementById("rememberme"),
+    nameInput = document.getElementById("username"),
+	passwordInput = document.getElementById("password");
+	
+	if (localStorage.checkbox && localStorage.checkbox !== "") {
+		rmCheck.setAttribute("checked", "checked");
+  		nameInput.value = localStorage.username;
+		passwordInput.value = localStorage.password;
+	} else {
+  		rmCheck.removeAttribute("checked");
+  		nameInput.value = "";
+		passwordInput.value =""
+	}
+	
+	function  RememberMe() {
+		 
+  		if (rmCheck.checked && nameInput.value !== ""&& passwordInput.value !=="") {
+ 
+			localStorage.password = passwordInput.value;
+    		localStorage.username = nameInput.value;
+    		localStorage.checkbox = rmCheck.value;
+			
+		} 
+		else {
+			localStorage.password = ""
+    		localStorage.username = "";
+    		localStorage.checkbox = "";
+  		}
+	}
+
+</script>
+
+
+{% endblock content %}

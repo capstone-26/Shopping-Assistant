@@ -1,42 +1,68 @@
-{% load static %}
-<!DOCTYPE html>
-<!-- Created By CodingNepal -->
-<html lang="en" dir="ltr">
-   <head>
-      <meta charset="utf-8">
-      <title>Popup Login Form Design | CodingNepal</title>
-      <link rel="stylesheet" type="text/css" href="{% static 'login.css' %}">
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
-   </head>
-   <body>
-      <div class="center">
-         <div class="container">
-            <div class="text">
-              Create an account
-            </div>
-            <form action="#">
-                <div class="data">
-                    <label>Name</label>
-                    <input type="text" required placeholder="Enter your Name">
-                 </div>
-               <div class="data">
-                  <label>Email</label>
-                  <input type="text" required placeholder="Enter your email">
-               </div>
-               <div class="data">
-                  <label>Password</label>
-                  <input type="password" required placeholder="Password">
-               </div>
-               <div class="btn">
-                  <div class="inner"></div>
-                  <button type="submit">Get started</button>
-               </div>
-             </div>
-               <div class="signup-link">
-                  Already have an account? <a href="../login">Log in</a>
-               </div>
-            </form>
-         </div>
-      </div>
-   </body>
-</html>
+{% extends 'bases/base_entry.html' %}
+	
+
+{% block content %}
+<h1 class="title">Sign Up</h1>
+<form action="{% url 'signup' %}" method="post" class="box">
+	{% csrf_token %}
+	<div class="field">
+		<label for="" class="label">Username</label>
+		<div class="control has-icons-left">
+			<input id="username" class="input" type="text" required placeholder="john_appleseed" name="username">
+			<span class="icon is-small is-left">
+				<i class="fa fa-person"></i>
+			</span>
+		</div>
+	</div>
+	<div class="field">
+		<label for="" class="label">Email</label>
+		<div class="control has-icons-left">
+			<input id="useremail" class="input" type="email" placeholder="e.g. john.appleseed@gmail.com" name="useremail" required>
+			<span class="icon is-small is-left">
+				<i class="fa fa-envelope"></i>
+			</span>
+		</div>
+	</div>
+	
+	<div class="field">
+		<label for="" class="label">Password</label>
+		<div class="control has-icons-left">
+			<input type="password" id="password1" name="password1"placeholder="*******" class="input" required>
+			<span class="icon is-small is-left">
+				<i class="fa fa-lock"></i>
+			</span>
+		</div>
+	</div>
+	<div class="field">
+		<label for="" class="label">Repeat Password</label>
+		<div class="control has-icons-left">
+			<input type="password"id="password2" name="password2" placeholder="*******" class="input" required>
+			<span class="icon is-small is-left">
+				<i class="fa fa-lock"></i>
+			</span>
+		</div>
+	</div> 
+
+	{% comment %} 
+	<div class="field">
+		<label for="" class="checkbox">
+			<input type="checkbox">
+			Remember me
+		</label>
+	</div> 
+	{% endcomment %}
+	<div class="field ">
+		<div class="control">
+			<button type="submit" class="button is-success">Get Started</button>
+		</div>
+	</div>
+</form>
+<div class="content">
+	Already have an acccount? <a href="/signin">Sign in</a>
+</div>
+
+{% for message in messages %}
+<p class="help is-danger">{{ message }}</p>
+{% endfor %}
+
+{% endblock content %}

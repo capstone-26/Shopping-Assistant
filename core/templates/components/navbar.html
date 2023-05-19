@@ -1,0 +1,42 @@
+{% load static %}
+
+<nav class="navbar is-light is-transparent" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+        <a class="navbar-item" href="#">
+            <img src="https://em-content.zobj.net/thumbs/240/apple/354/shopping-cart_1f6d2.png">
+        </a>
+        
+        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navMenuMain">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+    </div>
+    
+    <div id="navMenuMain" class="navbar-menu ">
+        
+        <div class="navbar-end">
+            {% comment %} Add links to new pages here, but only when you have a useful page for it to link to {% endcomment %}
+            <a href="/" class="navbar-item">Home</a>
+            <a href="/watchlists" class="navbar-item">Watchlists</a>
+            <a href="/profile" class="navbar-item">Profile</a>
+            
+            {% comment %} <a href="#" class="navbar-item">Another Link</a> {% endcomment %}
+        </div>
+
+        <div class="navbar-start">
+            <div class="navbar-item">
+                <div class="buttons">
+                    <a class="button is-primary" type="button" href="/signout"><strong>Sign out</strong></a> 
+                </div>
+            </div>
+        
+            <div class="is-flex navbar-item">
+                {% include 'components/product_searchbar.html' %}
+            </div>
+        </div>
+
+    </div>
+</nav>
+
+<script src="{% static 'js/navbar.js' %}"></script>

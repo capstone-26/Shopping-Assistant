@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>Profile</h1>
+<div class="container">
+    <div class="profile-info">
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" id="name" value="None">
+        </div>
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" value="None@example.com">
+        </div>
+        <div class="form-group">
+            <label for="address">Address:</label>
+            <textarea id="address">curtin,WA,Australia</textarea>
+        </div>
+        <button id="edit-profile-btn">Edit Profile</button>
+    </div>
+</div>
+{% endblock %}

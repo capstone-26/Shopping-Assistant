@@ -1,119 +1,240 @@
-{% extends 'base.html' %}
+{% extends 'bases/base_page.html' %}
+
 
 {% block content %}
 
-<h1>Watchlists</h1>
-
-<div class="middle">
-    <div class="buttons_container">
-        <button class="myButton" id="open-btn">Create New</button>
-        <div id="popup">
-			<div class="popup-content">
-				<form>
-                <label> Name </label>
-                <input type="text" id="windows-input" required placeholder="Enter Watchlist Name">
-                
-                <label> Item Count </label>
-                <select>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                </select>
-
-                
-                <label> User ID </label>
-                <select>
-                    <option value="1">1001</option>
-                    <option value="2">2002</option>
-                    <option value="3">3002</option>
-                    <option value="4">4004</option>
-                </select>
-                </form>
+<div class="block">
+    <div class="columns">
         
-				<h4>Items added to Watchlist</h4>
-				<ul>
-					<li><input type="checkbox" id="item1" name="item1"><label for="item1">Item 1</label></li>
-					<li><input type="checkbox" id="item2" name="item2"><label for="item2">Item 2</label></li>
-					<li><input type="checkbox" id="item3" name="item3"><label for="item3">Item 3</label></li>
-					<li><input type="checkbox" id="item4" name="item4"><label for="item4">Item 4</label></li>
-					<li><input type="checkbox" id="item5" name="item5"><label for="item5">Item 5</label></li>
-					<li><input type="checkbox" id="item6" name="item6"><label for="item6">Item 6</label></li>
-					<li><input type="checkbox" id="item7" name="item7"><label for="item7">Item 7</label></li>
-					<li><input type="checkbox" id="item8" name="item8"><label for="item8">Item 8</label></li>
-					<li><input type="checkbox" id="item9" name="item9"><label for="item9">Item 9</label></li>
-					<li><input type="checkbox" id="item10" name="item10"><label for="item10">Item 10</label></li>
-				</ul>
-				<div class="popup-buttons">
-					<button id="cancel-btn">Cancel</button>
-					<button id="confirm-btn">Confirm Selection</button>
-				</div>
-			</div>
-		</div>
-        <button class="myButton" onclick="importData()">Add New</button>
-        
+        <!-- This column will show the table/list of the user's watchlists -->
+        <div class="column">  
+            <h2 class="title">My Watchilsts</h2>
+            
+            <div class="block">
+                <!-- Add watchlist button-->
+                <button class="js-modal-trigger button is-link is-primary" data-target="add-modal">
+                    <span>Create New</span>
+                </button>
+                
+                <!-- Add watchlist modal -->
+                <div class="modal" id="add-modal">
+                    <div class="modal-background"></div>
+                    <div class="modal-card">
+                        
+                        <header class="modal-card-head">
+                            <p class="modal-card-title">Create New Watchlist</p>
+                            <button class="delete" aria-label="close"></button>
+                        </header>
+                        
+                        <section class="modal-card-body">
+                            <div class="block">
+                                <form id="create-watchlist-form" method="POST">
+                                    {% csrf_token %}
+                                    <div class="field">
+                                        <label class="label">Title</label>
+                                        <div class="control">
+                                            <input name="watchlist_title" class="input" type="text" placeholder="My New Watchlist">
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            
+                            <!-- This block should be redundant when we fix automatically ending session when server refreshes -->
+                            <div class="block">
+                                <article id="form-error" class="message is-danger is-hidden">
+                                    <div class="message-header">
+                                        <p>Error</p>
+                                        <button class="delete" aria-label="delete"></button>
+                                    </div>
+                                    <div class="message-body">
+                                        <p>You must be signed in to create a watchlist.</p>
+                                    </div>
+                                </article>
+                            </div>
+                            
+                        </section>
+                        <footer class="modal-card-foot">
+                            <div class="field button-group">
+                                <div class="control">
+                                    <button class="button is-link is-primary">Create</button>
+                                </div>
+                            </div>
+                        </footer>
+                    </div>
+                </div>
+            </div>
+            
+            
+            <div class="block">
+                <!-- Table of watchlists -->  
+                {% if watchlists|length > 0 %}
+                <table class="table is-hoverable is-fullwidth">
+                    <thead>
+                        <tr>
+                            <th class="is-expanded">Title</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for watchlist in watchlists %}
+                        <tr>
+                            <td><a href="{% url 'watchlist' watchlist.id %}">{{ watchlist.title }}</td></a>
+                            <td>
+                                
+                                <!-- Delete button -->
+                                <button class="js-modal-trigger button is-danger is-small is-outlined" data-target="delete-modal{{ watchlist.id }}">
+                                    Delete
+                                </button>
+                                
+                                <!-- Delete-->
+                                <div class="modal" id="delete-modal{{ watchlist.id }}">
+                                    <div class="modal-background"></div>
+                                    <div class="modal-card">
+                                        <header class="modal-card-head">
+                                            <p class="modal-card-title">Confirm {{ watchlist.title }} delete?</p>
+                                        </header>
+                                        <section class="modal-card-body">
+                                            <!-- Warning message -->
+                                            <article class="message is-danger">
+                                                <div class="message-body">
+                                                    <span class="icon has-text-danger">
+                                                        <i class="fas fa-exclamation-triangle"></i>
+                                                    </span>
+                                                    This action is irreversible
+                                                </div>
+                                            </article>
+                                            
+                                        </section>
+                                        <footer class="modal-card-foot">
+                                            
+                                            <!-- Delete and Cancel buttons -->
+                                            <div class="button-group">
+                                                <button class="delete-watchlist button is-danger" data-watchlist-id="{{ watchlist.id }}">
+                                                    <span>Delete Watchlist</span>
+                                                </button>
+                                                <button class="button close">Cancel</button>
+                                            </div>
+                                            
+                                        </footer>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p class="mt-6 is-flex is-justify-content-center">You have no watchlists... 😐</p>
+                {% endif %}
+            </div>
+            
+            
+        </div>
     </div>
 </div>
-<div class="list">
-    <body class="list-bady">
-
-        <ul class="list-group">
-            <li>Item One
-                <span class="badge">2</span>
-            </li>
-            <li>Item Two
-                <span class="badge">10</span>
-            </li>
-            <li>Item Three
-                <span class="badge">9</span>
-            </li>
-            <li>Item Four
-                <span class="badge">0</span>
-            </li>
-        </ul>
-    
-    </body>    
 </div>
 
+{% endblock content %}
 
+{% block javascript %}
 <script>
-
-    const openBtn = document.getElementById("open-btn");
-    const popup = document.getElementById("popup");
-    const cancelBtn = document.getElementById("cancel-btn");
-    const confirmBtn = document.getElementById("confirm-btn");
-
-    openBtn.addEventListener("click", function() {
-      popup.style.display = "block";
+    // Create watchlist
+    $(document).ready(function() {
+        $('#create-watchlist-form').submit(function(event) {
+            event.preventDefault();
+            var form = $(this);
+            var url = form.attr('action');
+            var formData = form.serialize();
+            $.ajax({
+                type: 'POST',
+                url: '/create-watchlist/', // Replace with the URL of your AJAX endpoint
+                data: formData,
+                success: function(data) {
+                    console.log('Watchlist created with ID ' + data.watchlist_id);
+                    // Add code here to update the page as needed
+                    location.reload();
+                },
+                error: function(data) {
+                    // unhides the error message
+                    $('#form-error').removeClass('is-hidden');
+                    console.log('An error occurred while creating the watchlist.');
+                }
+            });
+        });
     });
     
-    cancelBtn.addEventListener("click", function() {
-      popup.style.display = "none";
+    // Hides the error message
+    $('#form-error.delete').click(function() {
+        $('#form-error').addClass('is-hidden');
     });
     
-    function importData() {
-        let input = document.createElement('input');
-        input.type = 'file';
-        input.onchange = _ => {
+    // Delete watchlist
+    $(document).ready(function() {
+        $('.delete-watchlist').click(function() {
+            var watchlist_id = $(this).data('watchlist-id');
+            
+            $.ajax({
+                type: 'POST',
+                url: '/delete-watchlist/', // Replace with the URL of your AJAX endpoint
+                data: {
+                    'watchlist_id': watchlist_id,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function(data) {
+                    console.log('Watchlist deleted with ID ' + data.watchlist_id);
+                    // Add code here to update the page as needed
+                    location.reload();
+                },
+                error: function(data) {
+                    console.log('An error occurred while deleting the watchlist.');
+                }
+            });
+        })
+    });
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        // Functions to open and close a modal
+        function openModal($el) {
+            $el.classList.add('is-active');
+        }
         
-        let files =   Array.from(input.files);
-        console.log(files);
-    };
-     input.click();
-  
-    }
-    
-  
-   
-    
+        function closeModal($el) {
+            $el.classList.remove('is-active');
+        }
+        
+        function closeAllModals() {
+            (document.querySelectorAll('.modal') || []).forEach(($modal) => {
+                closeModal($modal);
+            });
+        }
+        
+        // Add a click event on buttons to open a specific modal
+        (document.querySelectorAll('.js-modal-trigger') || []).forEach(($trigger) => {
+            const modal = $trigger.dataset.target;
+            const $target = document.getElementById(modal);
+            
+            $trigger.addEventListener('click', () => {
+                openModal($target);
+            });
+        });
+        
+        // Add a click event on various child elements to close the parent modal
+        (document.querySelectorAll('.modal-close, .modal-card-head .delete, .modal-card-foot .button, .modal-card-body .close') || []).forEach(($close) => {
+            const $target = $close.closest('.modal');
+            
+            $close.addEventListener('click', () => {
+                closeModal($target);
+            });
+        });
+        
+        // Add a keyboard event to close all modals
+        document.addEventListener('keydown', (event) => {
+            const e = event || window.event;
+            
+            if (e.keyCode === 27) { // Escape key
+                closeAllModals();
+            }
+        });
+    });
 </script>
-<style>
-    input[id=windows-input]{
-    width: 100%;
-    padding: 12px 20px;
-    margin: 8px 0;
-    box-sizing: border-box;
-}
-</style>
-
-{% endblock %}
+{% endblock javascript%}
