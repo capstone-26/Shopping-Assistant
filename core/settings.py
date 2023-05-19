@@ -25,7 +25,10 @@ SECRET_KEY = 'django-insecure-l$5-644ob8(=k*3gtjd7v(fmk#1se@w55cy02b5*d9-mji=lzw
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    '156.67.219.71',
+    '156.67.219.71:8000'
+]
 
 # Auto logout
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
