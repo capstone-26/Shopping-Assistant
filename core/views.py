@@ -18,6 +18,7 @@ from django.contrib.auth.models import User
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
+from datetime import date
 
 def home(request):
      
@@ -327,6 +328,26 @@ def editProfile(request):
         'user_form': user_form,
         'profile_form': profile_form
     })
+
+
+# Historical Price views
+
+
+def store_historical_price(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    current_price = product.price
+    
+    status = 200
+
+    latest_price_entry = HistoricalPrice.objects.filter(product=product).order_by('-date').first()
+
+    # Check if new price is different to existing price
+    if latest_price_entry is None or latest_price_entry.price != current_price:
+        historical_price = HistoricalPrice(product=product, price=current_price, date=date.today())
+        historical_price.save()
+        return JsonResponse({'success': True})
+
+    return JsonResponse({'success': False})
 
 # Test Views
 # ...

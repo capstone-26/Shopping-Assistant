@@ -24,6 +24,7 @@
                         <div class="media-right">
                             <h1 class="title is-6">{{ product.name }}</h1>
                             <p class="subtitle is-6">${{ product.price }}</p>
+                            <button id="store-price-button" class="button is-info">Save Price</button>
                         </div>
                     </div>
                     
@@ -175,6 +176,27 @@
             },
         })
     }
+
+    // Save historical price of product
+    $('#store-price-button').click(function() {
+        var productId = '{{ product.id }}';
+        var price = parseFloat('{{ product.price }}');
+        
+        // Send add request via ajax
+        $.ajax({
+            url: "/store-historical-price/" + productId,
+            method: "POST",
+            data: {
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success: function(response) {
+                updateActionButtons();
+            },
+            error: function(xhr, status, error) {
+                console.log(error);
+            }
+        });
+    });
 
 </script>
 
