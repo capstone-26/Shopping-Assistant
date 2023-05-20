@@ -1,0 +1,88 @@
+{% extends 'bases/base_page.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="block">
+    {% if user.is_authenticated %}
+    <h1 class="title">Hello <span style="font-weight: bold;">{{ user.username }}</span>, let's help get you started!</h1>
+    {% endif %}   
+</div>
+<div class="block">
+    <h3 class="subtitle">How does this all work? Its simple, let me show you!</h2>
+        <p>To begin, you will need to create a watchlist by going to the <a href="#" onclick="goToWatchlist();">watchlist</a> tab.</p>
+        <p>Click "Create new watchlist" to add a watchlist to your account</p><br>
+        <p style="text-align:left;">
+            <img src="{% static 'img/step1.png' %}" alt="My image">
+        </p>
+        <p>------------------------------------------------------------------</p>
+        <p>Give the watchlist a name and click "Create", or just hit enter!</p><br>
+        <p style="text-align:left;">
+            <img src="{% static 'img/step2.png' %}" alt="My image">
+        </p>
+        <p>------------------------------------------------------------------</p>
+        <p>Congrats! You now have a watchlist to use and track products across Coles, Woolworths and Aldi!</p>
+        <p>Click into the watchlist to start adding products</p><br>
+        <p style="text-align:left;">
+            <img src="{% static 'img/step3.png' %}" alt="My image">
+        </p>
+        <p>Alternatively, click "Delete" to remove the watchlist if it is no longer needed</p>
+        <p>------------------------------------------------------------------</p>
+        <p>Click into the "Add Product to watchlist" to start adding products</p><br>
+        <p style="text-align:left;">
+            <img src="{% static 'img/step4.png' %}" alt="My image">
+        </p>
+        <p>------------------------------------------------------------------</p>
+        <p>Enter the product you are looking for and hit enter</p><br>
+        <p style="text-align:left;">
+            <img src="{% static 'img/step5.png' %}" alt="My image">
+        </p>
+        <p>========</p><br>
+        <p>Alternatively, search for the product in the top right of any page on the website</p>
+        <p style="text-align:left;">
+            <img src="{% static 'img/step5_1.png' %}" alt="My image">
+        </p>
+        <p>------------------------------------------------------------------</p>
+        <p>Look at all these Options!</p>
+        <p>Select the product you would like to add to your watchlist by clicking the "Add" button next to the product</p><br>
+        <p style="text-align:left;">
+            <img src="{% static 'img/step6.png' %}" alt="My image">
+        </p>
+        <p>------------------------------------------------------------------</p>
+        <p>WooHoo, the product has been successfully added to the watchlist!</p><br>
+        <p style="text-align:left;">
+            <img src="{% static 'img/step7.png' %}" alt="My image">
+        </p>
+        <p>You can also see the total current price of the watchlist at the bottom of the table to help you keep track</p>
+        <p>------------------------------------------------------------------</p>
+        <p>Select the "Remove" button to remove the product from the watchlist if it is no longer needed</p>
+        <p style="text-align:left;">
+            <img src="{% static 'img/step8.png' %}" alt="My image">
+        </p>
+        <p>------------------------------------------------------------------</p>
+        <p>"But I want more information about the product and want to compare my choice with other options?"</p>
+        <p>No Issue. Search for a product the same way we did before and instead of clicking "Add", click on the product name</p><br>
+        <p style="text-align:left;">
+            <img src="{% static 'img/step9.png' %}" alt="My image">
+        </p>
+        <p>------------------------------------------------------------------</p>
+        <p>You can now see product details and suggestions of similar products you can compare your product with</p>
+        <p>Click the "Compare" button next to the product you would like to compare to bring up a comparison of the 2 products</p>
+        <p style="text-align:left;">
+            <img src="{% static 'img/step10.png' %}" alt="My image">
+        </p>
+        <p>------------------------------------------------------------------</p>
+        <br><p>It's as easy as that! To get started and create your own watchlist by going to the <a href="#" onclick="goToWatchlist();">watchlist</a> tab.</p><br>    
+</div>
+<hr>
+
+
+{% endblock %}
+
+{% block javascript %}
+<script>
+    function goToWatchlist() {
+      window.location.href = '/watchlists/';
+    }
+  </script>
+  {% endblock javascript%}

@@ -27,6 +27,9 @@ def home(request):
             return render(request, 'index.html')
     else:
         return redirect(SignIn)
+    
+def howtoguide(request):
+    return render(request, 'howto.html')
 
      
 def SignUp(request):

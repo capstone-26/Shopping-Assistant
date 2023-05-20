@@ -8,9 +8,19 @@
     {% endif %}   
 </div>
 <div class="block">
-    <h2 class="subtitle">This is the landing page and everything should begin from here.</h2>
+    <h2 class="subtitle">Welcome to the Shopping Assistant Application [Insert application name here]</h2><br>
+    <h3 class="subtitle">How does this all work? Lets get Started!</h2>
+        <p>To begin, you will need to create a watchlist by going to the <a href="#" onclick="goToWatchlist();">watchlist</a> tab.</p>
 </div>
 <hr>
 
 
 {% endblock %}
+
+{% block javascript %}
+<script>
+    function goToWatchlist() {
+      window.location.href = '/watchlists/';
+    }
+  </script>
+  {% endblock javascript%}

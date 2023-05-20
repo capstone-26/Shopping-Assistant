@@ -28,6 +28,7 @@ urlpatterns = [
     path('signup/',views.SignUp,name='signup'),
     path('signin/',views.SignIn,name='signin'),
     path('signout/',views.SignOut,name='signout'),
+    path('guide/', views.howtoguide,name='guide'),
     
     path('product/<str:product_id>', views.ProductView.as_view(), name='product'),
     path('productcompare/<str:product_id>/<str:viewingproduct_id>', views.CompareProductView.as_view(), name='compareProduct'),
