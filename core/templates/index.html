@@ -7,20 +7,37 @@
         <h1 class="title">Hello, {{ user.username }}!</h1>      
     {% endif %}   
 </div>
+
 <div class="block">
-    <h2 class="subtitle">Welcome to the Shopping Assistant Application [Insert application name here]</h2><br>
-    <h3 class="subtitle">How does this all work? Lets get Started!</h2>
-        <p>To begin, you will need to create a watchlist by going to the <a href="#" onclick="goToWatchlist();">watchlist</a> tab.</p>
+    <h2 class="subtitle">Welcome to the Shopping Assistant Application [Insert application name here]</h2>
+    <p>Are you tired of overspending on groceries? Say goodbye to hefty bills and hello to smart savings with [Insert application name here], the ultimate money-saving companion for every savvy shopper!</p>
+    <p>[Insert application name here] is a cutting-edge web application that revolutionizes the way you shop by scanning the prices of thousands of products across major supermarkets. With just a few clicks, you can effortlessly track and compare prices, ensuring you never pay more than necessary for your favorite items.</p>
+    <br><p><span style="font-weight: bold;">Here's how [Insert application name here] helps you pocket those extra savings:</span></p>
+    <p>1. Real-Time and Historical Price Comparisons</p>
+    <p>2. Watchlist Organisation</p>
+    <p>3. Budget-Friendly Product comparisons</p>
+    <p>4. User-Friendly interface and Free to use</p>
+    <br>
+    <h3 class="subtitle">How does this all work? Simply select <a href="#" onclick="goToGuide();">How to Guide</a> tab for a helpful guide</h3>
+    <h3 class="subtitle">To view your watchlists, click on the <a href="#" onclick="goToWatchlist();">Watchlist</a> tab</h3>
+    <h3 class="subtitle">Want to change your profile details or change any settings? Go to the <a href="#" onclick="goToSettings();">Profile</a> tab</h3>
 </div>
-<hr>
 
 
 {% endblock %}
 
 {% block javascript %}
 <script>
+    function goToGuide() {
+      window.location.href = '/guide/';
+    }
+
     function goToWatchlist() {
       window.location.href = '/watchlists/';
+    }
+
+    function goToSettings() {
+      window.location.href = '/profile/';
     }
   </script>
   {% endblock javascript%}
