@@ -307,7 +307,7 @@ class AllProductsScraper(Scraper):
                 pass
             pages = pagination.find_elements(By.TAG_NAME,"li")
             last_page = int(pages[-2].text)
-            self.logger.info(f"Scraping coles {pages} pages in category: {category_name}")
+            self.logger.info(f"Scraping coles {last_page} pages in category: {category_name}")
             for page in range(2, last_page + 1):
                 # Get the link to the next page
                 next_page_link = f"{category_url}?page={page}"
@@ -334,9 +334,9 @@ class AllProductsScraper(Scraper):
                     except NoSuchElementException as nse_e:
                         pass
                         
-                if page >=10:
-                    page = last_page
+                if page == 5:
                     self.logger.info(f"exceed page limit stop scraping this category: {category_name}")
+                    break
                     
             all_category_products[category_name] = category_products
             
