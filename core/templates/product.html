@@ -158,7 +158,7 @@
             url: "/get-product-details/",
             type: "POST",
             data: {
-                'product_id': '{{ product.id }}',
+                'product_id': '{{ viewingProduct.id }}',
                 'csrfmiddlewaretoken': '{{ csrf_token }}'
             },
             beforeSend: function() {
@@ -188,7 +188,7 @@
         // Add product to watchlist button
         $('#add-to-watchlist-button').click(function() {
             var selectedWatchlistId = $('#watchlist-dropdown').val();
-            var productId = '{{ product.id }}';
+            var productId = '{{ viewingProduct.id }}';
             
             // Send add request via ajax
             $.ajax({
@@ -210,7 +210,7 @@
         $('#remove-from-watchlist-button').click(function(e) {
             e.preventDefault();
             var watchlist_id = $('#watchlist-dropdown').val();
-            var product_id = '{{ product.id }}';
+            var product_id = '{{ viewingProduct.id }}';
             
             // Send remove request via ajax
             $.ajax({
@@ -234,7 +234,7 @@
     function updateActionButtons () {
         // Get the currently selected watchlist from the dropdown
         var selectedWatchlistId = $('#watchlist-dropdown').val();
-        var productId = '{{ product.id }}';
+        var productId = '{{ viewingProduct.id }}';
         
         // If the product is already in the watchlist, disable the add button
         $.ajax({
