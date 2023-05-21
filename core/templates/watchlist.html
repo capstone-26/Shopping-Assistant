@@ -101,148 +101,144 @@
 {% block javascript %}
 <script>
 
-$(document).ready(function() {
-    $('.remove-from-watchlist-button').click(function(e) {
-        e.preventDefault();
-        var watchlist_id = '{{ watchlist.id }}';
-        var product_id = $(this).data('product-id');
-        removeProductFromWatchlist(watchlist_id, product_id);
-    });
-});
-    // Remove product from watchlist
-    function removeProductFromWatchlist(watchlist_id, product_id) {
-        $.ajax({
-            url: "/watchlist/remove/" + watchlist_id + "/" + product_id,
-            type: 'POST',
-            data: {
-                'watchlist_id': watchlist_id,
-                'product_id': product_id,
-                'csrfmiddlewaretoken': '{{ csrf_token }}'
-            },
-            success: function(response) {
-                if (response.status === 'success') {
-                    location.reload();
-                } else {
-                    alert(response.message);
-                }
-            },
-            error: function(xhr, status, error) {
-                alert('An error occurred: ' + error);
-            }
+    $(document).ready(function() {
+        $('.remove-from-watchlist-button').click(function(e) {
+            e.preventDefault();
+            var watchlist_id = '{{ watchlist.id }}';
+            var product_id = $(this).data('product-id');
+            removeProductFromWatchlist(watchlist_id, product_id);
         });
+    });
+        // Remove product from watchlist
+    function removeProductFromWatchlist(watchlist_id, product_id) {
+    $.ajax({
+        url: "/watchlist/remove/" + watchlist_id + "/" + product_id,
+        type: 'POST',
+        data: {
+            'watchlist_id': watchlist_id,
+            'product_id': product_id,
+            'csrfmiddlewaretoken': '{{ csrf_token }}'
+        },
+        success: function(response) {
+            if (response.status === 'success') {
+                location.reload();
+            } else {
+                alert(response.message);
+            }
+        },
+        error: function(xhr, status, error) {
+            alert('An error occurred: ' + error);
+        }
+    });
     };
 
     function redirectToWatchlistAddProductPage(watchlistId) {
-        window.location.href = "/watchlistAddProduct/" + watchlistId;
+    window.location.href = "/watchlistAddProduct/" + watchlistId;
     }
 
     function redirectToMyWatchlists(watchlistId) {
-        window.location.href = "/watchlists";
+    window.location.href = "/watchlists";
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        // Functions to open and close a modal
-        function openModal($el) {
-          $el.classList.add('is-active');
-        }
-      
-        function closeModal($el) {
-          $el.classList.remove('is-active');
-        }
-      
-        function closeAllModals() {
-          (document.querySelectorAll('.modal') || []).forEach(($modal) => {
-            closeModal($modal);
-          });
-        }
-      
-        // Add a click event on buttons to open a specific modal
-        (document.querySelectorAll('.js-modal-trigger') || []).forEach(($trigger) => {
-          const modal = $trigger.dataset.target;
-          const $target = document.getElementById(modal);
-      
-          $trigger.addEventListener('click', () => {
-            openModal($target);
-          });
-        });
-      
-        // Add a click event on various child elements to close the parent modal
-        (document.querySelectorAll('.modal-close, .modal-card-head .delete, .modal-card-foot .button, .modal-card-body .close') || []).forEach(($close) => {
-          const $target = $close.closest('.modal');
-      
-          $close.addEventListener('click', () => {
-            closeModal($target);
-          });
-        });
-      
-        // Add a keyboard event to close all modals
-        document.addEventListener('keydown', (event) => {
-          const e = event || window.event;
-      
-          if (e.keyCode === 27) { // Escape key
-            closeAllModals();
-          }
-        });
-
-        function calculateTotalCost() {
-            // Retrieve all product prices from the table rows
-            var prices = document.querySelectorAll("tbody td:nth-child(3)");
-
-            // Calculate the total cost
-            var totalCost = 0;
-            for (var i = 0; i < prices.length; i++) {
-                totalCost += parseFloat(prices[i].textContent);
-            }
-
-            // Update the total cost element
-            var totalCostElement = document.getElementById("total-cost");
-            totalCostElement.textContent = "Total Cost: " + totalCost.toFixed(2); // Adjust decimal places as needed
-        }
-
-        // Call the calculateTotalCost function when the page loads
-        calculateTotalCost();
-      });
-
-function exportData() {
-  var tableRows = document.querySelectorAll("tbody tr");
-
-  var data = [];
-  var columnHeadings = ["", "Name", "Price"];
-  data.push(columnHeadings);
-  
-  for (var i = 0; i < tableRows.length; i++) {
-    var rowData = [];
-    var tableCells = tableRows[i].querySelectorAll("td");
-    for (var j = 0; j < tableCells.length; j++) {
-      var cellValue = tableCells[j].innerText;
-      // Exclude certain strings
-      if (cellValue !== "Excluded String 1" && cellValue !== "Remove") {
-        rowData.push(cellValue);
-      }
+    // Functions to open and close a modal
+    function openModal($el) {
+        $el.classList.add('is-active');
     }
-    data.push(rowData);
-  }
 
-  var csvContent = "data:text/csv;charset=utf-8,";
+    function closeModal($el) {
+        $el.classList.remove('is-active');
+    }
 
-  data.forEach(function (rowArray) {
-    var row = rowArray.join(",");
-    csvContent += row + "\r\n";
-  });
+    function closeAllModals() {
+        (document.querySelectorAll('.modal') || []).forEach(($modal) => {
+        closeModal($modal);
+        });
+    }
 
-  var encodedUri = encodeURI(csvContent);
+    // Add a click event on buttons to open a specific modal
+    (document.querySelectorAll('.js-modal-trigger') || []).forEach(($trigger) => {
+        const modal = $trigger.dataset.target;
+        const $target = document.getElementById(modal);
 
-  var link = document.createElement("a");
-  link.setAttribute("href", encodedUri);
-  link.setAttribute("download", "Watchlist.csv");
-  document.body.appendChild(link); // Required for Firefox
-  link.click();
-  document.body.removeChild(link);
-}
+        $trigger.addEventListener('click', () => {
+        openModal($target);
+        });
+    });
 
-// Call the exportData function when the button is clicked
-var exportButton = document.getElementById("export-button");
-exportButton.addEventListener("click", exportData);
+    // Add a click event on various child elements to close the parent modal
+    (document.querySelectorAll('.modal-close, .modal-card-head .delete, .modal-card-foot .button, .modal-card-body .close') || []).forEach(($close) => {
+        const $target = $close.closest('.modal');
+
+        $close.addEventListener('click', () => {
+        closeModal($target);
+        });
+    });
+
+    // Add a keyboard event to close all modals
+    document.addEventListener('keydown', (event) => {
+        const e = event || window.event;
+
+        if (e.keyCode === 27) { // Escape key
+        closeAllModals();
+        }
+    });
+
+    function calculateTotalCost() {
+        // Retrieve all product prices from the table rows
+        var prices = document.querySelectorAll("tbody td:nth-child(3)");
+
+        // Calculate the total cost
+        var totalCost = 0;
+        for (var i = 0; i < prices.length; i++) {
+            totalCost += parseFloat(prices[i].textContent);
+        }
+
+        // Update the total cost element
+        var totalCostElement = document.getElementById("total-cost");
+        totalCostElement.textContent = "Total Cost: " + totalCost.toFixed(2); // Adjust decimal places as needed
+    }
+
+    // Call the calculateTotalCost function when the page loads
+    calculateTotalCost();
+    });
+
+    // Export watchlist as CSV
+    function exportData() {
+        var tableRows = document.querySelectorAll("tbody tr");
+
+        var data = [];
+        var columnHeadings = ["", "Name", "Price"];
+        data.push(columnHeadings);
+        
+        for (var i = 0; i < tableRows.length; i++) {
+            var rowData = [];
+            var tableCells = tableRows[i].querySelectorAll("td");
+            for (var j = 0; j < tableCells.length; j++) {
+                var cellValue = tableCells[j].innerText;
+                if (cellValue !== "Remove") {
+                    rowData.push(cellValue);
+                }
+            }
+            data.push(rowData);
+        }
+
+        var csvContent = "data:text/csv;charset=utf-8,";
+
+        data.forEach(function (rowArray) {
+            var row = rowArray.join(",");
+            csvContent += row + "\r\n";
+        });
+
+        var encodedUri = encodeURI(csvContent);
+
+        var link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "{{watchlist.title}}.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
 
 </script>
 
