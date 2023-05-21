@@ -266,7 +266,11 @@
     $('#store-price-button').click(function() {
         var productId = '{{ viewingProduct.id }}';
         var price = parseFloat('{{ viewingProduct.price }}');
+        var button = $(this); // Reference to the button element
         
+        // Disable the button
+        button.prop('disabled', true);
+
         // Send add request via ajax
         $.ajax({
             url: "/store-historical-price/" + productId,
@@ -275,13 +279,23 @@
                 'csrfmiddlewaretoken': '{{ csrf_token }}'
             },
             success: function(response) {
-                location.reload();
+                if (response.success) {
+                    $('#store-price-button').text('Saved');
+                    // Get the current date
+                    var currentDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+                    // Create a new row with the latest data
+                    var newRow = $('<tr><td>' + currentDate + '</td><td>$' + price + '</td></tr>');
+                    $('#historical-price tbody').prepend(newRow);
+                } else {
+                    $('#store-price-button').text('Price up to date');
+                }
             },
             error: function(xhr, status, error) {
                 console.log(error);
             }
         });
-    });
+    }); 
+
 </script>
 
 {% endblock javascript %}
