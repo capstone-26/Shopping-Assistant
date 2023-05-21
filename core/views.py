@@ -14,6 +14,10 @@ from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from datetime import date
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from django.db.models import Sum
+from django.http import HttpResponse
 
 def home(request):
      
@@ -145,6 +149,49 @@ class WatchlistView(View):
             return redirect('watchlists')
 
         return render(request, self.template_name, {'watchlist': watchlist})
+    
+    def export_as_pdf(self, request, watchlist_id):
+        watchlist = Watchlist.objects.get(id=watchlist_id)
+
+        if request.user != watchlist.owner:
+            return redirect('watchlists')
+
+        total_price = watchlist.products.aggregate(
+            Sum('price')).get('price__sum')
+
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="watchlist.pdf"'
+
+        p = canvas.Canvas(response, pagesize=letter)
+
+        p.setFont("Helvetica-Bold", 14)
+        p.setFont("Helvetica", 12)
+
+        p.drawString(100, 700, watchlist.title)
+
+        headers = ["Image", "Name", "Price", "Retailer"]
+        y = 650
+        for header in headers:
+            p.drawString(100, y, header)
+            y -= 30
+            
+        products = watchlist.products.all()
+        y -= 30
+        for product in products:
+            p.drawImage(product.image_url, 100, y - 15, width=50, height=50)
+            p.drawString(200, y, product.name)
+            p.drawString(350, y, str(product.price))
+            p.drawString(450, y, product.retailer)
+            y -= 30
+
+        p.setFont("Helvetica-Bold", 12)
+        p.drawString(350, y, "Total:")
+        p.drawString(450, y, str(total_price))
+
+        p.showPage()
+        p.save()
+
+        return response
     
 class WatchlistAddProductView(View):
     model = Watchlist
