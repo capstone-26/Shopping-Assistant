@@ -30,7 +30,42 @@
                                 </figure>
                             </span>
                             <span class="tag is-medium has-background-primary-light"><strong>${{ viewingProduct.price }}</strong></span>
+                            
+                            <span>
                             <button id="store-price-button" class="button is-info">Save Price</button>
+                            <button id="view-price-history" class="js-modal-trigger button is-link is-primary" data-target="price-history">View Price History</button>
+                            </span>
+
+                            <!-- Price History-->
+                            <div class="modal" id="price-history">
+                                <div class="modal-background"></div>
+                                <div class="modal-card">
+                                    <header class="modal-card-head">
+                                        <p class="modal-card-title"> {{ viewingProduct.name }} Price History</p>
+                                        <button class="delete" aria-label="close"></button>
+                                    </header>
+                                    <section class="modal-card-body">
+                                        <div class="container">
+                                            <table class="table is-striped is-hoverable is-fullwidth">
+                                              <thead>
+                                                <tr>
+                                                  <th>Date</th>
+                                                  <th>Price</th>
+                                                </tr>
+                                              </thead>
+                                              <tbody>
+                                                {% for historicalPrice in historicalPrices %}
+                                                  <tr>
+                                                    <td>{{ historicalPrice.date }}</td>
+                                                    <td>${{ historicalPrice.price }}</td>
+                                                  </tr>
+                                                {% endfor %}
+                                              </tbody>
+                                            </table>
+                                          </div>
+                                    </section>
+                                </div>
+                            </div> 
                         </span>
                     </div>
 
@@ -162,6 +197,26 @@
             }
         });
         
+        // Get product price
+        document.addEventListener("DOMContentLoaded", function () {
+            // Get the product ID from the URL or set it manually
+            var productId = "{{ product.id }}";
+        
+            // Make the AJAX request
+            fetch("/historical-price/" + productId)
+              .then(response => response.text())
+              .then(data => {
+                // Render the response data (HTML) in a container element
+                document.getElementById("prices-container").innerHTML = data;
+        
+                // Open the modal automatically
+                var modal = document.getElementById("price-history{{ product.id }}");
+                modal.classList.add("is-active");
+              })
+              .catch(error => {
+                console.error("Error:", error);
+              });
+          });
         
         // Add product to watchlist button
         $('#add-to-watchlist-button').click(function() {
@@ -240,7 +295,6 @@
         })
     }
     
-
     // Save historical price of product
     $('#store-price-button').click(function() {
         var productId = '{{ viewingProduct.id }}';
@@ -262,6 +316,50 @@
         });
     });
 
+    document.addEventListener('DOMContentLoaded', () => {
+        // Functions to open and close a modal
+        function openModal($el) {
+            $el.classList.add('is-active');
+        }
+        
+        function closeModal($el) {
+            $el.classList.remove('is-active');
+        }
+        
+        function closeAllModals() {
+            (document.querySelectorAll('.modal') || []).forEach(($modal) => {
+                closeModal($modal);
+            });
+        }
+        
+        // Add a click event on buttons to open a specific modal
+        (document.querySelectorAll('.js-modal-trigger') || []).forEach(($trigger) => {
+            const modal = $trigger.dataset.target;
+            const $target = document.getElementById(modal);
+            
+            $trigger.addEventListener('click', () => {
+                openModal($target);
+            });
+        });
+        
+        // Add a click event on various child elements to close the parent modal
+        (document.querySelectorAll('.modal-close, .modal-card-head .delete, .modal-card-foot .button, .modal-card-body .close') || []).forEach(($close) => {
+            const $target = $close.closest('.modal');
+            
+            $close.addEventListener('click', () => {
+                closeModal($target);
+            });
+        });
+        
+        // Add a keyboard event to close all modals
+        document.addEventListener('keydown', (event) => {
+            const e = event || window.event;
+            
+            if (e.keyCode === 27) { // Escape key
+                closeAllModals();
+            }
+        });
+    });
 </script>
 
 {% endblock javascript %}
