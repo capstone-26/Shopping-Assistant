@@ -12,7 +12,7 @@
     <nav class="level">
         <div class="level-left">
             <div class="level-item">
-                <a href="#" onclick="history.back();" class="title is-4 has-text-weight-light has-text-link">My Watchlists</a>
+                <a href="#" onclick="redirectToMyWatchlists();" class="title is-4 has-text-weight-light has-text-link">My Watchlists</a>
             </div>
             <div class="level-item">
                 <span class="mr-2 icon is-small">
@@ -132,6 +132,10 @@ $(document).ready(function() {
 
     function redirectToWatchlistAddProductPage(watchlistId) {
         window.location.href = "/watchlistAddProduct/" + watchlistId;
+    }
+
+    function redirectToMyWatchlists(watchlistId) {
+        window.location.href = "/watchlists";
     }
 
     document.addEventListener('DOMContentLoaded', () => {
