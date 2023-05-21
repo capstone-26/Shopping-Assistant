@@ -310,7 +310,7 @@ class AllProductsScraper(Scraper):
             self.logger.info(f"Scraping coles {pages} pages in category: {category_name}")
             for page in range(2, last_page + 1):
                 # Get the link to the next page
-                next_page_link = f"{url}?page={page}"
+                next_page_link = f"{category_url}?page={page}"
                 # Navigate to the next page
                 self.driver.get(next_page_link)
                 # Find all products header on the next page
