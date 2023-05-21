@@ -30,7 +30,8 @@
                                 </figure>
                             </span>
                             <span class="tag is-medium has-background-primary-light"><strong>${{ viewingProduct.price }}</strong></span>
-                            <button id="store-price-button" class="button is-info">Save Price</button>
+                    
+                            <button id="store-price-button" class="button is-info ml-2">Save Price</button>
                         </span>
                     </div>
 
@@ -42,6 +43,28 @@
 
                     <!-- Loading indicator for when additional details are being gotten -->
                     <progress id="loading-indicator" class="progress is-small is-primary is-hidden mt-4" max="100">30%</progress>
+                    
+                    <div id="historical-price" class="box mb-0">
+                        <div class="container">
+                            <p class="heading">Historical Prices</p>
+                            <table class="table is-striped is-hoverable is-fullwidth">
+                              <thead>
+                                <tr>
+                                  <th>Date</th>
+                                  <th>Price</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {% for historicalPrice in historicalPrices %}
+                                  <tr>
+                                    <td>{{ historicalPrice.date }}</td>
+                                    <td>${{ historicalPrice.price }}</td>
+                                  </tr>
+                                {% endfor %}
+                              </tbody>
+                            </table>
+                          </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -162,7 +185,6 @@
             }
         });
         
-        
         // Add product to watchlist button
         $('#add-to-watchlist-button').click(function() {
             var selectedWatchlistId = $('#watchlist-dropdown').val();
@@ -240,7 +262,6 @@
         })
     }
     
-
     // Save historical price of product
     $('#store-price-button').click(function() {
         var productId = '{{ viewingProduct.id }}';
@@ -254,14 +275,13 @@
                 'csrfmiddlewaretoken': '{{ csrf_token }}'
             },
             success: function(response) {
-                updateActionButtons();
+                location.reload();
             },
             error: function(xhr, status, error) {
                 console.log(error);
             }
         });
     });
-
 </script>
 
 {% endblock javascript %}

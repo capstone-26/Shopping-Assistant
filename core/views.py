@@ -30,8 +30,7 @@ def home(request):
     
 def howtoguide(request):
     return render(request, 'howto.html')
-
-     
+ 
 def SignUp(request):
     if request.method == "POST":
         name = request.POST.get('username' )
@@ -66,15 +65,12 @@ def SignIn(request):
             messages.error(request,"Invalid username or password.")
     return render(request=request, template_name="signin.html")
 
-
 def SignOut(request):
     logout(request)
     print("goooddddd")
     messages.success(request, "Logged Out Successfully!!")
 
     return redirect(SignIn)
-
-#### Please dont put unneccessary or bloaty views in here that arent being worked on. Add them when they make sense to add.
 
 # Page Views
 class SearchView(ListView):
@@ -94,7 +90,6 @@ class SearchView(ListView):
         context = super().get_context_data(**kwargs)
         context['query'] = self.request.GET.get('q')
         return context
-    
 
 class SearchView_Watchlist(ListView):
     model = Product
@@ -168,7 +163,6 @@ class WatchlistAddProductView(View):
 
         return render(request, self.template_name, {'watchlist': watchlist})
     
-
 class SearchView(ListView):
     model = Product
     template_name = 'search.html'
@@ -216,13 +210,19 @@ class ProductView(View):
             combined_list.extend(similar_lists)
 
         combined_list = list(set(combined_list))  # Remove duplicate items
-
         
-        return render(request, 'product.html', {
+        # Retrieve historical prices
+        historical_prices = HistoricalPrice.objects.filter(product=product).order_by('-date')
+        
+        context = {
             'viewingProduct': product,
             'watchlists': watchlists,
-            'similarlists':combined_list,
-            })
+            'similarlists': combined_list,
+            'historicalPrices': historical_prices
+        }
+        
+        return render(request, 'product.html', context)
+        
 class CompareProductView(View):
     model = Product
     template_name = 'compareProduct.html'
@@ -369,11 +369,9 @@ def is_product_in_watchlist(request, watchlist_id, product_id):
         
 # User Profile views
 
-
 def profile(request):
     User = request.user
     return render(request, 'profile.html', {'user': User})
-
 
 @login_required(login_url='signin/')
 @transaction.atomic
@@ -399,9 +397,16 @@ def editProfile(request):
         'profile_form': profile_form
     })
 
-
 # Historical Price views
 
+def historical_price(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    historicalPrices = HistoricalPrice.objects.filter(product=product).order_by('-date')
+    context = {
+        'productName': product,
+        'historicalPrices': historicalPrices
+    }
+    return render(request, 'product.html', context)
 
 def store_historical_price(request, product_id):
     product = get_object_or_404(Product, id=product_id)
@@ -419,8 +424,6 @@ def store_historical_price(request, product_id):
 
     return JsonResponse({'success': False})
 
-# Test Views
-# ...
 
 
 
@@ -433,53 +436,3 @@ def store_historical_price(request, product_id):
 
 
 
-# For reference @Jehan
-
-class Watchlists(APIView):
-    renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'watchlists.html'
-
-    def get(self, request):
-        queryset = Watchlist.objects.all()
-        return Response({'watchlists': queryset}) 
-
-class WatchlistDetails(APIView):
-    renderer_classes = [TemplateHTMLRenderer]
-    template_name = 'watchlistdetail.html'
-
-    def get(self, request, id):
-        watchlist = get_object_or_404(Watchlist, id=id)
-        serializer = WatchlistSerializer(watchlist)
-        return Response({'serializer': serializer, 'watchlist': watchlist})
-
-@api_view(['GET'])
-def watchlists(request):
-    watchlists = Watchlist.objects.all()
-    serializer = WatchlistSerializer(watchlists, many=True)
-    return Response(serializer.data)
-
-@api_view(['POST'])
-def watchlistcreate(request):
-    serializer = WatchlistSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data)
-    
-@api_view(['PUT'])
-def watchlistupdate(request, id):
-    watchlist = Watchlist.objects.get(id=id)
-    serializer = WatchlistSerializer(instance=watchlist, data=request.data)
-    
-    if serializer.is_valid():
-        serializer.save()
-    
-    return Response(serializer.data)
-    
-@api_view(['DELETE'])
-def watchlistdelete(request, id): 
-    watchlist = Watchlist.objects.get(id=id)           
-    watchlist.delete()
-    
-    return Response('Item deleted')
-
-# Test Views
