@@ -332,7 +332,11 @@ class AllProductsScraper(Scraper):
                             "image_url": image_url,
                             })
                     except NoSuchElementException as nse_e:
-                        pass   
+                        pass
+                        
+                if page >=10:
+                    page = last_page
+                    self.logger.info(f"exceed page limit stop scraping this category: {category_name}")
                     
             all_category_products[category_name] = category_products
             
