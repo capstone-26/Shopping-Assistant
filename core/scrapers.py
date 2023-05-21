@@ -327,7 +327,7 @@ class AllProductsScraper(Scraper):
                             "name": name,
                             "price": price,
                             "retailer_code": retailer_code,
-                            "category": "test",
+                            "category": category_name,
                             "retailer": "coles",
                             "image_url": image_url,
                             })
