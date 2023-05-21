@@ -210,13 +210,18 @@ class ProductView(View):
             combined_list.extend(similar_lists)
 
         combined_list = list(set(combined_list))  # Remove duplicate items
-
         
-        return render(request, 'product.html', {
+        # Retrieve historical prices
+        historical_prices = HistoricalPrice.objects.filter(product=product).order_by('-date')
+        
+        context = {
             'viewingProduct': product,
             'watchlists': watchlists,
-            'similarlists':combined_list,
-            })
+            'similarlists': combined_list,
+            'historicalPrices': historical_prices
+        }
+        
+        return render(request, 'product.html', context)
         
 class CompareProductView(View):
     model = Product
@@ -398,7 +403,7 @@ def historical_price(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     historicalPrices = HistoricalPrice.objects.filter(product=product).order_by('-date')
     context = {
-        'product': product,
+        'productName': product,
         'historicalPrices': historicalPrices
     }
     return render(request, 'product.html', context)
