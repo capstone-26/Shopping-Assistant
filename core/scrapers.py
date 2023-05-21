@@ -277,7 +277,7 @@ class AllProductsScraper(Scraper):
             # Go to category page
             self.driver.get(category_url)
             
-            # Find all products header on the page
+            # Find all products header on the first page
             products = self.driver.find_elements(By.CSS_SELECTOR, "header.product__header")
             for product in products:
                 try:
@@ -299,6 +299,40 @@ class AllProductsScraper(Scraper):
                     pass
                 except Exception as e:
                     self.logger.error(f"Error scraping product tile: {e}")
+            
+            #scrape for the rest pages        
+            try:
+                pagination = self.driver.find_element(By.CSS_SELECTOR, "ul.coles-targeting-PaginationPaginationUl")
+            except:
+                pass
+            pages = pagination.find_elements(By.TAG_NAME,"li")
+            last_page = int(pages[-2].text)
+            for page in range(2, last_page + 1):
+                print("scapre page",page)
+                # Get the link to the next page
+                next_page_link = f"{url}?page={page}"
+                # Navigate to the next page
+                self.driver.get(next_page_link)
+                # Find all products header on the next page
+                products = self.driver.find_elements(By.CSS_SELECTOR, "header.product__header")
+                for product in products:
+                    try:
+                        name = product.find_element(By.CSS_SELECTOR, "h2.product__title").text.strip()
+                        price = product.find_element(By.CSS_SELECTOR, "span.price__value").get_attribute("innerHTML")
+                        productLink = product.find_element(By.CSS_SELECTOR, "a.product__link").get_attribute("href")
+                        retailer_code = productLink.split("-")[-1]
+                        image_url = f"https://productimages.coles.com.au/productimages/{retailer_code[0]}/{retailer_code}.jpg"
+
+                        category_products.append({
+                            "name": name,
+                            "price": price,
+                            "retailer_code": retailer_code,
+                            "category": "test",
+                            "retailer": "coles",
+                            "image_url": image_url,
+                            })
+                    except NoSuchElementException as nse_e:
+                        pass   
                     
             all_category_products[category_name] = category_products
             
