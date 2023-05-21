@@ -2,8 +2,8 @@ from .views import *
 from django.shortcuts import redirect
 from django.contrib.auth import logout
 from datetime import datetime, timedelta
-from django.conf import settings
 import json
+
 class SessionExpiredMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response

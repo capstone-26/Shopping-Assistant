@@ -4,22 +4,16 @@
 {% block content %}
 
 <div class="block">
-    {% comment %} <h1 class="title">Search</h1> {% endcomment %}
-</div>
-
-<div class="block">
     
     <div class="columns is-centered">
         <div class="column is-half">
 
             <div class="block">
-                {% comment %} {% include 'components/product_searchbar.html' %} {% endcomment %}
                 <h1 class="title">Showing results for "<span class="is-italic">{{ query }}</span>"</h1>
             </div>
 
             <div class="block">
 
-                {% comment %} search results {% endcomment %}
                 {% if product_list %}
                 <table class="table">
                     <thead>

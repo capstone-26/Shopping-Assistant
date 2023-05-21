@@ -4,16 +4,11 @@ from django.http import JsonResponse
 from django.views import View
 from django.views.generic import ListView
 from core.forms import ProfileForm, UserForm
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework.renderers import TemplateHTMLRenderer
-from rest_framework.views import APIView
-from rest_framework.decorators import api_view
 from django.contrib import messages
 from .models import *
 from .serializers import *
 from core import scrapers
-from django.contrib.auth import login,logout
+from django.contrib.auth import logout
 from django.contrib.auth.models import User
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
