@@ -307,8 +307,8 @@ class AllProductsScraper(Scraper):
                 pass
             pages = pagination.find_elements(By.TAG_NAME,"li")
             last_page = int(pages[-2].text)
+            self.logger.info(f"Scraping coles {pages} pages in category: {category_name}")
             for page in range(2, last_page + 1):
-                print("scapre page",page)
                 # Get the link to the next page
                 next_page_link = f"{url}?page={page}"
                 # Navigate to the next page
