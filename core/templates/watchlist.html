@@ -125,7 +125,6 @@ removeSelectedButton.addEventListener('click', function() {
       if (productId !== '') {
         removeProductsFromWatchlist(watchlist_id, productId);
       }
-      
     }
   });
 
@@ -151,7 +150,7 @@ removeSelectedButton.addEventListener('click', function() {
                 }
             },
             error: function(xhr, status, error) {
-                alert('An error occurred: ' + error);
+                //alert('An error occurred: ' + error);
             }
         });
     };
