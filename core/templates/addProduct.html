@@ -15,7 +15,6 @@
             <div class="block">
                 {% comment %} {% include 'components/product_searchbar.html' %} {% endcomment %}
                 <h1 class="title">Showing results for "<span class="is-italic">{{ query }}</span>"</h1>
-                <h1 class="title">Showing results for watchlist id = "<span class="is-italic">{{ another_value }}</span>"</h1>
             </div>
 
             <div class="block">
@@ -52,6 +51,7 @@
                     </tbody>
                 </table>
                 {% else %}
+                <p>No product found for "<span class="is-italic">{{ query }}</span>"</p>
                 {% endif %}
 
             </div>
