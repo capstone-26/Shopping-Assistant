@@ -13,8 +13,15 @@
         <div class="column is-half">
 
             <div class="block">
-                {% comment %} {% include 'components/product_searchbar.html' %} {% endcomment %}
-                <h1 class="title">Showing results for "<span class="is-italic">{{ query }}</span>"</h1>
+                <div class="columns is-half">
+                    <div class="column is-three-quarters">
+                        {% comment %} {% include 'components/product_searchbar.html' %} {% endcomment %}
+                        <h1 class="title">Showing results for "<span class="is-italic">{{ query }}</span>"</h1>
+                    </div>
+                    <div class="column is-one-quarter">
+                        <button class="go-Back button is-danger">Back</button></td>
+                    </div>
+                </div>
             </div>
 
             <div class="block">
@@ -51,7 +58,7 @@
                     </tbody>
                 </table>
                 {% else %}
-                <p>No product found for "<span class="is-italic">{{ query }}</span>"</p>
+                    <p>No product found for "<span class="is-italic">{{ query }}</span>"</p>
                 {% endif %}
 
             </div>
@@ -64,6 +71,11 @@
 
 {% block javascript %}
 <script>
+
+    document.querySelector(".go-Back").addEventListener("click", function() {
+        window.location.href = '/watchlist/' + '{{ another_value }}';
+    });
+
 
     $(document).ready(function() {
         $('.add-to-watchlist-button').click(function() {

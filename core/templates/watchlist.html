@@ -51,18 +51,24 @@
                                     <img src="{% static 'img/' %}{{ product.retailer }}.png" alt="">
                                 </figure>
                             </td>
-                            <td><input class="remove-product-checkbox" type="checkbox" data-product-id="{{ product.id }}"></td>
+                            <td><input class="remove-product-checkbox is-hidden" type="checkbox" data-product-id="{{ product.id }}"></td>
+                            <td><button class="remove-from-watchlist-button button is-danger" data-product-id="{{ product.id }}">Remove</button></td>
                         </tr>
                     {% endfor %}
+                    <tr>
+                        <td colspan="3" align="right"><span id="total-cost" style="font-weight: bold;"></td>
+                        <td colspan="4" align="right"> <button id="remove-selected-button" class="button is-danger" style="display: none;"> Remove Selected</button>
+                    </tr>
                 </tbody>
             </table>
 
         </div>
 
+       
         <button class="js-modal-trigger button is-link is-primary ml-2 mr-2" data-target="add-modal">
             Add Product to watchlist
         </button>
-        <button id="remove-selected-button" class="button is-danger" disabled> Remove Selected</button>
+        <button id="remove-multiple-button" class="button is-danger">Remove Multiple Products</button>
         <button id="export-button" class="button is-info ml-2" onclick="exportData()">
             Export
         </button>
@@ -86,6 +92,7 @@
                                 </p>
                             </div>
                             <input type="hidden" name="another_value" value="{{ watchlist.id }}">
+                            <button type="submit" class="button is-primary">Search</button>
                         </form>
                     </div>
                 </section>
@@ -98,14 +105,32 @@
 
 {% block javascript %}
 <script>
+
+    document.getElementById('remove-multiple-button').addEventListener('click', function() {
+        var removeSelectedButton = document.getElementById('remove-selected-button');
+        removeSelectedButton.style.display = 'block';
+
+        var removeButtons = document.getElementsByClassName('remove-from-watchlist-button');
+        var checkboxes = document.getElementsByClassName('remove-product-checkbox');
+
+        // Hide all "Remove" buttons
+        for (var i = 0; i < removeButtons.length; i++) {
+            removeButtons[i].style.display = 'none';
+        }
+
+        // Show all checkboxes
+        for (var j = 0; j < checkboxes.length; j++) {
+            checkboxes[j].classList.remove('is-hidden');
+        }
+    });
+
+
     $(document).ready(function() {
-        $('.remove-product-checkbox').change(function() {
-            var removeSelectedButton = $('#remove-selected-button');
-            if ($('.remove-product-checkbox:checked').length > 0) {
-                removeSelectedButton.prop('disabled', false);
-            } else {
-                removeSelectedButton.prop('disabled', true);
-            }
+        $('.remove-from-watchlist-button').click(function(e) {
+            e.preventDefault();
+            var watchlist_id = '{{ watchlist.id }}';
+            var product_id = $(this).data('product-id');
+            removeProductFromWatchlist(watchlist_id, product_id);
         });
     });
 
@@ -123,17 +148,14 @@ removeSelectedButton.addEventListener('click', function() {
       // Get the product id from the data attribute
       var productId = checkbox.dataset.productId;
       if (productId !== '') {
-        removeProductsFromWatchlist(watchlist_id, productId);
+        removeProductFromWatchlist(watchlist_id, productId);
       }
     }
   });
-
-  // Alert the selected product ids
-  alert('Selected Product IDs: ' + selectedProductIds.join(', '));
 });
 
     // Remove products from watchlist
-    function removeProductsFromWatchlist(watchlist_id, product_id) {
+    function removeProductFromWatchlist(watchlist_id, product_id) {
         $.ajax({
             url: "/watchlist/remove/" + watchlist_id + "/" +product_id,
             type: 'POST',
@@ -144,7 +166,9 @@ removeSelectedButton.addEventListener('click', function() {
             },
             success: function(response) {
                 if (response.status === 'success') {
-                    location.reload();
+                    setTimeout(function() {
+                        location.reload();
+                        }, 250); // 2
                 } else {
                     alert(response.message);
                 }
