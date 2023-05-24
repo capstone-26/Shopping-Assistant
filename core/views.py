@@ -184,7 +184,9 @@ class ProductView(View):
         print(product_id)
         product = Product.objects.get(id=product_id)
         watchlists = Watchlist.objects.filter(owner=request.user)
-        stop_words = set(['the', 'and', 'a', 'an', 'in', 'on', 'at', 'is', 'it', 'of', 'for','woolworths', 'coles', 'aldi'])  # Define your own set of stopwords
+        stop_words = set(['the', 'and', 'a', 'an', 'in', 'on', 'at', 'is', 'it', 'of', 'for','with','Woolworths', 'Coles',
+                      'Aldi' 'woolworths', 'coles',
+                      'aldi','No','Yes','Each','each','Pack','Pack','bottle','Bottle'])  # Define your own set of stopwords
         description = product.name
         description = description.lower()
 
