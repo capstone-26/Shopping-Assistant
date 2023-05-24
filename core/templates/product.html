@@ -104,34 +104,36 @@
         <div class="container">
             <div class="box">
                 <h1 class="title is-6">You May Also Like</h1>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Image</th>
-                            <th>Name</th>
-                            <th>Price</th>
-                            <th>Retailer</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for product in similarlists %}
+                <div style="height: 900px; overflow-y: scroll;">
+                    <table class="table">
+                        <thead>
                             <tr>
-                                <td><img class="image is-32x32" src="{{ product.image_url }}" alt="{{ product.name }}" width="100px"></td>
-                                <td><a href="{% url 'product' product.id %}"> {{ product.name }}</a></td>
-                                <td>{{ product.price }}</td>
-                                <td>
-                                    <figure class="image is-32x32">
-                                        <img src="{% static 'img/' %}{{ product.retailer }}.png" alt="">
-                                    </figure>
-                                </td>
-                                <td><a  href="{% url 'compareProduct' product.id viewingProduct.id %}" data-product-id="{{ product.id }}">Compare</a></td>  
+                                <th>Image</th>
+                                <th>Name</th>
+                                <th>Price</th>
+                                <th>Retailer</th>
                             </tr>
-                        {% endfor %}
-                        <tr>
-                          <td colspan="3" align="right"><span id="total-cost" style="font-weight: bold;"></td>
-                        </tr>
-                      </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {% for product in similarlists %}
+                                <tr>
+                                    <td><img class="image is-32x32" src="{{ product.image_url }}" alt="{{ product.name }}" width="100px"></td>
+                                    <td><a href="{% url 'product' product.id %}"> {{ product.name }}</a></td>
+                                    <td>{{ product.price }}</td>
+                                    <td>
+                                        <figure class="image is-32x32">
+                                            <img src="{% static 'img/' %}{{ product.retailer }}.png" alt="">
+                                        </figure>
+                                    </td>
+                                    <td><a  href="{% url 'compareProduct' product.id viewingProduct.id %}"  class="button is-primary"  data-product-id="{{ product.id }}">Compare</a></td>  
+                                </tr>
+                            {% endfor %}
+                            <tr>
+                              <td colspan="3" align="right"><span id="total-cost" style="font-weight: bold;"></td>
+                            </tr>
+                          </tbody>
+                    </table>    
+                </div>           
             </div>
 
         </div>
