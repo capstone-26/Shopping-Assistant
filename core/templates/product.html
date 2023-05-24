@@ -7,9 +7,7 @@
     <div class="column">
         <div class="block">
     
-            
             <div class="card">
-
                 <!-- Product image -->
                 <div class="card-image">
                     <figure class="image">
@@ -32,6 +30,45 @@
                             <span class="tag is-medium has-background-primary-light"><strong>${{ viewingProduct.price }}</strong></span>
                     
                             <button id="store-price-button" class="button is-info ml-2">Save Price</button>
+                            <button class="js-modal-trigger button is-link is-primary ml-2" data-target="historical-price-modal">
+                                <span>Price History</span>
+                            </button>
+                            
+                            <!-- Add watchlist modal -->
+                            <div class="modal" id="historical-price-modal">
+                                <div class="modal-background"></div>
+                                <div class="modal-card" style="width: 50%;">
+                                    <header class="modal-card-head">
+                                        <p class="modal-card-title has-text-weight-bold" style="padding-right: 20px;">{{ viewingProduct.name }}</p>
+                                        <button class="delete is-large" aria-label="close"></button>
+                                    </header>
+                                    
+                                    <section class="modal-card-body">
+                                        <div id="historical-price" class="box mb-0">
+                                            <div class="container">
+                                                <p class="title is-4">Price History</p>
+                                                <table class="table is-striped is-hoverable is-fullwidth">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Date</th>
+                                                            <th>Price</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {% for historicalPrice in historicalPrices %}
+                                                        <tr>
+                                                            <td>{{ historicalPrice.date }}</td>
+                                                            <td>${{ historicalPrice.price }}</td>
+                                                        </tr>
+                                                        {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div id="price-chart" style="padding-right: 20px;"></div>
+                                    </section>
+                                </div>
+                            </div>
                         </span>
                     </div>
 
@@ -44,27 +81,6 @@
                     <!-- Loading indicator for when additional details are being gotten -->
                     <progress id="loading-indicator" class="progress is-small is-primary is-hidden mt-4" max="100">30%</progress>
                     
-                    <div id="historical-price" class="box mb-0">
-                        <div class="container">
-                            <p class="heading">Historical Prices</p>
-                            <table class="table is-striped is-hoverable is-fullwidth">
-                              <thead>
-                                <tr>
-                                  <th>Date</th>
-                                  <th>Price</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {% for historicalPrice in historicalPrices %}
-                                  <tr>
-                                    <td>{{ historicalPrice.date }}</td>
-                                    <td>${{ historicalPrice.price }}</td>
-                                  </tr>
-                                {% endfor %}
-                              </tbody>
-                            </table>
-                          </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -138,16 +154,16 @@
 
     </div>
    
-        
-       
-
-    
 </div>
 
 {% endblock %}
 
 {% block javascript %}
 {% comment %} for some reason moving this js to a static/ file it causes csrf_token errors {% endcomment %}
+
+<!-- Include Chart.js library -->
+<script src="https://code.highcharts.com/highcharts.js"></script>
+
 <script>
     $(document).ready(function() {
         
@@ -261,16 +277,19 @@
             },
         })
     }
-    
-    // Save historical price of product
+
+    // Handle button click to save historical price
     $('#store-price-button').click(function() {
+        var button = $(this); 
+        button.prop('disabled', true); // Disable button
+    
         var productId = '{{ viewingProduct.id }}';
         var price = parseFloat('{{ viewingProduct.price }}');
-        var button = $(this); // Reference to the button element
-        
-        // Disable the button
-        button.prop('disabled', true);
+        saveHistoricalPrice(productId, price);
+    });
 
+    // Save historical price of product
+    function saveHistoricalPrice(productId, price) {
         // Send add request via ajax
         $.ajax({
             url: "/store-historical-price/" + productId,
@@ -279,23 +298,189 @@
                 'csrfmiddlewaretoken': '{{ csrf_token }}'
             },
             success: function(response) {
+                console.log(response);
                 if (response.success) {
                     $('#store-price-button').text('Saved');
                     // Get the current date
-                    var currentDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+                    var currentDate = new Date();
+                    // Format date 
+                    var formattedDate = currentDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
                     // Create a new row with the latest data
-                    var newRow = $('<tr><td>' + currentDate + '</td><td>$' + price + '</td></tr>');
+                    var newRow = $('<tr><td>' + formattedDate + '</td><td>$' + price + '</td></tr>');
+                    // Prepend a new row to the top of historical price table
                     $('#historical-price tbody').prepend(newRow);
-                } else {
-                    $('#store-price-button').text('Price up to date');
+                    // Update the price chart
+                    renderPriceChart(response.prices);
+                    } else {
+                        $('#store-price-button').text('Price up to date');
                 }
             },
             error: function(xhr, status, error) {
                 console.log(error);
             }
         });
-    }); 
+    }
 
+    // Render historical price chart using Highcharts
+    function renderPriceChart(historicalPrices) {
+        console.log('renderPriceChart called');
+
+        // Get data points 
+        var data = [];
+        for (var i = 0; i < historicalPrices.length; i++) {
+            var entry = historicalPrices[i];
+            var date = entry.date;
+            var price = parseFloat(entry.price);
+            data.push([new Date(date).getTime(), price]);
+        }
+
+        // Chart options
+        var options = {
+            chart: {
+                type: 'line',
+                renderTo: 'price-chart'
+            },
+            title: {
+                text: 'Price Variation'
+            },
+            xAxis: {
+                type: 'datetime',
+                title: {
+                    text: 'Date'
+                }
+            },
+            yAxis: {
+                title: {
+                    text: 'Price'
+                }
+            },
+            series: [{
+                name: 'Price',
+                data: data
+            }]
+        };
+
+        // Create chart
+        var chart = new Highcharts.Chart(options);
+    }
+    
+    Highcharts.chart('price-chart', {
+        chart: {
+            type: 'line'
+        },
+        title: {
+            text: 'Historical Prices',
+            style: {
+                color: '#363636',
+                fontSize: '1.5rem',
+                fontWeight: 'bold'
+            }
+        },
+        xAxis: {
+            type: 'datetime',
+            title: {
+                text: 'Date'
+            }
+        },
+        yAxis: {
+            title: {
+                text: 'Price'
+            }
+        },
+        series: [{
+            name: 'Price',
+            data: []
+        }]
+    });
+
+
+   // Load historical price table 
+    function loadHistoricalPriceTable() {
+        var productId = '{{ viewingProduct.id }}';
+        // Fetch historical prices 
+        $.ajax({
+            url: "/fetch-historical-price/" + productId,
+            method: "GET",
+            success: function(response) {
+                console.log(response);
+                if (response.success) {
+                    var historicalPrices = response.prices;
+                    var tableBody = $('#historical-price tbody');
+
+                    // Clear existing rows
+                    tableBody.empty();
+
+                    // Loop through historical prices and create rows
+                    for (var i = 0; i < historicalPrices.length; i++) {
+                        var entry = historicalPrices[i];
+                        var date = new Date(entry.date);
+                        // Format date
+                        var formattedDate = date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+                        var price = entry.price;
+                        var row = $('<tr><td>' + formattedDate + '</td><td>$' + price + '</td></tr>');
+                        tableBody.append(row);
+                    }
+
+                    // Update the chart with data
+                    renderPriceChart(historicalPrices);
+                } else {
+                    console.log('Failed to fetch historical prices.');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.log(error);
+            }
+        });
+    }
+
+    // Load historical price table 
+    loadHistoricalPriceTable();
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Functions to open and close a modal
+        function openModal($el) {
+            $el.classList.add('is-active');
+        }
+        
+        function closeModal($el) {
+            $el.classList.remove('is-active');
+        }
+        
+        function closeAllModals() {
+            (document.querySelectorAll('.modal') || []).forEach(($modal) => {
+                closeModal($modal);
+            });
+        }
+        
+        // Add a click event on buttons to open a specific modal
+        (document.querySelectorAll('.js-modal-trigger') || []).forEach(($trigger) => {
+            const modal = $trigger.dataset.target;
+            const $target = document.getElementById(modal);
+            
+            $trigger.addEventListener('click', () => {
+                openModal($target);
+            });
+        });
+        
+        // Add a click event on various child elements to close the parent modal
+        (document.querySelectorAll('.modal-close, .modal-card-head .delete, .modal-card-foot .button, .modal-card-body .close') || []).forEach(($close) => {
+            const $target = $close.closest('.modal');
+            
+            $close.addEventListener('click', () => {
+                closeModal($target);
+            });
+        });
+        
+        // Add a keyboard event to close all modals
+        document.addEventListener('keydown', (event) => {
+            const e = event || window.event;
+            
+            if (e.keyCode === 27) { // Escape key
+                closeAllModals();
+            }
+        });
+    });
+    
 </script>
 
 {% endblock javascript %}
