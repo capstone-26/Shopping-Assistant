@@ -45,6 +45,6 @@ urlpatterns = [
     path('watchlist/add/<int:watchlist_id>/<str:product_id>', views.add_product_to_watchlist, name='add_product_to_watchlist'),
     path('watchlist/remove/<int:watchlist_id>/<str:product_id>', views.remove_product_from_watchlist, name='remove_product_from_watchlist'),
     path('is-product-in-watchlist/<int:watchlist_id>/<str:product_id>', views.is_product_in_watchlist, name='is_product_in_watchlist'),
-    path('historical-price/<str:product_id>', views.historical_price, name='historical_price'),
+    path('fetch-historical-price/<str:product_id>', views.fetch_historical_price, name='fetch_historical_price'),
     path('store-historical-price/<str:product_id>', views.store_historical_price, name='store_historical_price')
 ]

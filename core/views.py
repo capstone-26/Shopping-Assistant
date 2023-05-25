@@ -4,16 +4,17 @@ from django.http import JsonResponse
 from django.views import View
 from django.views.generic import ListView
 from core.forms import ProfileForm, UserForm
-from django.contrib import messages
+from django.contrib import messages,auth
 from .models import *
 from .serializers import *
 from core import scrapers
 from django.contrib.auth import logout
 from django.contrib.auth.models import User
-from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
-from datetime import date
+from datetime import date, datetime
+# import schedule
+import time
 
 def home(request):
      
@@ -396,40 +397,23 @@ def editProfile(request):
 
 # Historical Price views
 
-def historical_price(request, product_id):
+# Display historical price data in product page 
+def fetch_historical_price(request, product_id):
     product = get_object_or_404(Product, id=product_id)
-    historicalPrices = HistoricalPrice.objects.filter(product=product).order_by('-date')
-    context = {
-        'productName': product,
-        'historicalPrices': historicalPrices
-    }
-    return render(request, 'product.html', context)
+    historical_prices = HistoricalPrice.objects.filter(product=product).values('date', 'price')
+    return JsonResponse({"success": True, "prices": list(historical_prices)})
 
+# Store new price
 def store_historical_price(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     current_price = product.price
-    
-    status = 200
 
     latest_price_entry = HistoricalPrice.objects.filter(product=product).order_by('-date').first()
 
-    # Check if new price is different to existing price
+    # Check if new price is different from the existing price
     if latest_price_entry is None or latest_price_entry.price != current_price:
         historical_price = HistoricalPrice(product=product, price=current_price, date=date.today())
         historical_price.save()
         return JsonResponse({'success': True})
 
     return JsonResponse({'success': False})
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -51,24 +51,28 @@
                                     <img src="{% static 'img/' %}{{ product.retailer }}.png" alt="">
                                 </figure>
                             </td>
+                            <td><input class="remove-product-checkbox is-hidden" type="checkbox" data-product-id="{{ product.id }}"></td>
                             <td><button class="remove-from-watchlist-button button is-danger" data-product-id="{{ product.id }}">Remove</button></td>
-                            
                         </tr>
                     {% endfor %}
                     <tr>
-                      <td colspan="3" align="right"><span id="total-cost" style="font-weight: bold;"></td>
+                        <td colspan="3" align="right"><span id="total-cost" style="font-weight: bold;"></td>
+                        <td colspan="4" align="right"> <button id="remove-selected-button" class="button is-danger" style="display: none;"> Remove Selected</button>
                     </tr>
-                  </tbody>
+                </tbody>
             </table>
 
         </div>
 
-        <button class="js-modal-trigger button is-link is-primary ml-2" data-target="add-modal">
+       
+        <button class="js-modal-trigger button is-link is-primary ml-2 mr-2" data-target="add-modal">
             Add Product to watchlist
         </button>
+        <button id="remove-multiple-button" class="button is-danger">Remove Multiple Products</button>
         <button id="export-button" class="button is-info ml-2" onclick="exportData()">
             Export
         </button>
+        
         <div class="modal" id="add-modal">
             <div class="modal-background"></div>
             <div class="modal-card">
@@ -88,6 +92,7 @@
                                 </p>
                             </div>
                             <input type="hidden" name="another_value" value="{{ watchlist.id }}">
+                            <button type="submit" class="button is-primary">Search</button>
                         </form>
                     </div>
                 </section>
@@ -101,6 +106,25 @@
 {% block javascript %}
 <script>
 
+    document.getElementById('remove-multiple-button').addEventListener('click', function() {
+        var removeSelectedButton = document.getElementById('remove-selected-button');
+        removeSelectedButton.style.display = 'block';
+
+        var removeButtons = document.getElementsByClassName('remove-from-watchlist-button');
+        var checkboxes = document.getElementsByClassName('remove-product-checkbox');
+
+        // Hide all "Remove" buttons
+        for (var i = 0; i < removeButtons.length; i++) {
+            removeButtons[i].style.display = 'none';
+        }
+
+        // Show all checkboxes
+        for (var j = 0; j < checkboxes.length; j++) {
+            checkboxes[j].classList.remove('is-hidden');
+        }
+    });
+
+
     $(document).ready(function() {
         $('.remove-from-watchlist-button').click(function(e) {
             e.preventDefault();
@@ -109,27 +133,50 @@
             removeProductFromWatchlist(watchlist_id, product_id);
         });
     });
-        // Remove product from watchlist
+
+    var removeSelectedButton = document.getElementById('remove-selected-button');
+
+
+removeSelectedButton.addEventListener('click', function() {
+  var checkboxes = document.querySelectorAll('.remove-product-checkbox');
+  var watchlist_id = '{{ watchlist.id }}';
+
+  // Iterate over the checkboxes and check if they are selected
+  checkboxes.forEach(function(checkbox) {
+    var watchlist_id = '{{ watchlist.id }}';
+    if (checkbox.checked) {
+      // Get the product id from the data attribute
+      var productId = checkbox.dataset.productId;
+      if (productId !== '') {
+        removeProductFromWatchlist(watchlist_id, productId);
+      }
+    }
+  });
+});
+
+    // Remove products from watchlist
     function removeProductFromWatchlist(watchlist_id, product_id) {
-    $.ajax({
-        url: "/watchlist/remove/" + watchlist_id + "/" + product_id,
-        type: 'POST',
-        data: {
-            'watchlist_id': watchlist_id,
-            'product_id': product_id,
-            'csrfmiddlewaretoken': '{{ csrf_token }}'
-        },
-        success: function(response) {
-            if (response.status === 'success') {
-                location.reload();
-            } else {
-                alert(response.message);
+        $.ajax({
+            url: "/watchlist/remove/" + watchlist_id + "/" +product_id,
+            type: 'POST',
+            data: {
+                'watchlist_id': watchlist_id,
+                'product_id': product_id,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success: function(response) {
+                if (response.status === 'success') {
+                    setTimeout(function() {
+                        location.reload();
+                        }, 250); // 2
+                } else {
+                    alert(response.message);
+                }
+            },
+            error: function(xhr, status, error) {
+                //alert('An error occurred: ' + error);
             }
-        },
-        error: function(xhr, status, error) {
-            alert('An error occurred: ' + error);
-        }
-    });
+        });
     };
 
     function redirectToWatchlistAddProductPage(watchlistId) {
