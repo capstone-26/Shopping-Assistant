@@ -13,8 +13,10 @@ class Command(BaseCommand):
         self.stdout.write('Scraping data...')
         try:
             # Scrape all data to core/temp/
-            scraper2.SweepingScraper().scrape_woolworths()
-            scraper2.SweepingScraper().scrape_coles()
+            scraper.scrape_woolworths()
+            scraper.scrape_coles()
+            scraper.scrape_aldi()
+            
         except Exception as e:
             self.stdout.write(self.style.ERROR(f"FAILED: {e}"))
             return
@@ -34,7 +36,6 @@ class Command(BaseCommand):
         
     def update_database(self, products):
     
-        self.stdout.write('Updating database...')
         for product in products:
             try:
                 # Get existing or create new product

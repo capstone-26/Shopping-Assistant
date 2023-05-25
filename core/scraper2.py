@@ -19,6 +19,7 @@ class SweepingScraper(Scraper):
     PAGES_TO_SCRAPE = 2
 
     def scrape_woolworths(self):
+        self.logger.info(f"scraping woolworth...")
         # Fixed categories and urls to scrape
         categories = {
             "Fruit & Veg": "https://www.woolworths.com.au/shop/browse/fruit-veg",
@@ -102,10 +103,9 @@ class SweepingScraper(Scraper):
             # Write the products to a file
             self.export(f"woolworths-[{category_name}].json", category_products)
 
-        # Close the driver
-        self.driver.close()
    
     def scrape_coles(self):
+        self.logger.info(f"scraping coles...")
         categories = {
             "Meat & Seafood": "https://www.coles.com.au/browse/meat-seafood",
             "Fruit & Vegetables": "https://www.coles.com.au/browse/fruit-vegetables",
@@ -157,7 +157,77 @@ class SweepingScraper(Scraper):
             # Write the products to a file
             self.export(f"coles-[{category_name}].json", category_products)
             
-        # Close the driver
+    def scrape_aldi(self):
+        self.logger.info(f"scraping aldi...")
+        categories = {
+            "super-savers": "https://www.aldi.com.au/en/groceries/super-savers/",
+            "seasonal-range": "https://www.aldi.com.au/en/groceries/seasonal-range/",
+            "Price-reductions": "https://www.aldi.com.au/en/groceries/price-reductions/",
+            "dairy-eggs": "https://www.aldi.com.au/en/groceries/fresh-produce/dairy-eggs/",
+            "baby": "https://www.aldi.com.au/en/groceries/baby/",
+            "beauty": "https://www.aldi.com.au/en/groceries/beauty/",
+            "freezer": "https://www.aldi.com.au/en/groceries/freezer/",
+            "health": "https://www.aldi.com.au/en/groceries/health/",
+            "laundry-household": "https://www.aldi.com.au/en/groceries/laundry-household/",
+            "pantry": "https://www.aldi.com.au/en/groceries/pantry/",
+        }
+
+        for category_name, category_url in categories.items():
+            self.logger.info(f"Scraping category: {category_name}")
+            category_products = []
+            self.driver.get(category_url)
+
+            # Check the sub link to the category page
+            sub_category_links = []
+            try:
+                sub_categories = WebDriverWait(self.driver, self.TIMEOUT).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "div.csc-textpic-imagecolumn")))
+                for sub_category in sub_categories:
+                    sub_category_link = sub_category.find_element(By.XPATH, ".//a")
+                    sub_category_link = sub_category_link.get_attribute("href")
+                    if sub_category_link is not None and category_url in sub_category_link:
+                        sub_category_links.append(sub_category_link)
+            except TimeoutException:
+                # no sub categories
+                pass
+
+            # Check if the sub link to the category page is empty reload category page if its empty
+            if not sub_category_links:
+                sub_category_links.append(category_url)
+                
+            for link in sub_category_links:
+                self.driver.get(link)
+                # Find all product data on the page
+                try:
+                    products = WebDriverWait(self.driver, self.TIMEOUT).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "a.box--wrapper")))
+                    # Extract content from each of the product tiles
+                    for product in products:
+                        name = product.find_element(By.CSS_SELECTOR, "div.box--description--header").text.strip()
+                        value = product.find_element(By.CSS_SELECTOR, "span.box--value")
+                        decimal = product.find_element(By.CSS_SELECTOR, "span.box--decimal")
+                        image_url = product.find_element(By.TAG_NAME, "img").get_attribute("src")
+                        product_link = product.get_attribute("href")
+                        # Split the URL by "/"
+                        parts = product_link.split("/")
+                        # Find the index of the desired section
+                        index = parts.index("groceries") + 1
+                        # Join the parts starting from the groceires to make retailer_code
+                        retailer_code = "/".join(parts[index:])
+                        category_products.append({
+                            "name": name,
+                            "price": value.text.strip() + decimal.text.strip(),
+                            "retailer_code": retailer_code,
+                            "category": category_name,
+                            "retailer": "aldi",
+                            "image_url": image_url,
+                        })
+                except NoSuchElementException as nse_e:
+                    pass
+                except Exception as e:
+                    self.logger.error(f"Error scraping product tile: {e}")
+            
+            # Write the products to a file
+            self.export(f"aldi-[{category_name}].json", category_products)
+        #close the driver
         self.driver.close()
 
     def export(self, filename, data):
