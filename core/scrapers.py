@@ -29,7 +29,7 @@ class Scraper:
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(self.LOGGING_LEVEL)
         self.handler = logging.StreamHandler()
-        self.handler.setFormatter(logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s"))
+        self.handler.setFormatter(logging.Formatter('%(asctime)s [%(levelname)s]: %(message)s', datefmt='%Y-%m-%d %H:%M:%S'))
         self.logger.addHandler(self.handler)
 
         self.driver = self._get_driver()
