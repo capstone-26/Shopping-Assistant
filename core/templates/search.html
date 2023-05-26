@@ -44,7 +44,9 @@
                     </tbody>
                 </table>
                 {% else %}
-                <p>No product found for "<span class="is-italic">{{ query }}</span>"</p>
+                <div class="hero-body has-text-centered">
+                    <p class="title is-3 has-text-grey-light">No product found for "<span class="is-italic">{{ query }}</span>"</p>
+                </div>
                 {% endif %}
 
             </div>
