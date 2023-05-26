@@ -94,28 +94,34 @@
         <div class="container">
 
             <!-- This is the "Add to watchlist" action -->
+            {% if watchlists %}
             <div class="box">
                 <h1 class="title is-6">Add to Watchlist</h1>
-            
+
                 <div class="field">
                     <div class="control">
                         <div class="select is-fullwidth">
                             <select id="watchlist-dropdown" onChange="updateActionButtons()">
-                                {% for watchlist in watchlists %}
-                                <option value="{{ watchlist.id }}">{{ watchlist.title }}</option>
-                                {% endfor %}
+                            {% for watchlist in watchlists %}
+                            <option value="{{ watchlist.id }}">{{ watchlist.title }}</option>
+                            {% endfor %}
                             </select>
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="field">
                     <div class="control">
-                        <button id="add-to-watchlist-button" class="button is-primary">Add</button>
-                        <button id="remove-from-watchlist-button" class="button is-danger">Remove</button>
+                    <button id="add-to-watchlist-button" class="button is-primary">Add</button>
+                    <button id="remove-from-watchlist-button" class="button is-danger">Remove</button>
                     </div>
                 </div>
             </div>
+            {% else %}
+            <div class="hero-body has-text-centered">
+                <p class="title is-3 has-text-grey-light">No watchlists found</p>
+            </div>
+            {% endif %}
         </div>
         <div class="container">
             <div class="box">
