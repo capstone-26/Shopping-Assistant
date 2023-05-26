@@ -57,7 +57,7 @@
                     {% endfor %}
                     <tr>
                         <td colspan="3" align="right"><span id="total-cost" style="font-weight: bold;"></td>
-                        <td colspan="4" align="right"> <button id="remove-selected-button" class="button is-danger" style="display: none;"> Remove Selected</button>
+                        <td colspan="4" align="right"> <button id="remove-selected-button" class="button is-danger" style="display: none;"> Remove Selected</button>  
                     </tr>
                 </tbody>
             </table>
@@ -66,10 +66,10 @@
 
        
         <button class="js-modal-trigger button is-link is-primary ml-2 mr-2" data-target="add-modal">
-            Add Product to watchlist
+            Add Product
         </button>
-        <button id="remove-multiple-button" class="button is-danger">Remove Multiple Products</button>
-        <button id="export-button" class="button is-info ml-2" onclick="exportData()">
+        <button id="remove-multiple-button" class="button is-info">Edit List</button>
+        <button id="export-button" class="button is-success ml-2" onclick="exportData()">
             Export
         </button>
         
@@ -137,22 +137,22 @@
     var removeSelectedButton = document.getElementById('remove-selected-button');
 
 
-removeSelectedButton.addEventListener('click', function() {
-  var checkboxes = document.querySelectorAll('.remove-product-checkbox');
-  var watchlist_id = '{{ watchlist.id }}';
-
-  // Iterate over the checkboxes and check if they are selected
-  checkboxes.forEach(function(checkbox) {
+    removeSelectedButton.addEventListener('click', function() {
+    var checkboxes = document.querySelectorAll('.remove-product-checkbox');
     var watchlist_id = '{{ watchlist.id }}';
-    if (checkbox.checked) {
-      // Get the product id from the data attribute
-      var productId = checkbox.dataset.productId;
-      if (productId !== '') {
-        removeProductFromWatchlist(watchlist_id, productId);
-      }
-    }
-  });
-});
+
+    // Iterate over the checkboxes and check if they are selected
+    checkboxes.forEach(function(checkbox) {
+        var watchlist_id = '{{ watchlist.id }}';
+        if (checkbox.checked) {
+        // Get the product id from the data attribute
+        var productId = checkbox.dataset.productId;
+        if (productId !== '') {
+            removeProductFromWatchlist(watchlist_id, productId);
+        }
+        }
+    });
+    });
 
     // Remove products from watchlist
     function removeProductFromWatchlist(watchlist_id, product_id) {
