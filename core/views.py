@@ -3,7 +3,7 @@ from django.shortcuts import render, get_object_or_404,redirect
 from django.http import JsonResponse
 from django.views import View
 from django.views.generic import ListView
-from core.forms import ProfileForm, UserForm
+from core.forms import ProfileForm, UserForm, PasswordForm
 from django.contrib import messages,auth
 from .models import *
 from .serializers import *
@@ -13,6 +13,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from datetime import date, datetime
+from django.contrib.auth import update_session_auth_hash
 # import schedule
 import time
 
@@ -394,6 +395,35 @@ def editProfile(request):
         'user_form': user_form,
         'profile_form': profile_form
     })
+    
+@login_required(login_url='signin/')
+@transaction.atomic
+def changepassword(request):
+    if request.method == "POST":
+        password_form = PasswordForm(request.POST)
+        if password_form.is_valid():
+            user = request.user
+            old_password = password_form.cleaned_data.get("old_password")
+            new_password = password_form.cleaned_data.get("new_password")
+
+            if not user.check_password(old_password):
+                password_form.add_error(
+                    "old_password", "Incorrect old password.")
+            else:
+                user.set_password(new_password)
+                user.save()
+
+                update_session_auth_hash(request, user)
+
+                messages.success(request, "Password changed successfully!")
+                
+                return redirect("/profile")
+    else:
+        password_form = PasswordForm()
+
+    return render(request, "changepassword.html", {
+        "password_form": password_form
+        })
 
 # Historical Price views
 

@@ -37,6 +37,7 @@ urlpatterns = [
     path('profile/', views.profile, name='profile'),
     path('editprofile/', views.editProfile, name='editprofile'),
     path('addProductToWatchlist/', views.SearchView_Watchlist.as_view(), name = 'addProduct'),
+    path('changepassword/', views.changepassword, name='changepassword'),
 
     # API/data URLs
     path('get-product-details/', views.get_product_details, name='get_product_details'),

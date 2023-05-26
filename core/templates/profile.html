@@ -1,6 +1,24 @@
 {% extends 'bases/base_page.html' %}
 {% block content %}
 
+<style>
+    .buttons-container {
+        margin-top: 0px;
+    }
+</style>
+
+{% if messages %}
+  <div class="message">
+    {% for message in messages %}
+      <div class="message is-{{ message.tags }}">
+        <div class="message-body">
+          {{ message }}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+
 <section class="hero is-primary">
     <div class="hero-body">
         <div class="container">
@@ -14,8 +32,18 @@
                     </h2>
                 </div>
                 <div class="column">
-                    <button class="button is-link is-primary is-pulled-right"
-                        onclick="window.location.href='/editprofile'">Edit Profile</button>
+                    <div class="buttons is-pulled-right">
+                        <button class="button is-link is-primary"
+                            onclick="window.location.href='/editprofile'">Edit Profile</button>
+                    </div>
+                </div>
+            </div>
+            <div class="columns">
+                <div class="column">
+                    <div class="buttons is-pulled-right">
+                        <button class="button is-link is-primary buttons-container"
+                            onclick="window.location.href='/changepassword'">Change Password</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -60,7 +88,15 @@
     </div>
 </section>
 
-
+<script>
+  // Automatically remove messages after 5 seconds
+  setTimeout(function() {
+    var messages = document.getElementsByClassName('message');
+    for (var i = 0; i < messages.length; i++) {
+      messages[i].remove();
+    }
+  }, 5000);
+</script>
 
 
 {% endblock %}
