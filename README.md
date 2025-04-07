@@ -16,11 +16,11 @@ The documentation phase was completed in 2022 Semester 2, and the application de
 
 ## Authors
 
-- Shey Laplanche
-- Jehan Hapugalle
-- Zhengnan Jiang
+- Shey Laplanche: 0xshey
+- Jehan Hapugalle: JehanHapugalle
+- Zhengnan Jiang: Zener99
 - Nick Fanchi
-- Nithula Ratnayake
+- Nithula Ratnayake: nithular
 - Yuan He
 
 ## License
