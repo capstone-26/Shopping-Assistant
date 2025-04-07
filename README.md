@@ -1,18 +1,27 @@
 # Shopping Assistant
 
-Currently this is a Django web application that runs inside a Docker container. This structure provides as a skeleton for building the rest of the application. Currently the application should run inside the provided Docker container and allow navigation between the four main pages.
+This is a Django web application that runs inside a Docker container. The application runs inside the provided Docker container and allows navigation between the four main pages.
 
 ## State of the Application
-The application is still in a very early stage of development. We are in the process of integrating key pieces with each other in order to reach the intended functionality. Currently we are testing the applicaiton inside a docker container defined in the repo. Once the application enters a more stable state (alpha/beta), we will begin to deploy it to a live server and provide instructions on how to run it.
+The application is now completed and fully functional. Developed as a Curtin University Capstone Computing Project, this Shopping Assistant app integrates web scraping to update product pricing weekly from Aldi, Coles, and Woolworths. Users can compare prices and access historical price trends graphically displayed based on real data. The application was engineered using Django, SQLite, and Bootstrap; it was managed through Jira, version-controlled with Bitbucket, and deployed using Docker.
+
+The documentation phase was completed in 2022 Semester 2, and the application development was conducted in 2023 Semester 1. Once the application reached a stable state, it was deployed to a live server.
 
 ## Built With
 
-- Django - The web framework used
-- Docker - Containerization technology
+- **Django** - The web framework used
+- **SQLite** - Database technology
+- **Bootstrap** - Front-end framework
+- **Docker** - Containerization technology
 
 ## Authors
 
 - Shey Laplanche
+- Jehan Hapugalle
+- Zhengnan Jiang
+- Nick Fanchi
+- Nithula Ratnayake
+- Yuan He
 
 ## License
 
